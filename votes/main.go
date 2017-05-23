@@ -76,9 +76,9 @@ func main() {
 		b.WriteString(fmt.Sprintf("<%v> <Timestamp> %q .\n", node, v.CreationDate))
 
 		if v.VoteTypeId == 2 {
-			b.WriteString(fmt.Sprintf("<%v> <Type> \"up\" .\n", node))
+			b.WriteString(fmt.Sprintf("<%v> <Type> \"Up\" .\n", node))
 		} else if v.VoteTypeId == 3 {
-			b.WriteString(fmt.Sprintf("<%v> <Type> \"down\" .\n", node))
+			b.WriteString(fmt.Sprintf("<%v> <Type> \"Down\" .\n", node))
 		}
 
 		b.WriteString("}}")
