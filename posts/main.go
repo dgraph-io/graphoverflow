@@ -42,6 +42,8 @@ type Post struct {
 	Tags             string `xml:",attr"`
 	LastEditorUserId string `xml:",attr"`
 	LastEditDate     string `xml:",attr"`
+	LastActivityDate string `xml:",attr"`
+	OwnerUserId      string `xml:",attr"`
 }
 
 type Posts struct {
@@ -73,7 +75,7 @@ func main() {
 
 	fmt.Println("dryrun: ", *dryRun)
 	var wg sync.WaitGroup
-	limiter := make(chan struct{}, 100)
+	limiter := make(chan struct{}, 1000)
 	if *dryRun {
 		limiter = make(chan struct{}, 1)
 	}
@@ -100,6 +102,16 @@ func main() {
 
 		node := "p" + p.Id
 		b.WriteString("mutation { set { ")
+
+		if len(p.LastEditDate) == 0 {
+			p.LastEditDate = p.LastActivityDate
+		}
+		if len(p.LastEditorUserId) == 0 {
+			p.LastEditorUserId = p.OwnerUserId
+		}
+		if len(p.LastEditorUserId) == 0 || len(p.LastEditDate) == 0 {
+			continue
+		}
 
 		// First create the versions correctly, and attach them to the node.
 		{
@@ -135,13 +147,18 @@ func main() {
 			b.WriteString(fmt.Sprintf("<%s> <Type> \"Question\" .\n", node))
 
 			// Relation from question to accepted answer.
-			b.WriteString(fmt.Sprintf("<%s> <Chosen.Answer> <p%s> .\n", node, p.AcceptedAnswerId))
+			if len(p.AcceptedAnswerId) > 0 {
+				b.WriteString(fmt.Sprintf("<%s> <Chosen.Answer> <p%s> .\n", node, p.AcceptedAnswerId))
+				b.WriteString(fmt.Sprintf("<%s> <Has.Answer> <p%s> .\n", node, p.AcceptedAnswerId))
+			}
 
 		} else if p.PostTypeId == 2 {
 			b.WriteString(fmt.Sprintf("<%s> <Type> \"Answer\" .\n", node))
 
 			// Relation from question to answer.
-			b.WriteString(fmt.Sprintf("<p%s> <Has.Answer> <%s> .\n", p.ParentId, node))
+			if len(p.ParentId) > 0 {
+				b.WriteString(fmt.Sprintf("<p%s> <Has.Answer> <%s> .\n", p.ParentId, node))
+			}
 		} else {
 			// Not sure what this is. It isn't documented.
 			continue

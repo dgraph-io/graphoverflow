@@ -1,0 +1,5 @@
+mutation {
+  schema {
+    Score: int @index .
+  }
+}

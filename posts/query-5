@@ -1,0 +1,14 @@
+{
+  questions(func: eq(Type, "Question"), orderdesc: ViewCount, first: 1) {
+  	Title {
+      Text
+      Author { DisplayName }
+    }
+  	Score
+  	ViewCount
+  	Has.Answer (orderdesc: Score, first: 1) {
+    	Score
+    	Body { Text }
+  	}
+  }
+}

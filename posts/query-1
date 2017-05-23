@@ -1,0 +1,14 @@
+{
+  question(id: p27) {
+    Body { Text }
+    Title {
+      Text
+      Author {DisplayName}
+    }
+    Tags { Text }
+    count(Has.Answer)
+    Chosen.Answer {
+      Body { Text }
+    }
+  }
+}

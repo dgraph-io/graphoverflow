@@ -1,0 +1,10 @@
+mutation {
+  schema {
+    Score: int @index .
+    ViewCount: int @index .
+    DisplayName: string @index(exact) .
+    Author: uid @reverse .
+    Text: string @index(term) .
+  }
+}
+

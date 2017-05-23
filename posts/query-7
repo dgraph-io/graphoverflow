@@ -1,0 +1,10 @@
+{
+  user(func: eq(DisplayName, "MrPhooky")) {
+    Location
+    ~Author (orderdesc: Timestamp, first: 10) @filter(not eq(Text, "_nil_")) {
+       Type
+       Text
+       Timestamp
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  questions(func: eq(Type, "Question"), orderdesc: Score, first: 1) {
+  	Title {
+      Text
+      Author { DisplayName }
+    }
+  	Score
+  	count(Has.Answer)
+    Chosen.Answer {
+      Body { Text }
+    }
+  }
+}
