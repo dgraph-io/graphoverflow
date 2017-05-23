@@ -1,7 +1,8 @@
 {
-  users(func: eq(Type, "User"), orderdesc: Reputation, first: 10) @filter(not eq(Location, "_nil_")) {
+  users(func: eq(Type, "User"), orderdesc: Reputation, first: 10) @filter(anyoftext(AboutMe, "professional") and not eq(Location, "_nil_")) {
   	Reputation
   	DisplayName
   	Location
+    AboutMe
   }
 }
