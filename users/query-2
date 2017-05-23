@@ -1,0 +1,5 @@
+{
+  users(func: eq(Type, "User"), orderdesc: LastAccessDate, first: 10) {
+    expand(_all_)
+  }
+}

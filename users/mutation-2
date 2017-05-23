@@ -1,0 +1,6 @@
+mutation {
+  schema {
+    Type: string @index(exact) .
+    Reputation: int @index(int) .
+  }
+}

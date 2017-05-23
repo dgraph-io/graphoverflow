@@ -54,7 +54,7 @@ func main() {
 		b.WriteString(fmt.Sprintf("<u%s> <DisplayName> %q .\n", u.Id, u.DisplayName))
 		b.WriteString(fmt.Sprintf("<u%s> <Location> %q .\n", u.Id, u.Location))
 		b.WriteString(fmt.Sprintf("<u%s> <AboutMe> %q .\n", u.Id, u.AboutMe))
-		b.WriteString(fmt.Sprintf("<User> <Instance> <u%s> .\n", u.Id))
+		b.WriteString(fmt.Sprintf("<u%s> <Type> \"User\" .\n", u.Id))
 		b.WriteString("}}")
 		wg.Add(1)
 		go func(b *bytes.Buffer) {
@@ -64,7 +64,7 @@ func main() {
 			check(err)
 			body, err := ioutil.ReadAll(resp.Body)
 			check(err)
-			fmt.Printf("%q\n\n", body)
+			fmt.Printf("%q\n", body)
 			check(resp.Body.Close())
 			wg.Done()
 			<-limiter

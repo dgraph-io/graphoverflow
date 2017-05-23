@@ -1,0 +1,7 @@
+{
+  users(func: eq(Type, "User"), orderdesc: Reputation, first: 10) {
+  	Reputation
+  	DisplayName
+  	Location
+  }
+}

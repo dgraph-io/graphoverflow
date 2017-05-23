@@ -1,0 +1,5 @@
+mutation {
+  schema {
+    Type: string @index(exact) .
+  }
+}

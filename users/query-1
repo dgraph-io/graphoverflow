@@ -1,0 +1,5 @@
+{
+  user(id: u-1) {
+    expand(_all_)
+  }
+}
