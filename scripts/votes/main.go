@@ -61,7 +61,7 @@ func main() {
 		limiter = make(chan struct{}, 1)
 	}
 
-	for _, v := range votes.Rows[:10] {
+	for _, v := range votes.Rows {
 		fmt.Println(v.Id)
 		var b bytes.Buffer
 

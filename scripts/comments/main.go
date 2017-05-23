@@ -53,7 +53,7 @@ func main() {
 	}
 
 	// First generate all the versions.
-	for _, c := range comments.Rows[:10] {
+	for _, c := range comments.Rows {
 		fmt.Println(c.Id)
 		var b bytes.Buffer
 
