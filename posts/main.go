@@ -132,13 +132,13 @@ func main() {
 
 		// Now create the actual post.
 		if p.PostTypeId == 1 {
-			b.WriteString(fmt.Sprintf("<%s> <Type> <Question> .\n", node))
+			b.WriteString(fmt.Sprintf("<%s> <Type> \"Question\" .\n", node))
 
 			// Relation from question to accepted answer.
 			b.WriteString(fmt.Sprintf("<%s> <Chosen.Answer> <p%s> .\n", node, p.AcceptedAnswerId))
 
 		} else if p.PostTypeId == 2 {
-			b.WriteString(fmt.Sprintf("<%s> <Type> <Answer> .\n", node))
+			b.WriteString(fmt.Sprintf("<%s> <Type> \"Answer\" .\n", node))
 
 			// Relation from question to answer.
 			b.WriteString(fmt.Sprintf("<p%s> <Has.Answer> <%s> .\n", p.ParentId, node))
