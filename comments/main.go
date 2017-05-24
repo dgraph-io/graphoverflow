@@ -47,24 +47,24 @@ func main() {
 	check(xml.Unmarshal(data, &comments))
 
 	var wg sync.WaitGroup
-	limiter := make(chan struct{}, 100)
+	limiter := make(chan struct{}, 1000)
 	if *dryRun {
 		limiter = make(chan struct{}, 1)
 	}
 
 	// First generate all the versions.
 	for _, c := range comments.Rows {
-		fmt.Println(c.Id)
 		var b bytes.Buffer
 
 		node := "c" + c.Id
 		b.WriteString("mutation { set { ")
 
 		b.WriteString(fmt.Sprintf("<%v> <Author> <u%v> .\n", node, c.UserId))
-		b.WriteString(fmt.Sprintf("<%v> <Post> <p%v> .\n", node, c.PostId))
+		b.WriteString(fmt.Sprintf("<p%v> <Comment> <%v> .\n", c.PostId, node))
 		b.WriteString(fmt.Sprintf("<%v> <Score> \"%v\" .\n", node, c.Score))
-		b.WriteString(fmt.Sprintf("<%v> <Body> %q .\n", node, c.Text))
+		b.WriteString(fmt.Sprintf("<%v> <Text> %q .\n", node, c.Text))
 		b.WriteString(fmt.Sprintf("<%v> <Timestamp> %q .\n", node, c.CreationDate))
+		b.WriteString(fmt.Sprintf("<%v> <Type> \"Comment\" .\n", node))
 
 		b.WriteString("}}")
 		wg.Add(1)
