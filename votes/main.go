@@ -69,7 +69,7 @@ func main() {
 
 		// We generate userId for the user that casted the vote, because dataset is anonymized
 		// and does not always contain userId
-		author_id := random(1, 1000)
+		author_id := random(3, 20000)
 		b.WriteString(fmt.Sprintf("<%v> <Author> <u%v> .\n", node, author_id))
 		b.WriteString(fmt.Sprintf("<p%v> <Vote> <%v> .\n", v.PostId, node))
 		b.WriteString(fmt.Sprintf("<%v> <Timestamp> %q .\n", node, v.CreationDate))
