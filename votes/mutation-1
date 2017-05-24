@@ -1,0 +1,4 @@
+mutation {
+schema {
+  Vote: uid @reverse .
+}}

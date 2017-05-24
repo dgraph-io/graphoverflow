@@ -12,11 +12,12 @@
       Author {DisplayName}
     }
     count(Vote)
-    Vote (orderdesc: Timestamp, first: 1) {
-      Score
+    Vote(orderdesc: Timestamp) {
+      s as Score
       Timestamp
       Author {DisplayName}
     }
+    sum(var(s))
   }
 }
 

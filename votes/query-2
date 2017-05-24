@@ -1,0 +1,8 @@
+{
+  Comments(func: eq(Score, -2), orderdesc: Timestamp, first: 5) {
+    ~Vote {
+      Type
+      _uid_
+    }
+  }
+}
