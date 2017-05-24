@@ -62,7 +62,6 @@ func main() {
 	}
 
 	for _, v := range votes.Rows {
-		fmt.Println(v.Id)
 		var b bytes.Buffer
 
 		node := "v" + v.Id
@@ -72,13 +71,14 @@ func main() {
 		// and does not always contain userId
 		author_id := random(1, 1000)
 		b.WriteString(fmt.Sprintf("<%v> <Author> <u%v> .\n", node, author_id))
-		b.WriteString(fmt.Sprintf("<%v> <Post> <p%v> .\n", node, v.PostId))
+		b.WriteString(fmt.Sprintf("<p%v> <Vote> <%v> .\n", v.PostId, node))
 		b.WriteString(fmt.Sprintf("<%v> <Timestamp> %q .\n", node, v.CreationDate))
+		b.WriteString(fmt.Sprintf("<%v> <Type> \"Vote\" .\n", node))
 
-		if v.VoteTypeId == 2 {
-			b.WriteString(fmt.Sprintf("<%v> <Type> \"Up\" .\n", node))
-		} else if v.VoteTypeId == 3 {
-			b.WriteString(fmt.Sprintf("<%v> <Type> \"Down\" .\n", node))
+		if v.VoteTypeId == 2 { // upvote
+			b.WriteString(fmt.Sprintf("<%v> <Score> \"1\" .\n", node))
+		} else if v.VoteTypeId == 3 { // downvote
+			b.WriteString(fmt.Sprintf("<%v> <Score> \"-2\" .\n", node))
 		}
 
 		b.WriteString("}}")
