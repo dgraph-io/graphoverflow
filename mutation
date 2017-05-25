@@ -1,0 +1,14 @@
+mutation {
+  schema {
+    AboutMe: string @index(fulltext) .
+    Author: uid @reverse .
+    DisplayName: string @index(exact) .
+    Location: string @index(term) .
+    Reputation: int @index(int) .
+    Score: int @index .
+    Text: string @index(term) .
+    Type: string @index(exact) .
+    ViewCount: int @index .
+    Vote: uid @reverse .
+  }
+}

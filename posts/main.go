@@ -166,6 +166,7 @@ func main() {
 
 		b.WriteString(fmt.Sprintf("<%s> <Score> \"%d\" .\n", node, p.Score))
 		b.WriteString(fmt.Sprintf("<%s> <ViewCount> \"%d\" .\n", node, p.ViewCount))
+		b.WriteString(fmt.Sprintf("<%s> <Timestamp> %q .\n", node, p.CreationDate))
 
 		b.WriteString("}}")
 		wg.Add(1)
