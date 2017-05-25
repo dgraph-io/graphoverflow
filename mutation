@@ -10,5 +10,7 @@ mutation {
     Type: string @index(exact) .
     ViewCount: int @index .
     Vote: uid @reverse .
+    Title: uid @reverse .
+    Body: uid @reverse .
   }
 }
