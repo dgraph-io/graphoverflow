@@ -44,3 +44,15 @@ export function parseTagString(tagString) {
 export function kFormat(num) {
   return num > 999 ? (num / 1000).toFixed(1) + "k" : num;
 }
+
+export function trimStr(str, maxLen = 100) {
+  if (str.length < maxLen) {
+    return str;
+  }
+
+  return str.substring(0, maxLen - 3) + "...";
+}
+
+export function stripTags(str) {
+  return str.replace(/(<([^>]+)>)/gi, "");
+}

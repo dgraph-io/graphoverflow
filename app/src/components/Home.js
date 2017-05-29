@@ -2,8 +2,14 @@ import React from "react";
 import QuestionList from "./QuestionList";
 import HomeTabNavigation from "./HomeTabNavigation";
 import TopTagList from "./TopTagList";
+import TopUserList from "./TopUserList";
 
 import { runQuery } from "../lib/helpers";
+import {
+  recentQuestionsQuery,
+  topTagsQuery,
+  topUsersQuery
+} from "../queries/Home";
 import "../assets/styles/Home.css";
 
 // enum for tabs
@@ -21,6 +27,7 @@ export default class Home extends React.Component {
       dataLoaded: false,
       questions: [],
       topTags: [],
+      topUsers: [],
       currentTab: ALL_TABS.TAB_RECENT
     };
   }
@@ -28,49 +35,15 @@ export default class Home extends React.Component {
   componentDidMount() {
     const query = `
 {
-  questions(func: eq(Type, "Question"), orderdesc: Timestamp, first: 100) {
-    _uid_
-
-  	Title {
-      Text
-    }
-
-    Owner {
-      DisplayName
-      Reputation
-      _uid_
-    }
-
-    Tags {
-      Text
-    }
-
-    Has.Answer(orderdesc: Timestamp, first: 1) {
-      Owner {
-        DisplayName
-        Reputation
-        _uid_
-      }
-      Timestamp
-    }
-
-    VoteCount: count(Vote)
-    AnswerCount: count(Has.Answer)
-    ViewCount
-    Timestamp
-  }
-
-  topTags(func: gt(count(PostCount), 0), orderdesc: PostCount, first: 10) {
-    PostCount
-    TagName
-    _uid_
-  }
+  ${recentQuestionsQuery}
+  ${topTagsQuery}
+  ${topUsersQuery}
 }
 `;
     runQuery(query).then(res => {
-      const { questions, topTags } = res;
+      const { questions, topTags, topUsers } = res;
 
-      this.setState({ questions, topTags, dataLoaded: true });
+      this.setState({ questions, topTags, topUsers, dataLoaded: true });
     });
   }
 
@@ -79,7 +52,7 @@ export default class Home extends React.Component {
   };
 
   render() {
-    const { questions, topTags, currentTab } = this.state;
+    const { questions, topTags, topUsers, currentTab } = this.state;
 
     return (
       <div className="container">
@@ -106,6 +79,7 @@ export default class Home extends React.Component {
 
           <div className="col-12 col-sm-4">
             <TopTagList tags={topTags} />
+            <TopUserList users={topUsers} />
           </div>
         </div>
       </div>

@@ -1,0 +1,15 @@
+.footer {
+  padding: 2em;
+  text-align: center;
+  color: white;
+  background-color: black;
+
+  a {
+    color: white;
+    text-decoration: underline;
+
+    &:hover {
+      color: gray;
+    }
+  }
+}

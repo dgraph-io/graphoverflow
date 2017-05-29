@@ -4,8 +4,8 @@ import "../assets/styles/TopTagList.css";
 
 const TopTagList = ({ tags }) => {
   return (
-    <section className="section top-tag-list-container">
-      <h2>Top tags</h2>
+    <section className="side-section top-tag-list-container">
+      <h2>Top Tags</h2>
       <ul className="tag-list">
         {tags.map(tag => {
           return (

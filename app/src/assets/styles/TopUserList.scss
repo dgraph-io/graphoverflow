@@ -1,0 +1,53 @@
+.top-user-list {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.top-user-item {
+  display: block;
+  border-top: 1px solid #d8d8d8;
+  padding: 11px 4px;
+}
+
+.top-user-list-container {
+  border: 1px solid #d8d8d8;
+  padding: 17px 11px;
+}
+
+.section-desc {
+  font-size: 13px;
+  color: #797979;
+}
+
+.about-me {
+  font-size: 13px;
+  color: #777777;
+}
+
+.user-avatar {
+  width: 68px;
+  height: 68px;
+  margin-right: 12px;
+}
+
+.username {
+  font-size: 16px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+}
+
+.info {
+  flex: 1;
+}
+
+.statistics {
+  font-size: 14px;
+}
+
+.num {
+  margin-left: 3px;
+}
