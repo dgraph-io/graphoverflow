@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import QuestionList from "./QuestionList";
 
 import { runQuery } from "../lib/helpers";
 
@@ -22,6 +22,20 @@ export default class Home extends React.Component {
   	Title {
       Text
     }
+
+    Author {
+      DisplayName
+      Reputation
+      _uid_
+    }
+
+    Tags {
+      Text
+    }
+
+    VoteCount: count(Vote)
+    AnswerCount: count(Has.Answer)
+    ViewCount
   }
 }
 `;
@@ -36,18 +50,16 @@ export default class Home extends React.Component {
     const { questions } = this.state;
 
     return (
-      <div>
-        <ul className="list-unstyled">
-          {questions.map(question => {
-            return (
-              <li>
-                <Link to={`/questions/${question._uid_}`}>
-                  {JSON.stringify(question.Title[0].Text)}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+      <div className="container">
+        <div className="row">
+          <div className="col-12">
+            <section className="questions">
+              <h2>Top Questions</h2>
+
+              <QuestionList questions={questions} />
+            </section>
+          </div>
+        </div>
       </div>
     );
   }

@@ -56,7 +56,7 @@ func main() {
 	check(xml.Unmarshal(data, &votes))
 
 	var wg sync.WaitGroup
-	limiter := make(chan struct{}, 1000)
+	limiter := make(chan struct{}, 100)
 	if *dryRun {
 		limiter = make(chan struct{}, 1)
 	}
@@ -67,10 +67,12 @@ func main() {
 		node := "v" + v.Id
 		b.WriteString("mutation { set { ")
 
+		fmt.Println(node)
+
 		// We generate userId for the user that casted the vote, because dataset is anonymized
 		// and does not always contain userId
-		author_id := random(3, 20000)
-		b.WriteString(fmt.Sprintf("<%v> <Author> <u%v> .\n", node, author_id))
+		authorId := random(3, 20000)
+		b.WriteString(fmt.Sprintf("<%v> <Author> <u%v> .\n", node, authorId))
 		b.WriteString(fmt.Sprintf("<p%v> <Vote> <%v> .\n", v.PostId, node))
 		b.WriteString(fmt.Sprintf("<%v> <Timestamp> %q .\n", node, v.CreationDate))
 		b.WriteString(fmt.Sprintf("<%v> <Type> \"Vote\" .\n", node))
@@ -78,20 +80,18 @@ func main() {
 		if v.VoteTypeId == 2 { // upvote
 			b.WriteString(fmt.Sprintf("<%v> <Score> \"1\" .\n", node))
 		} else if v.VoteTypeId == 3 { // downvote
-			b.WriteString(fmt.Sprintf("<%v> <Score> \"-2\" .\n", node))
+			b.WriteString(fmt.Sprintf("<%v> <Score> \"-1\" .\n", node))
 		}
 
 		b.WriteString("}}")
 		wg.Add(1)
 		go func(b *bytes.Buffer) {
 			limiter <- struct{}{}
-			fmt.Println(b.String())
 			if !*dryRun {
 				resp, err := http.Post("http://localhost:8080/query", "", b)
 				check(err)
-				body, err := ioutil.ReadAll(resp.Body)
+				_, err = ioutil.ReadAll(resp.Body)
 				check(err)
-				fmt.Printf("%q\n\n", body)
 				check(resp.Body.Close())
 			}
 			wg.Done()
