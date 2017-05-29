@@ -1,0 +1,47 @@
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1px 12px;
+
+  h2 {
+    font-size: 18px;
+  }
+}
+
+.questions {
+  padding: 18px 0;
+}
+
+.tab-navigation {
+  margin: 0;
+  list-style: none;
+  padding-left: 0;
+}
+
+.tab-item {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.tab-link {
+  display: block;
+  padding: 12px 12px;
+  color: #9c9c9c;
+  font-size: 14px;
+  letter-spacing: 0.8px;
+
+  &.active {
+    color: #545454;
+    border-bottom: 2px solid #545454;
+  }
+
+  &:hover {
+    text-decoration: none;
+    border-bottom: 2px solid #9c9c9c;
+  }
+
+  &:focus {
+    text-decoration: none;
+  }
+}
