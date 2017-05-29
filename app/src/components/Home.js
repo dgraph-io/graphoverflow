@@ -16,14 +16,14 @@ export default class Home extends React.Component {
   componentDidMount() {
     const query = `
 {
-  questions(func: eq(Type, "Question"), first: 10) {
+  questions(func: eq(Type, "Question"), orderdesc: Timestamp, first: 10) {
     _uid_
 
   	Title {
       Text
     }
 
-    Author {
+    Owner {
       DisplayName
       Reputation
       _uid_
@@ -33,9 +33,19 @@ export default class Home extends React.Component {
       Text
     }
 
+    Has.Answer(orderdesc: Timestamp, first: 1) {
+      Owner {
+        DisplayName
+        Reputation
+        _uid_
+      }
+      Timestamp
+    }
+
     VoteCount: count(Vote)
     AnswerCount: count(Has.Answer)
     ViewCount
+    Timestamp
   }
 }
 `;

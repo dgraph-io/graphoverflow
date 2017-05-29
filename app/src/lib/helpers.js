@@ -39,3 +39,8 @@ export function parseTagString(tagString) {
 
   return ret;
 }
+
+// kFormat formats the number with suffix 'k' if greater than 999
+export function kFormat(num) {
+  return num > 999 ? (num / 1000).toFixed(1) + "k" : num;
+}

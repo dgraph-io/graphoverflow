@@ -1,5 +1,11 @@
 .question-item {
   padding: 10px 0px;
+  border-bottom: 1px solid #d8d8d8;
+  cursor: pointer;
+
+  &:first-child {
+    border-top: 1px solid #d8d8d8;
+  }
 }
 
 .stats {
@@ -21,4 +27,23 @@
   font-size: 11px;
   text-transform: uppercase;
   padding: 5px 0;
+}
+
+.tags {
+  float: left;
+}
+
+.last-activity {
+  float: right;
+  font-size: 14px;
+  color: gray;
+  padding-top: 5px;
+}
+
+.reputation {
+  font-weight: 600;
+}
+
+.tag {
+  margin-right: 6px;
 }

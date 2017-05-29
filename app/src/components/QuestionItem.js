@@ -1,14 +1,22 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
+
 import { parseTagString } from "../lib/helpers";
+import QuestionItemLastActivity from "./QuestionItemLastActivity";
 
 import "../assets/styles/QuestionItem.css";
 
-const QuestionItem = ({ question }) => {
+const QuestionItem = ({ question, history }) => {
+  const questionLink = `/questions/${question._uid_}`;
   const tags = parseTagString(question.Tags[0].Text);
 
   return (
-    <li className="question-item">
+    <li
+      className="question-item"
+      onClick={() => {
+        history.push(questionLink);
+      }}
+    >
       <div className="row">
         <div className="col-12 col-sm-3">
           <div className="stats">
@@ -43,23 +51,30 @@ const QuestionItem = ({ question }) => {
         </div>
         <div className="col-12 col-sm-9">
           <div>
-            <Link to={`/questions/${question._uid_}`}>
+            <Link
+              to={questionLink}
+              onClick={e => {
+                e.stopPropagation();
+              }}
+            >
               {JSON.stringify(question.Title[0].Text)}
             </Link>
           </div>
           <div className="tags">
             {tags.map(tag => {
               return (
-                <div className="badge badge-info" key={tag}>
+                <div className="badge badge-info tag" key={tag}>
                   {tag}
                 </div>
               );
             })}
           </div>
-          <div className="last-activity" />
+          <div className="last-activity">
+            <QuestionItemLastActivity question={question} />
+          </div>
         </div>
       </div>
     </li>
   );
 };
-export default QuestionItem;
+export default withRouter(QuestionItem);

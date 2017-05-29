@@ -75,7 +75,7 @@ func main() {
 
 	fmt.Println("dryrun: ", *dryRun)
 	var wg sync.WaitGroup
-	limiter := make(chan struct{}, 1000)
+	limiter := make(chan struct{}, 100)
 	if *dryRun {
 		limiter = make(chan struct{}, 1)
 	}
