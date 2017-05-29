@@ -63,7 +63,7 @@ const QuestionItem = ({ question, history }) => {
           <div className="tags">
             {tags.map(tag => {
               return (
-                <div className="badge badge-info tag" key={tag}>
+                <div className="tag" key={tag}>
                   {tag}
                 </div>
               );

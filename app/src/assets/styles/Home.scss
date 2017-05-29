@@ -2,15 +2,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1px 12px;
-
-  h2 {
-    font-size: 18px;
-  }
-}
-
-.questions {
-  padding: 18px 0;
+  padding: 1px 12px 0px;
+  border-bottom: 1px solid #d8d8d8;
 }
 
 .tab-navigation {
@@ -22,6 +15,7 @@
 .tab-item {
   display: inline-block;
   margin-right: 5px;
+  margin-bottom: -1px;
 }
 
 .tab-link {
@@ -33,15 +27,24 @@
 
   &.active {
     color: #545454;
-    border-bottom: 2px solid #545454;
+    border: 1px solid #d8d8d8;
+    border-bottom-color: white;
   }
 
   &:hover {
     text-decoration: none;
-    border-bottom: 2px solid #9c9c9c;
+    color: #545454;
   }
 
   &:focus {
     text-decoration: none;
   }
+}
+
+h2 {
+  font-size: 18px;
+}
+
+.section {
+  margin: 0px 6px;
 }

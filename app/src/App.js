@@ -6,6 +6,8 @@ import Home from "./components/Home";
 import About from "./components/About";
 import Question from "./components/Question";
 
+import "./App.css";
+
 class App extends Component {
   render() {
     return (
@@ -13,9 +15,11 @@ class App extends Component {
         <div>
           <Header />
 
-          <Route exact path="/" component={Home} />
-          <Route path="/about" component={About} />
-          <Route path="/questions/:uid" component={Question} />
+          <main className="main-content">
+            <Route exact path="/" component={Home} />
+            <Route path="/about" component={About} />
+            <Route path="/questions/:uid" component={Question} />
+          </main>
         </div>
       </Router>
     );

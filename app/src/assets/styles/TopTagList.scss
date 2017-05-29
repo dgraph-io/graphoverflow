@@ -1,0 +1,20 @@
+.top-tag-list-container {
+  border: 1px solid #d8d8d8;
+  padding: 17px 11px;
+  background-color: #fffef5;
+}
+
+.tag-list {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.tag-item {
+  display: inline-block;
+}
+
+.tag .count {
+  font-size: 11px;
+  color: black;
+}
