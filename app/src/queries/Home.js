@@ -27,8 +27,8 @@ Has.Answer(orderdesc: Timestamp, first: 1) {
 }
 
 ChosenAnswerCount: count(Chosen.Answer)
-UpvoteCount: count(Vote) @filter(eq(Type, "Upvote"))
-DownvoteCount: count(Vote) @filter(eq(Type, "Downvote"))
+UpvoteCount: count(Upvote)
+DownvoteCount: count(Downvote)
 AnswerCount: count(Has.Answer)
 ViewCount
 Timestamp
