@@ -7,6 +7,7 @@ import TopUserList from "./TopUserList";
 import { runQuery } from "../lib/helpers";
 import {
   recentQuestionsQuery,
+  hotQuestionsQuery,
   topTagsQuery,
   topUsersQuery
 } from "../queries/Home";
@@ -24,7 +25,7 @@ export default class Home extends React.Component {
     super(props);
 
     this.state = {
-      dataLoaded: false,
+      questionsLoaded: false,
       questions: [],
       topTags: [],
       topUsers: [],
@@ -43,16 +44,41 @@ export default class Home extends React.Component {
     runQuery(query).then(res => {
       const { questions, topTags, topUsers } = res;
 
-      this.setState({ questions, topTags, topUsers, dataLoaded: true });
+      this.setState({ questions, topTags, topUsers, questionsLoaded: true });
     });
   }
 
+  // refreshQuestions fetches the questions again
+  refreshQuestions = () => {
+    const { currentTab } = this.state;
+
+    let query = "";
+    if (currentTab === ALL_TABS.TAB_HOT) {
+      query = `{ ${hotQuestionsQuery} }`;
+    } else if (currentTab) {
+      query = `{ ${recentQuestionsQuery} }`;
+    }
+
+    this.setState({ questionsLoaded: false }, () => {
+      runQuery(query).then(res => {
+        const { questions } = res;
+        this.setState({ questions, questionsLoaded: true });
+      });
+    });
+  };
+
   handleChangeTab = newTab => {
-    this.setState({ currentTab: newTab });
+    this.setState({ currentTab: newTab }, this.refreshQuestions);
   };
 
   render() {
-    const { questions, topTags, topUsers, currentTab } = this.state;
+    const {
+      questions,
+      topTags,
+      topUsers,
+      currentTab,
+      questionsLoaded
+    } = this.state;
 
     return (
       <div className="container">
@@ -69,7 +95,9 @@ export default class Home extends React.Component {
                 />
               </div>
 
-              <QuestionList questions={questions} />
+              {questionsLoaded
+                ? <QuestionList questions={questions} />
+                : <div>Loading...</div>}
 
               <div>
                 Looking for more? Try to search for a question.

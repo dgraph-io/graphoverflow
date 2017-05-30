@@ -195,7 +195,7 @@ func main() {
 		if len(p.OwnerUserId) > 0 {
 			b.WriteString(fmt.Sprintf("<%s> <Owner> <u%s> .\n", node, p.OwnerUserId))
 		}
-		b.WriteString(fmt.Sprintf("<%s> <Score> \"%d\" .\n", node, p.Score))
+		//b.WriteString(fmt.Sprintf("<%s> <Score> \"%d\" .\n", node, p.Score))
 		b.WriteString(fmt.Sprintf("<%s> <ViewCount> \"%d\" .\n", node, p.ViewCount))
 		b.WriteString(fmt.Sprintf("<%s> <Timestamp> %q .\n", node, p.CreationDate))
 

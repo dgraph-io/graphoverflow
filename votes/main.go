@@ -67,21 +67,19 @@ func main() {
 		node := "v" + v.Id
 		b.WriteString("mutation { set { ")
 
-		fmt.Println(node)
+		if v.VoteTypeId == 2 { // upvote
+			b.WriteString(fmt.Sprintf("<p%v> <Upvote> <%v> .\n", v.PostId, node))
+		} else if v.VoteTypeId == 3 { // downvote
+			b.WriteString(fmt.Sprintf("<p%v> <Downvote> <%v> .\n", v.PostId, node))
+		} else {
+			continue
+		}
 
 		// We generate userId for the user that casted the vote, because dataset is anonymized
 		// and does not always contain userId
 		authorId := random(3, 20000)
 		b.WriteString(fmt.Sprintf("<%v> <Author> <u%v> .\n", node, authorId))
-		b.WriteString(fmt.Sprintf("<p%v> <Vote> <%v> .\n", v.PostId, node))
 		b.WriteString(fmt.Sprintf("<%v> <Timestamp> %q .\n", node, v.CreationDate))
-		b.WriteString(fmt.Sprintf("<%v> <Type> \"Vote\" .\n", node))
-
-		if v.VoteTypeId == 2 { // upvote
-			b.WriteString(fmt.Sprintf("<%v> <Score> \"1\" .\n", node))
-		} else if v.VoteTypeId == 3 { // downvote
-			b.WriteString(fmt.Sprintf("<%v> <Score> \"-1\" .\n", node))
-		}
 
 		b.WriteString("}}")
 		wg.Add(1)

@@ -1,5 +1,5 @@
 .question-item {
-  padding: 10px 0px;
+  padding: 10px 8px;
   border-bottom: 1px solid #d8d8d8;
   cursor: pointer;
 }
@@ -42,4 +42,8 @@
 
 .tag {
   margin-right: 6px;
+}
+
+.unanswered {
+  background-color: #e0ffe1;
 }

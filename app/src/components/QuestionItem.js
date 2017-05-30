@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
+import classnames from "classnames";
 
 import QuestionItemLastActivity from "./QuestionItemLastActivity";
 
@@ -7,10 +8,13 @@ import "../assets/styles/QuestionItem.css";
 
 const QuestionItem = ({ question, history }) => {
   const questionLink = `/questions/${question._uid_}`;
+  const questionScore = question.UpvoteCount - question.DownvoteCount;
 
   return (
     <li
-      className="question-item"
+      className={classnames("question-item", {
+        unanswered: question.ChosenAnswerCount === 0
+      })}
       onClick={() => {
         history.push(questionLink);
       }}
@@ -20,7 +24,7 @@ const QuestionItem = ({ question, history }) => {
           <div className="stats">
             <div className="stat">
               <div className="number">
-                {question.VoteCount}
+                {questionScore}
               </div>
               <div className="noun">
                 Votes
