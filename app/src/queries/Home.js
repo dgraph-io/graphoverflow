@@ -13,7 +13,7 @@ questions(func: eq(Type, "Question"), orderdesc: Timestamp, first: 100) {
   }
 
   Tags {
-    Text
+    TagName: Text
   }
 
   Has.Answer(orderdesc: Timestamp, first: 1) {
@@ -33,10 +33,14 @@ questions(func: eq(Type, "Question"), orderdesc: Timestamp, first: 100) {
 `;
 
 export const topTagsQuery = `
-topTags(func: gt(count(PostCount), 0), orderdesc: PostCount, first: 10) {
-  PostCount
-  TagName
+t as var(func: eq(Type, "Tag")) {
+  c as count(~Tags)
+}
+
+topTags(id: var(t), orderdesc: var(c), first: 10) {
   _uid_
+  TagName: Text
+  QuestionCount: var(c)
 }
 `;
 

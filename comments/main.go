@@ -47,7 +47,7 @@ func main() {
 	check(xml.Unmarshal(data, &comments))
 
 	var wg sync.WaitGroup
-	limiter := make(chan struct{}, 100)
+	limiter := make(chan struct{}, 1000)
 	if *dryRun {
 		limiter = make(chan struct{}, 1)
 	}

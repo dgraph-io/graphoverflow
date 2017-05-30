@@ -14,5 +14,6 @@ mutation {
     Body: uid @reverse .
     Post: uid @reverse .
     PostCount: int @index .
+    Tag: uid @reverse .
   }
 }

@@ -11,7 +11,9 @@ const TopTagList = ({ tags }) => {
           return (
             <li className="tag-item" key={tag._uid_}>
               <span className="tag">
-                {tag.TagName} <span className="count">x {tag.PostCount}</span>
+                {tag.TagName}
+                {" "}
+                <span className="count">x {tag.QuestionCount}</span>
               </span>
             </li>
           );

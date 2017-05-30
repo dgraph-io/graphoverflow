@@ -1,14 +1,12 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
 
-import { parseTagString } from "../lib/helpers";
 import QuestionItemLastActivity from "./QuestionItemLastActivity";
 
 import "../assets/styles/QuestionItem.css";
 
 const QuestionItem = ({ question, history }) => {
   const questionLink = `/questions/${question._uid_}`;
-  const tags = parseTagString(question.Tags[0].Text);
 
   return (
     <li
@@ -61,10 +59,10 @@ const QuestionItem = ({ question, history }) => {
             </Link>
           </div>
           <div className="tags">
-            {tags.map(tag => {
+            {question.Tags.map(tag => {
               return (
-                <div className="tag" key={tag}>
-                  {tag}
+                <div className="tag" key={tag.TagName}>
+                  {tag.TagName}
                 </div>
               );
             })}
