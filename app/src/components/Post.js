@@ -1,12 +1,16 @@
 import React from "react";
 
 import PostHistory from "./PostHistory";
+import CommentList from "./CommentList";
+import TagList from "./TagList";
+import marked from "marked";
 
 const Post = ({ post }) => {
   const postScore = post.UpvoteCount - post.DownvoteCount;
 
   return (
     <div className="post">
+      {/* questions have title and answers don't */}
       {post.Title ? <h1 className="post-title">{post.Title[0].Text}</h1> : null}
 
       <div className="post-content">
@@ -15,13 +19,17 @@ const Post = ({ post }) => {
             {postScore}
           </div>
         </div>
-        <div
-          className="post-body"
-          dangerouslySetInnerHTML={{ __html: post.Body[0].Text }}
-        />
-      </div>
+        <div className="post-body-container">
+          <div
+            className="post-body"
+            dangerouslySetInnerHTML={{ __html: marked(post.Body[0].Text) }}
+          />
+          {post.Tags ? <TagList tags={post.Tags} /> : null}
+          <PostHistory post={post} />
 
-      <PostHistory post={post} />
+          {post.Comment ? <CommentList comments={post.Comment} /> : null}
+        </div>
+      </div>
     </div>
   );
 };

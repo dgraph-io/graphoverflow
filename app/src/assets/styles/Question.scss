@@ -9,8 +9,16 @@
   display: flex;
 }
 
-.post-body {
+.post-body-container {
   flex: 1;
+}
+
+.post-body {
+  word-break: break-word;
+
+  img {
+    max-width: 100%;
+  }
 }
 
 .vote-count-container {

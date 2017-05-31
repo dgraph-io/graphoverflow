@@ -1,14 +1,22 @@
 const HistoryFragment = `
-History: ~Post(orderdesc: Timestamp) {
-  Author {
-    DisplayName
-    Reputation
-    _uid_
-  }
-  Type
-  Text
-  Timestamp
+Author {
+  DisplayName
+  Reputation
+  _uid_
 }
+Type
+Text
+Timestamp
+`;
+
+const CommentFragment = `
+_uid_
+Author {
+  DisplayName
+}
+Text
+Score
+Timestamp
 `;
 
 // getQuestionQuery generates a query to fetch the question with the given UID
@@ -31,6 +39,10 @@ export function getQuestionQuery(questionUID) {
       UpvoteCount: count(Upvote)
       DownvoteCount: count(Downvote)
 
+      Tags {
+        TagName: Text
+      }
+
       Has.Answer {
         Body {
           Text
@@ -43,10 +55,21 @@ export function getQuestionQuery(questionUID) {
         Timestamp
         UpvoteCount: count(Upvote)
         DownvoteCount: count(Downvote)
-        ${HistoryFragment}
+        History: ~Post(orderdesc: Timestamp) {
+          ${HistoryFragment}
+        }
+        Comment {
+          ${CommentFragment}
+        }
       }
 
-      ${HistoryFragment}
+      Comment {
+        ${CommentFragment}
+      }
+
+      History: ~Post(orderdesc: Timestamp) {
+        ${HistoryFragment}
+      }
     }
   }`;
 }

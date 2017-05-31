@@ -15,5 +15,6 @@ mutation {
     Post: uid @reverse .
     PostCount: int @index .
     Tag: uid @reverse .
+    Timestamp: datetime .
   }
 }

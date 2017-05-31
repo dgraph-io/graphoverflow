@@ -1,0 +1,45 @@
+.comment-list {
+  list-style: none;
+  padding-left: 0;
+  border-top: 1px solid #dedede;
+  margin-top: 22px;
+  margin-bottom: 0;
+}
+
+.comment-item {
+  display: flex;
+  padding: 6px 0px;
+  border-bottom: 1px solid #dedede;
+}
+
+.comment-score {
+  width: 30px;
+  font-size: 14px;
+  margin-top: 2px;
+}
+
+.comment-content {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.comment-body {
+  font-size: 14px;
+
+  // inserted by markdown
+  p {
+    margin-bottom: 0;
+    display: inline-block;
+  }
+}
+
+.comment-author-name {
+  font-size: 14px;
+  color: #3c3c3c;
+  font-weight: 600;
+}
+
+.comment-timestamp {
+  font-size: 14px;
+  color: gray;
+}

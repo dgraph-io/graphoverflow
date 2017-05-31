@@ -6,6 +6,7 @@ const TopTagList = ({ tags }) => {
   return (
     <section className="side-section top-tag-list-container">
       <h2>Top Tags</h2>
+
       <ul className="tag-list">
         {tags.map(tag => {
           return (
