@@ -100,7 +100,7 @@ func main() {
 
 	fmt.Println("dryrun: ", *dryRun)
 	var wg sync.WaitGroup
-	limiter := make(chan struct{}, 500)
+	limiter := make(chan struct{}, 80)
 	if *dryRun {
 		limiter = make(chan struct{}, 1)
 	}
@@ -234,4 +234,6 @@ func main() {
 		go send(&b)
 	}
 	wg.Wait()
+
+	fmt.Println(len(posts.Rows), "processed")
 }

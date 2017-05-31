@@ -1,3 +1,16 @@
+const HistoryFragment = `
+History: ~Post(orderdesc: Timestamp) {
+  Author {
+    DisplayName
+    Reputation
+    _uid_
+  }
+  Type
+  Text
+  Timestamp
+}
+`;
+
 // getQuestionQuery generates a query to fetch the question with the given UID
 export function getQuestionQuery(questionUID) {
   return `{
@@ -15,7 +28,6 @@ export function getQuestionQuery(questionUID) {
       }
       ViewCount
       Timestamp
-
       UpvoteCount: count(Upvote)
       DownvoteCount: count(Downvote)
 
@@ -31,7 +43,10 @@ export function getQuestionQuery(questionUID) {
         Timestamp
         UpvoteCount: count(Upvote)
         DownvoteCount: count(Downvote)
+        ${HistoryFragment}
       }
+
+      ${HistoryFragment}
     }
   }`;
 }

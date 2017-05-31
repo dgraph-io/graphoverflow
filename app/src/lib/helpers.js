@@ -53,6 +53,6 @@ export function trimStr(str, maxLen = 100) {
   return str.substring(0, maxLen - 3) + "...";
 }
 
-export function stripTags(str) {
+export function stripTags(str = "") {
   return str.replace(/(<([^>]+)>)/gi, "");
 }

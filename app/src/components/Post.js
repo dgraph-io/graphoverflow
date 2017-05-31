@@ -2,7 +2,7 @@ import React from "react";
 
 import PostHistory from "./PostHistory";
 
-const Answer = ({ post }) => {
+const Post = ({ post }) => {
   const postScore = post.UpvoteCount - post.DownvoteCount;
 
   return (
@@ -25,4 +25,4 @@ const Answer = ({ post }) => {
     </div>
   );
 };
-export default Answer;
+export default Post;
