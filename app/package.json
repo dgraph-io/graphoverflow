@@ -21,6 +21,15 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-es2017": "^6.24.1",
     "babel-register": "^6.24.1",
-    "express": "^4.15.3"
+    "body-parser": "^1.17.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.3",
+    "express-session": "^1.15.3",
+    "passport": "^0.3.2",
+    "passport-github": "^1.1.0",
+    "react-redux": "^5.0.5",
+    "redux": "^3.6.0",
+    "redux-thunk": "^2.2.0",
+    "superagent": "^3.5.2"
   }
 }

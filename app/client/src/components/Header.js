@@ -16,6 +16,8 @@ const Header = () => {
             Graphoverflow
           </span>
         </Link>
+
+        <div className="actions" />
       </div>
     </nav>
   );

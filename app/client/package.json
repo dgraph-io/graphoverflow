@@ -2,7 +2,11 @@
   "name": "app",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:3001/",
+  "proxy": {
+    "/api": {
+      "target": "http://localhost:3001/"
+    }
+  },
   "dependencies": {
     "react": "^15.5.4",
     "react-dom": "^15.5.4",

@@ -16,5 +16,6 @@ mutation {
     PostCount: int @index .
     Tag: uid @reverse .
     Timestamp: datetime .
+    GitHubID: string @index(exact) .
   }
 }
