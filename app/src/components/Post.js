@@ -1,5 +1,7 @@
 import React from "react";
 
+import PostHistory from "./PostHistory";
+
 const Answer = ({ post }) => {
   const postScore = post.UpvoteCount - post.DownvoteCount;
 
@@ -18,6 +20,8 @@ const Answer = ({ post }) => {
           dangerouslySetInnerHTML={{ __html: post.Body[0].Text }}
         />
       </div>
+
+      <PostHistory post={post} />
     </div>
   );
 };

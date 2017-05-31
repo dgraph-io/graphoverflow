@@ -5,10 +5,16 @@ export function getQuestionQuery(questionUID) {
       Title {
         Text
       }
-
       Body {
         Text
       }
+      Owner {
+        DisplayName
+        Reputation
+        _uid_
+      }
+      ViewCount
+      Timestamp
 
       UpvoteCount: count(Upvote)
       DownvoteCount: count(Downvote)
