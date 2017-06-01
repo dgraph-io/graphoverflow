@@ -4,6 +4,8 @@ import session from "express-session";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 
+import questionsRoutes from "./routes/questions";
+
 import { runQuery } from "./helpers";
 import { configPassport, findUserByUID } from "./auth";
 
@@ -13,6 +15,7 @@ const app = express();
 configPassport(passport);
 
 app.use(cookieParser(process.env.CookieSecret));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   session({
@@ -56,6 +59,8 @@ app.get(
     res.redirect("/");
   }
 );
+
+app.use("/api/questions", questionsRoutes);
 
 app.listen(app.get("port"), () => {
   console.log(`Server running on: http://127.0.0.1:${app.get("port")}/`); // eslint-disable-line no-console

@@ -7,6 +7,7 @@ import QuestionItemLastActivity from "./QuestionItemLastActivity";
 import "../assets/styles/QuestionItem.css";
 
 const QuestionItem = ({ question, history }) => {
+  // console.log(question._uid_);
   const questionLink = `/questions/${question._uid_}`;
   const questionScore = question.UpvoteCount - question.DownvoteCount;
 
@@ -63,13 +64,15 @@ const QuestionItem = ({ question, history }) => {
             </Link>
           </div>
           <div className="tags">
-            {question.Tags.map(tag => {
-              return (
-                <div className="tag" key={tag.TagName}>
-                  {tag.TagName}
-                </div>
-              );
-            })}
+            {question.Tags
+              ? question.Tags.map(tag => {
+                  return (
+                    <div className="tag" key={tag.TagName}>
+                      {tag.TagName}
+                    </div>
+                  );
+                })
+              : null}
           </div>
           <div className="last-activity">
             <QuestionItemLastActivity question={question} />

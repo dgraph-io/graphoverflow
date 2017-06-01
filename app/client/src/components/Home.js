@@ -1,9 +1,10 @@
 import React from "react";
+import { Link } from "react-router-dom";
+
 import QuestionList from "./QuestionList";
 import HomeTabNavigation from "./HomeTabNavigation";
 import TopTagList from "./TopTagList";
 import TopUserList from "./TopUserList";
-
 import { runQuery } from "../lib/helpers";
 import {
   recentQuestionsQuery,
@@ -106,6 +107,11 @@ export default class Home extends React.Component {
           </div>
 
           <div className="col-12 col-sm-4">
+            <div className="question-action">
+              <Link className="btn btn-primary" to="/questions/ask">
+                Ask Question
+              </Link>
+            </div>
             <TopTagList tags={topTags} />
             <TopUserList users={topUsers} />
           </div>

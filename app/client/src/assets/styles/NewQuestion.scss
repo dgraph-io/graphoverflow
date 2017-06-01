@@ -1,0 +1,23 @@
+.preview-container {
+  border-color: #cacaca;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  padding: 13px 0px;
+  margin-bottom: 9px;
+}
+
+.preview {
+  h1, h2, h3 ,h4 , h5, h6, p {
+    margin-bottom: 0;
+  }
+}
+
+.question-form-content {
+  margin-bottom: 9px;
+}
+
+.question-body-input {
+  height: 380px;
+}

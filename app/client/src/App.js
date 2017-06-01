@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import request from "superagent";
 import { connect } from "react-redux";
 
@@ -8,7 +8,9 @@ import Footer from "./components/Footer";
 import Home from "./components/Home";
 import About from "./components/About";
 import Question from "./components/Question";
+import NewQuestion from "./components/NewQuestion";
 import { login, logout } from "./actions/session";
+import LoggedInRoute from "./components/hocs/LoggedInRoute";
 
 import "./App.css";
 
@@ -45,7 +47,15 @@ class App extends Component {
           <main className="main-content">
             <Route exact path="/" component={Home} />
             <Route path="/about" component={About} />
-            <Route path="/questions/:uid" component={Question} />
+
+            <Switch>
+              <LoggedInRoute
+                path="/questions/ask"
+                component={NewQuestion}
+                authenticated={Boolean(user)}
+              />
+              <Route path="/questions/:uid" component={Question} />
+            </Switch>
           </main>
 
           <Footer />

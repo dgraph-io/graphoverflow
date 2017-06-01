@@ -2,6 +2,9 @@ import { LOGIN, LOGOUT } from "../actions/session";
 
 const defaultState = {
   user: null
+
+  // temporary for dev
+  // user: { DisplayName: "sungwoncho-demo" }
 };
 
 export default (state = defaultState, action) => {

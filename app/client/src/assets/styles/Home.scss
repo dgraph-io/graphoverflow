@@ -51,4 +51,15 @@ h2 {
 
 .side-section {
   margin: 0px 6px 7px;
+
+  &.emphasize {
+    border: 1px solid #d8d8d8;
+    padding: 17px 11px;
+    background-color: #fffef5;
+  }
+}
+
+.question-action {
+  text-align: right;
+  margin: 0px 6px 9px;
 }
