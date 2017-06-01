@@ -19,6 +19,34 @@ Score
 Timestamp
 `;
 
+const AnswerFragment = `
+Body {
+  Text
+}
+Owner {
+  DisplayName
+  Reputation
+  _uid_
+}
+Timestamp
+UpvoteCount: count(Upvote)
+DownvoteCount: count(Downvote)
+History: ~Post(orderdesc: Timestamp) {
+  ${HistoryFragment}
+}
+Comment {
+  ${CommentFragment}
+}
+`;
+
+export function getAnswerQuery(answerUID) {
+  return `{
+    answer(id: ${answerUID}) {
+      ${AnswerFragment}
+    }
+  }`;
+}
+
 // getQuestionQuery generates a query to fetch the question with the given UID
 export function getQuestionQuery(questionUID) {
   return `{
@@ -45,23 +73,7 @@ export function getQuestionQuery(questionUID) {
       }
 
       Has.Answer {
-        Body {
-          Text
-        }
-        Owner {
-          DisplayName
-          Reputation
-          _uid_
-        }
-        Timestamp
-        UpvoteCount: count(Upvote)
-        DownvoteCount: count(Downvote)
-        History: ~Post(orderdesc: Timestamp) {
-          ${HistoryFragment}
-        }
-        Comment {
-          ${CommentFragment}
-        }
+        ${AnswerFragment}
       }
 
       Comment {

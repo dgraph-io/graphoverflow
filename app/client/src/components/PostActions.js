@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const PostActions = ({ post, currentUser, onQuestionDelete }) => {
+const PostActions = ({ post, currentUser, onDeletePost }) => {
   const isOwner = post.Owner[0]._uid_ === currentUser._uid_;
   return (
     <div>
@@ -12,7 +12,7 @@ const PostActions = ({ post, currentUser, onQuestionDelete }) => {
               href="#delete"
               onClick={e => {
                 e.preventDefault();
-                onQuestionDelete();
+                onDeletePost(post._uid_);
               }}
             >
               Delete

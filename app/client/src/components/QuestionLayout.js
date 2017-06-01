@@ -2,38 +2,52 @@ import React from "react";
 
 import Post from "./Post";
 import PostInfo from "./PostInfo";
+import AnswerComposer from "./AnswerComposer";
 
-const QuestionLayout = ({ question, currentUser, onQuestionDelete }) => {
+const QuestionLayout = ({
+  question,
+  answers,
+  currentUser,
+  onDeletePost,
+  onCreateAnswer
+}) => {
   const questionScore = question.UpvoteCount - question.DownvoteCount;
-  const answers = question["Has.Answer"];
 
   return (
-    <div className="row">
-      <div className="col-12 col-sm-9">
-        <Post
-          post={question}
-          currentUser={currentUser}
-          onQuestionDelete={onQuestionDelete}
-        />
+    <div>
+      <div className="row">
+        <div className="col-12 col-sm-9">
+          <Post
+            post={question}
+            currentUser={currentUser}
+            onDeletePost={onDeletePost}
+          />
 
-        {answers
-          ? <div className="answers">
-              {answers.map(answer => {
-                return (
-                  <Post
-                    key={answer._uid_}
-                    post={answer}
-                    currentUser={currentUser}
-                    onQuestionDelete={onQuestionDelete}
-                  />
-                );
-              })}
-            </div>
-          : <div>no answers yet</div>}
+          {answers.length > 0
+            ? <div className="answers">
+                {answers.map(answer => {
+                  return (
+                    <Post
+                      key={answer._uid_}
+                      post={answer}
+                      currentUser={currentUser}
+                      onDeletePost={onDeletePost}
+                    />
+                  );
+                })}
+              </div>
+            : <div>no answers yet</div>}
 
+        </div>
+        <div className="col-12 col-sm-3">
+          <PostInfo post={question} />
+        </div>
       </div>
-      <div className="col-12 col-sm-3">
-        <PostInfo post={question} />
+
+      <div className="row">
+        <div className="col-9">
+          <AnswerComposer question={question} onCreateAnswer={onCreateAnswer} />
+        </div>
       </div>
     </div>
   );

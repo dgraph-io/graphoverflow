@@ -6,9 +6,8 @@ import CommentList from "./CommentList";
 import TagList from "./TagList";
 import marked from "marked";
 
-const Post = ({ post, currentUser, onQuestionDelete }) => {
+const Post = ({ post, currentUser, onDeletePost }) => {
   const postScore = post.UpvoteCount - post.DownvoteCount;
-  console.log(currentUser);
 
   return (
     <div className="post">
@@ -30,7 +29,7 @@ const Post = ({ post, currentUser, onQuestionDelete }) => {
           <PostActions
             post={post}
             currentUser={currentUser}
-            onQuestionDelete={onQuestionDelete}
+            onDeletePost={onDeletePost}
           />
           <PostHistory post={post} />
 

@@ -48,6 +48,64 @@ function fetchPost(uid) {
   });
 }
 
+function createPost({ title, body, postType, ownerID, parentPostID }) {
+  const now = new Date().toISOString();
+
+  // THOUGHTS: composing RDFs dynamically using string interpolation is kinda
+  // painful. But this is a common scenario when making apps.
+  // somewhat related: maybe upsert will ease the pain
+  let hasAnswerRDF = "";
+  if (parentPostID && postType === "Answer") {
+    hasAnswerRDF = `<${parentPostID}> <Has.Answer> <_:post> .`;
+  }
+
+  let titleVersionRDFs = "";
+  if (title) {
+    titleVersionRDFs = `
+  <_:newTitle> <Timestamp> "${now}" .
+  <_:newTitle> <Post> <_:post> .
+  <_:newTitle> <Author> <${ownerID}> .
+  <_:newTitle> <Text> "${title}" .
+  <_:newTitle> <Type> "Title" .
+  <_:post> <Title> <_:newTitle> .
+`;
+  }
+
+  const query = `
+mutation {
+  set {
+    <_:post> <Type> "${postType}" .
+    <_:post> <ViewCount> "0" .
+    <_:post> <Owner> <${ownerID}> .
+    <_:post> <Timestamp> "${now}" .
+
+    # Create versions
+    ${titleVersionRDFs}
+
+    <_:newBody> <Timestamp> "${now}" .
+    <_:newBody> <Post> <_:post> .
+    <_:newBody> <Author> <${ownerID}> .
+    <_:newBody> <Text> "${body}" .
+    <_:newBody> <Type> "Body" .
+    <_:post> <Body> <_:newBody> .
+
+    ${hasAnswerRDF}
+  }
+}
+`;
+
+  return new Promise((resolve, reject) => {
+    runQuery(query)
+      .then(result => {
+        resolve(result.uids.post);
+      })
+      .catch(err => {
+        console.log(err);
+        reject(err);
+      });
+  });
+}
+
 function updatePost({ post, title, body, currentUserUID }) {
   const now = new Date().toISOString();
 
@@ -130,48 +188,19 @@ async function handleUpdatePost(req, res, next) {
   res.json(postUID);
 }
 
-function handleCreatePost(req, res, next) {
+async function handleCreatePost(req, res, next) {
   const { title, body, postType } = req.body;
-  const now = new Date().toISOString();
   const currentUserUID = req.user._uid_;
 
-  const query = `
-mutation {
-  set {
-    <_:post> <Type> "${postType}" .
-    <_:post> <ViewCount> "0" .
-    <_:post> <Owner> <${currentUserUID}> .
-    <_:post> <Timestamp> "${now}" .
+  const postUID = await createPost({
+    title,
+    body,
+    postType,
+    ownerID: currentUserUID,
+    parentPostID
+  });
 
-    # Create versions
-    <_:newTitle> <Timestamp> "${now}" .
-    <_:newTitle> <Post> <_:post> .
-    <_:newTitle> <Author> <${currentUserUID}> .
-    <_:newTitle> <Text> "${title}" .
-    <_:newTitle> <Type> "Title" .
-    <_:post> <Title> <_:newTitle> .
-
-    <_:newBody> <Timestamp> "${now}" .
-    <_:newBody> <Post> <_:post> .
-    <_:newBody> <Author> <${currentUserUID}> .
-    <_:newBody> <Text> "${body}" .
-    <_:newBody> <Type> "Body" .
-    <_:post> <Body> <_:newBody> .
-  }
-}
-`;
-
-  console.log(query);
-
-  runQuery(query)
-    .then(result => {
-      // Respond with the _uid_ of the post we created
-      res.json(result.uids.post);
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).send(err.message);
-    });
+  res.json(postUID);
 }
 
 async function handleDeletePost(req, res, next) {
@@ -200,9 +229,25 @@ async function handleDeletePost(req, res, next) {
     });
 }
 
+async function handleCreateAnswer(req, res, next) {
+  const parentPostID = req.params.uid;
+  const { body, postType } = req.body;
+  const currentUserUID = req.user && req.user._uid_;
+
+  const postUID = await createPost({
+    body,
+    postType,
+    ownerID: currentUserUID,
+    parentPostID
+  });
+
+  res.json(postUID);
+}
+
 /*************** route definitions **/
-router.post("/", handleCreatePost);
+router.post("/", catchAsyncErrors(handleCreatePost));
 router.put("/:uid", catchAsyncErrors(handleUpdatePost));
 router.delete("/:uid", catchAsyncErrors(handleDeletePost));
+router.post("/:uid/answers", catchAsyncErrors(handleCreateAnswer));
 
 export default router;

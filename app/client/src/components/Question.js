@@ -2,9 +2,10 @@ import React from "react";
 import { connect } from "react-redux";
 import request from "superagent";
 import { withRouter } from "react-router-dom";
+import cloneDeep from "lodash/cloneDeep";
 
 import { runQuery } from "../lib/helpers";
-import { getQuestionQuery } from "../queries/Question";
+import { getQuestionQuery, getAnswerQuery } from "../queries/Question";
 import QuestionLayout from "./QuestionLayout";
 
 import "../assets/styles/Question.css";
@@ -15,7 +16,8 @@ class Question extends React.Component {
 
     this.state = {
       questionLoaded: false,
-      question: {}
+      question: {},
+      answers: []
     };
   }
 
@@ -24,17 +26,22 @@ class Question extends React.Component {
     const query = getQuestionQuery(params.uid);
 
     runQuery(query).then(res => {
-      const { question } = res;
+      const question = res.question[0];
 
-      this.setState({ question: question[0], questionLoaded: true });
+      // NOTE: `answers` is still present in `question`. Maybe we can delete it
+      this.setState({
+        question,
+        answers: cloneDeep(question["Has.Answer"]) || [],
+        questionLoaded: true
+      });
     });
   }
 
-  handleDeleteQuestion = () => {
-    const { match: { params }, history } = this.props;
+  handleDeletePost = uid => {
+    const { history } = this.props;
 
     request
-      .delete(`/api/posts/${params.uid}`)
+      .delete(`/api/posts/${uid}`)
       .then(() => {
         history.push("/");
       })
@@ -43,9 +50,35 @@ class Question extends React.Component {
       });
   };
 
+  handleCreateAnswer = (questionUID, body) => {
+    request
+      .post(`/api/posts/${questionUID}/answers`)
+      .send({ body, postType: "Answer" })
+      .then(res => {
+        const answerUID = res.body;
+        const answerQuery = getAnswerQuery(answerUID);
+
+        // Rather than having the server return the answer object, we fetch
+        // the answer object using the returned uid, because client knows which
+        // fields to fetch (see /quries/Question). It is generally a good idea
+        // to keep the shape of the required objects in a single place to avoid
+        // overfetching, or worse, underfetching
+        return runQuery(answerQuery).then(res => {
+          const answer = res.answer[0];
+
+          this.setState({
+            answers: [...this.state.answers, answer]
+          });
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   render() {
     const { user } = this.props;
-    const { question, questionLoaded } = this.state;
+    const { question, answers, questionLoaded } = this.state;
 
     const currentUser = user || {};
 
@@ -56,8 +89,10 @@ class Question extends React.Component {
             {questionLoaded
               ? <QuestionLayout
                   question={question}
+                  answers={answers}
                   currentUser={currentUser}
-                  onQuestionDelete={this.handleDeleteQuestion}
+                  onDeletePost={this.handleDeletePost}
+                  onCreateAnswer={this.handleCreateAnswer}
                 />
               : <div>Loading</div>}
           </div>
