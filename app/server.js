@@ -62,6 +62,13 @@ app.get(
 
 app.use("/api/questions", questionsRoutes);
 
+app.use((err, req, res, next) => {
+  if (err) {
+    console.log(err);
+  }
+  next();
+});
+
 app.listen(app.get("port"), () => {
   console.log(`Server running on: http://127.0.0.1:${app.get("port")}/`); // eslint-disable-line no-console
 });

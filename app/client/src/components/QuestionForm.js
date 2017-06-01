@@ -6,7 +6,8 @@ const QuestionForm = ({
   body,
   onUpdateTitle,
   onUpdateBody,
-  onSubmitQuestion
+  onSubmitQuestion,
+  isEditing
 }) => {
   return (
     <form
@@ -51,7 +52,7 @@ const QuestionForm = ({
       <div>
         <input
           type="submit"
-          value="Post Your Question"
+          value={isEditing ? "Edit Your Question" : "Post Your Question"}
           className="btn btn-primary"
         />
       </div>

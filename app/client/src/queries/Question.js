@@ -23,6 +23,7 @@ Timestamp
 export function getQuestionQuery(questionUID) {
   return `{
     question(id: ${questionUID}) {
+      _uid_
       Title {
         Text
       }

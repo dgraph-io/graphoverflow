@@ -4,6 +4,11 @@ import request from "superagent";
 // Same helper exists in client; we duplicate it on the server side rather than
 // sharing code between client and server for separation of concern
 export function runQuery(queryText) {
+  if (process.env.NODE_ENV === "dev") {
+    console.log("Running query:");
+    console.log(queryText);
+  }
+
   return request
     .post("http://localhost:8080/query")
     .send(queryText)
