@@ -60,6 +60,31 @@ func check(err error) {
 	}
 }
 
+func parseTags(tagString string) []string {
+	var ret []string
+	var currentTag string
+	var reading bool
+
+	for _, char := range tagString {
+		if char == '<' {
+			reading = true
+			continue
+		} else if char == '>' {
+			reading = false
+		}
+
+		if !reading && currentTag != "" {
+			ret = append(ret, currentTag)
+			currentTag = ""
+		}
+		if reading {
+			currentTag += string(char)
+		}
+	}
+
+	return ret
+}
+
 func main() {
 	flag.Parse()
 
@@ -75,21 +100,20 @@ func main() {
 
 	fmt.Println("dryrun: ", *dryRun)
 	var wg sync.WaitGroup
-	limiter := make(chan struct{}, 1000)
+	limiter := make(chan struct{}, 80)
 	if *dryRun {
 		limiter = make(chan struct{}, 1)
 	}
 
 	send := func(b *bytes.Buffer) {
 		limiter <- struct{}{}
-		fmt.Println(b.String())
+		// fmt.Println(b.String())
 		if *dryRun == false {
-			fmt.Println("POSTing")
+			//fmt.Println("POSTing")
 			resp, err := http.Post("http://localhost:8080/query", "", b)
 			check(err)
-			body, err := ioutil.ReadAll(resp.Body)
+			_, err = ioutil.ReadAll(resp.Body)
 			check(err)
-			fmt.Printf("%q\n\n", body)
 			check(resp.Body.Close())
 		}
 		wg.Done()
@@ -123,15 +147,19 @@ func main() {
 
 			b.WriteString(fmt.Sprintf("<%s> <Title> _:newTitle .\n", node))
 		}
-		{
-			b.WriteString(fmt.Sprintf("_:newTags <Timestamp> %q .\n", p.LastEditDate))
-			b.WriteString(fmt.Sprintf("_:newTags <Author> <u%s> .\n", p.LastEditorUserId))
-			b.WriteString(fmt.Sprintf("_:newTags <Post> <%s> .\n", node))
-			b.WriteString(fmt.Sprintf("_:newTags <Text> %q .\n", p.Tags))
-			b.WriteString(fmt.Sprintf("_:newTags <Type> \"Tags\" .\n"))
 
-			b.WriteString(fmt.Sprintf("<%s> <Tags> _:newTags .\n", node))
+		// Generate tag node for each tag in the tag string
+		tagList := parseTags(p.Tags)
+		for idx, tag := range tagList {
+			b.WriteString(fmt.Sprintf("<t-%v> <Timestamp> %q .\n", idx, p.LastEditDate))
+			b.WriteString(fmt.Sprintf("<t-%v> <Author> <u%s> .\n", idx, p.LastEditorUserId))
+			b.WriteString(fmt.Sprintf("<t-%v> <Post> <%s> .\n", idx, node))
+			b.WriteString(fmt.Sprintf("<t-%v> <Text> %q .\n", idx, tag))
+			b.WriteString(fmt.Sprintf("<t-%v> <Type> \"Tag\" .\n", idx))
+
+			b.WriteString(fmt.Sprintf("<%s> <Tags> <t-%v> .\n", node, idx))
 		}
+
 		{
 			b.WriteString(fmt.Sprintf("_:newBody <Timestamp> %q .\n", p.LastEditDate))
 			b.WriteString(fmt.Sprintf("_:newBody <Author> <u%s> .\n", p.LastEditorUserId))
@@ -167,7 +195,7 @@ func main() {
 		if len(p.OwnerUserId) > 0 {
 			b.WriteString(fmt.Sprintf("<%s> <Owner> <u%s> .\n", node, p.OwnerUserId))
 		}
-		b.WriteString(fmt.Sprintf("<%s> <Score> \"%d\" .\n", node, p.Score))
+		//b.WriteString(fmt.Sprintf("<%s> <Score> \"%d\" .\n", node, p.Score))
 		b.WriteString(fmt.Sprintf("<%s> <ViewCount> \"%d\" .\n", node, p.ViewCount))
 		b.WriteString(fmt.Sprintf("<%s> <Timestamp> %q .\n", node, p.CreationDate))
 
@@ -206,4 +234,6 @@ func main() {
 		go send(&b)
 	}
 	wg.Wait()
+
+	fmt.Println(len(posts.Rows), "processed")
 }

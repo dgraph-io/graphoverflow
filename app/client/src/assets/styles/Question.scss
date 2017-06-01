@@ -1,0 +1,31 @@
+.post-title {
+  font-size: 24px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #dedede;
+  padding-bottom: 12px;
+}
+
+.post-content {
+  display: flex;
+}
+
+.post-body-container {
+  flex: 1;
+}
+
+.post-body {
+  word-break: break-word;
+
+  img {
+    max-width: 100%;
+  }
+}
+
+.vote-count-container {
+  width: 50px;
+}
+
+.post {
+  border-bottom: 1px solid #dedede;
+  padding: 20px 7px;
+}

@@ -12,5 +12,10 @@ mutation {
     Vote: uid @reverse .
     Title: uid @reverse .
     Body: uid @reverse .
+    Post: uid @reverse .
+    PostCount: int @index .
+    Tag: uid @reverse .
+    Timestamp: datetime .
+    GitHubID: string @index(exact) .
   }
 }

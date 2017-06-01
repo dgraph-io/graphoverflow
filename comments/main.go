@@ -47,7 +47,7 @@ func main() {
 	check(xml.Unmarshal(data, &comments))
 
 	var wg sync.WaitGroup
-	limiter := make(chan struct{}, 1000)
+	limiter := make(chan struct{}, 100)
 	if *dryRun {
 		limiter = make(chan struct{}, 1)
 	}
@@ -70,13 +70,11 @@ func main() {
 		wg.Add(1)
 		go func(b *bytes.Buffer) {
 			limiter <- struct{}{}
-			fmt.Println(b.String())
 			if !*dryRun {
 				resp, err := http.Post("http://localhost:8080/query", "", b)
 				check(err)
-				body, err := ioutil.ReadAll(resp.Body)
+				_, err = ioutil.ReadAll(resp.Body)
 				check(err)
-				fmt.Printf("%q\n\n", body)
 				check(resp.Body.Close())
 			}
 			wg.Done()

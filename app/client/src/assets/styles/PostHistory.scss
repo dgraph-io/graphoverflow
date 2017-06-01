@@ -1,0 +1,49 @@
+.history-container {
+  text-align: right;
+}
+
+.history {
+  padding: 5px 10px;
+  width: 227px;
+  display: inline-block;
+
+  &.asked {
+    background-color: #ebebff;
+  }
+}
+
+.author-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.meta {
+  flex: 1;
+  text-align: left;
+}
+
+.author-avatar-container {
+  width: 37px;
+  margin-right: 9px;
+  font-size: 14px;
+}
+
+.author-name {
+  font-size: 14px;
+}
+
+.author-rep {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.author-avatar {
+  width: 100%;
+}
+
+.timestamp {
+  text-align: left;
+  font-size: 13px;
+  color: grey;
+}
