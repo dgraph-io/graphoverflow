@@ -34,7 +34,7 @@ class Question extends React.Component {
     const { match: { params }, history } = this.props;
 
     request
-      .delete(`/api/questions/${params.uid}`)
+      .delete(`/api/posts/${params.uid}`)
       .then(() => {
         history.push("/");
       })

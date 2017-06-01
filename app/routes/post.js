@@ -113,48 +113,50 @@ mutation {
   });
 }
 
-async function updateQuestion(req, res, next) {
+async function handleUpdatePost(req, res, next) {
+  console.log("req", req);
+  console.log("req.params", req.params);
   const { title, body } = req.body;
-  const questionUID = req.params.uid;
+  const postUID = req.params.uid;
   const currentUserUID = req.user && req.user._uid_;
 
-  const post = await fetchPost(questionUID);
+  const post = await fetchPost(postUID);
   if (post.Owner[0]._uid_ !== currentUserUID) {
-    res.status(403).send("Only the owner can update the question");
+    res.status(403).send("Only the owner can update the psot");
     return;
   }
   await updatePost({ post, title, body, currentUserUID });
 
-  res.json(questionUID);
+  res.json(postUID);
 }
 
-function getQuestion(req, res, next) {
-  const { title, body } = req.body;
+function handleCreatePost(req, res, next) {
+  const { title, body, postType } = req.body;
   const now = new Date().toISOString();
   const currentUserUID = req.user._uid_;
 
   const query = `
 mutation {
   set {
-    <_:question> <Type> "Question" .
-    <_:question> <ViewCount> "0" .
-    <_:question> <Owner> <${currentUserUID}> .
-    <_:question> <Timestamp> "${now}" .
+    <_:post> <Type> "${postType}" .
+    <_:post> <ViewCount> "0" .
+    <_:post> <Owner> <${currentUserUID}> .
+    <_:post> <Timestamp> "${now}" .
 
     # Create versions
     <_:newTitle> <Timestamp> "${now}" .
-    <_:newTitle> <Post> <_:question> .
+    <_:newTitle> <Post> <_:post> .
     <_:newTitle> <Author> <${currentUserUID}> .
     <_:newTitle> <Text> "${title}" .
     <_:newTitle> <Type> "Title" .
-    <_:question> <Title> <_:newTitle> .
+    <_:post> <Title> <_:newTitle> .
 
     <_:newBody> <Timestamp> "${now}" .
-    <_:newBody> <Post> <_:question> .
+    <_:newBody> <Post> <_:post> .
     <_:newBody> <Author> <${currentUserUID}> .
     <_:newBody> <Text> "${body}" .
     <_:newBody> <Type> "Body" .
-    <_:question> <Body> <_:newBody> .
+    <_:post> <Body> <_:newBody> .
   }
 }
 `;
@@ -163,8 +165,8 @@ mutation {
 
   runQuery(query)
     .then(result => {
-      // Respond with the _uid_ of the question we created
-      res.json(result.uids.question);
+      // Respond with the _uid_ of the post we created
+      res.json(result.uids.post);
     })
     .catch(err => {
       console.log(err);
@@ -172,20 +174,20 @@ mutation {
     });
 }
 
-async function deleteQuestion(req, res, next) {
-  const questionUID = req.params.uid;
+async function handleDeletePost(req, res, next) {
+  const postUID = req.params.uid;
   const currentUserUID = req.user && req.user._uid_;
 
-  const post = await fetchPost(questionUID);
+  const post = await fetchPost(postUID);
   if (post.Owner[0]._uid_ !== currentUserUID) {
-    res.status(403).send("Only the owner can delete the question");
+    res.status(403).send("Only the owner can delete the post");
     return;
   }
 
   const query = `
   mutation {
     delete {
-      <${questionUID}> * * .
+      <${postUID}> * * .
     }
   }
 `;
@@ -199,8 +201,8 @@ async function deleteQuestion(req, res, next) {
 }
 
 /*************** route definitions **/
-router.post("/", getQuestion);
-router.put("/:uid", catchAsyncErrors(updateQuestion));
-router.delete("/:uid", catchAsyncErrors(deleteQuestion));
+router.post("/", handleCreatePost);
+router.put("/:uid", catchAsyncErrors(handleUpdatePost));
+router.delete("/:uid", catchAsyncErrors(handleDeletePost));
 
 export default router;

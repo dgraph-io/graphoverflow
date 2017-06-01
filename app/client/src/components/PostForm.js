@@ -1,34 +1,37 @@
 import React from "react";
 import marked from "marked";
 
-const QuestionForm = ({
+const PostForm = ({
   title,
   body,
   onUpdateTitle,
   onUpdateBody,
-  onSubmitQuestion,
-  isEditing
+  onSubmitPost,
+  isEditing,
+  postType
 }) => {
   return (
     <form
       className="question-form"
       onSubmit={e => {
         e.preventDefault();
-        onSubmitQuestion();
+        onSubmitPost();
       }}
     >
       <div className="question-form-content">
-        <div>
-          Title
-          <input
-            type="text"
-            value={title}
-            onChange={e => {
-              onUpdateTitle(e.target.value);
-            }}
-            className="form-control"
-          />
-        </div>
+        {postType === "Question"
+          ? <div>
+              Title
+              <input
+                type="text"
+                value={title}
+                onChange={e => {
+                  onUpdateTitle(e.target.value);
+                }}
+                className="form-control"
+              />
+            </div>
+          : null}
 
         <div>
           Body
@@ -52,11 +55,11 @@ const QuestionForm = ({
       <div>
         <input
           type="submit"
-          value={isEditing ? "Edit Your Question" : "Post Your Question"}
+          value={`${isEditing ? "Edit" : "Submit"} Your ${postType}`}
           className="btn btn-primary"
         />
       </div>
     </form>
   );
 };
-export default QuestionForm;
+export default PostForm;

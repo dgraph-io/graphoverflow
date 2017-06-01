@@ -2,7 +2,7 @@ import React from "react";
 import request from "superagent";
 import { withRouter } from "react-router";
 
-import QuestionForm from "./QuestionForm";
+import PostForm from "./PostForm";
 import "../assets/styles/NewQuestion.css";
 
 class NewQuestion extends React.Component {
@@ -27,8 +27,8 @@ class NewQuestion extends React.Component {
     const { history } = this.props;
     const { title, body } = this.state;
     request
-      .post("/api/questions")
-      .send({ title, body })
+      .post("/api/posts")
+      .send({ title, body, postType: "Question" })
       .then(res => {
         // On create, redirect to the question
         const uid = res.body;
@@ -46,12 +46,13 @@ class NewQuestion extends React.Component {
       <div className="container">
         <div className="row">
           <div className="col-12 col-sm-8">
-            <QuestionForm
+            <PostForm
+              postType="Question"
               title={title}
               body={body}
               onUpdateTitle={this.handleUpdateTitle}
               onUpdateBody={this.handleUpdateBody}
-              onSubmitQuestion={this.handleSubmitQuestion}
+              onSubmitPost={this.handleSubmitQuestion}
             />
           </div>
 

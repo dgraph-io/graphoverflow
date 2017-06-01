@@ -4,7 +4,7 @@ import { withRouter } from "react-router";
 
 import { runQuery } from "../lib/helpers";
 import { getQuestionQuery } from "../queries/EditQuestion";
-import QuestionForm from "./QuestionForm";
+import PostForm from "./PostForm";
 import "../assets/styles/NewQuestion.css";
 
 class EditQuestion extends React.Component {
@@ -46,7 +46,7 @@ class EditQuestion extends React.Component {
     const { history, match: { params } } = this.props;
     const { title, body } = this.state;
     request
-      .put(`/api/questions/${params.uid}`)
+      .put(`/api/posts/${params.uid}`)
       .send({ title, body })
       .then(res => {
         // On create, redirect to the question
@@ -65,12 +65,13 @@ class EditQuestion extends React.Component {
       <div className="container">
         <div className="row">
           <div className="col-12 col-sm-8">
-            <QuestionForm
+            <PostForm
+              postType="Question"
               title={title}
               body={body}
               onUpdateTitle={this.handleUpdateTitle}
               onUpdateBody={this.handleUpdateBody}
-              onSubmitQuestion={this.handleSubmitQuestion}
+              onSubmitPost={this.handleSubmitQuestion}
               isEditing
             />
           </div>

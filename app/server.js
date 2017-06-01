@@ -4,8 +4,7 @@ import session from "express-session";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 
-import questionsRoutes from "./routes/questions";
-
+import postRoutes from "./routes/post";
 import { runQuery } from "./helpers";
 import { configPassport, findUserByUID } from "./auth";
 
@@ -60,7 +59,7 @@ app.get(
   }
 );
 
-app.use("/api/questions", questionsRoutes);
+app.use("/api/posts", postRoutes);
 
 app.use((err, req, res, next) => {
   if (err) {
