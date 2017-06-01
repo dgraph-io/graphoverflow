@@ -8,7 +8,7 @@ import Footer from "./components/Footer";
 import Home from "./components/Home";
 import About from "./components/About";
 import Question from "./components/Question";
-import { login } from "./actions/user";
+import { login, logout } from "./actions/session";
 
 import "./App.css";
 
@@ -29,11 +29,18 @@ class App extends Component {
       });
   }
 
+  handleLogout = () => {
+    const { _handleLogout } = this.props;
+    _handleLogout();
+  };
+
   render() {
+    const { user } = this.props;
+
     return (
       <Router>
         <div>
-          <Header />
+          <Header user={user} onLogout={this.handleLogout} />
 
           <main className="main-content">
             <Route exact path="/" component={Home} />
@@ -48,11 +55,16 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  user: state.session.user
+});
 
 const mapDispatchToProps = dispatch => ({
   handleLogin(user) {
     dispatch(login(user));
+  },
+  _handleLogout() {
+    dispatch(logout());
   }
 });
 

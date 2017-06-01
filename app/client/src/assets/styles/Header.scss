@@ -8,3 +8,22 @@
   font-size: 17px;
   margin-left: 5px;
 }
+
+.header-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+
+  .action {
+    color: black;
+  }
+}
+
+.separator {
+  margin: 0 18px;
+}

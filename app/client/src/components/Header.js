@@ -1,23 +1,30 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+import UserActions from "./UserActions";
+import GuestActions from "./GuestActions";
+
 import "../assets/styles/Header.css";
 
 import logo from "../assets/images/logo.svg";
 
-const Header = () => {
+const Header = ({ user, onLogout }) => {
   return (
     <nav className="navbar navbar-light bg-faded">
       <div className="container">
-        <Link className="navbar-brand" to="/">
-          <img src={logo} alt="logo" className="logo" />
+        <div className="header-content">
+          <Link className="navbar-brand" to="/">
+            <img src={logo} alt="logo" className="logo" />
 
-          <span className="name">
-            Graphoverflow
-          </span>
-        </Link>
+            <span className="name">
+              Graphoverflow
+            </span>
+          </Link>
 
-        <div className="actions" />
+          {user
+            ? <UserActions onLogout={onLogout} user={user} />
+            : <GuestActions />}
+        </div>
       </div>
     </nav>
   );
