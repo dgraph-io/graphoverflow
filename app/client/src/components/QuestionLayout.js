@@ -3,14 +3,18 @@ import React from "react";
 import Post from "./Post";
 import PostInfo from "./PostInfo";
 
-const QuestionLayout = ({ question, currentUser }) => {
+const QuestionLayout = ({ question, currentUser, onQuestionDelete }) => {
   const questionScore = question.UpvoteCount - question.DownvoteCount;
   const answers = question["Has.Answer"];
 
   return (
     <div className="row">
       <div className="col-12 col-sm-9">
-        <Post post={question} currentUser={currentUser} />
+        <Post
+          post={question}
+          currentUser={currentUser}
+          onQuestionDelete={onQuestionDelete}
+        />
 
         {answers
           ? <div className="answers">
@@ -20,6 +24,7 @@ const QuestionLayout = ({ question, currentUser }) => {
                     key={answer._uid_}
                     post={answer}
                     currentUser={currentUser}
+                    onQuestionDelete={onQuestionDelete}
                   />
                 );
               })}

@@ -4,50 +4,6 @@ import { runQuery } from "../helpers";
 
 const router = express.Router();
 
-router.post("/", (req, res, next) => {
-  const { title, body } = req.body;
-  const now = new Date().toISOString();
-  const currentUserUID = req.user._uid_;
-
-  const query = `
-mutation {
-  set {
-    <_:question> <Type> "Question" .
-    <_:question> <ViewCount> "0" .
-    <_:question> <Owner> <${currentUserUID}> .
-    <_:question> <Timestamp> "${now}" .
-
-    # Create versions
-    <_:newTitle> <Timestamp> "${now}" .
-    <_:newTitle> <Post> <_:question> .
-    <_:newTitle> <Author> <${currentUserUID}> .
-    <_:newTitle> <Text> "${title}" .
-    <_:newTitle> <Type> "Title" .
-    <_:question> <Title> <_:newTitle> .
-
-    <_:newBody> <Timestamp> "${now}" .
-    <_:newBody> <Post> <_:question> .
-    <_:newBody> <Author> <${currentUserUID}> .
-    <_:newBody> <Text> "${body}" .
-    <_:newBody> <Type> "Body" .
-    <_:question> <Body> <_:newBody> .
-  }
-}
-`;
-
-  console.log(query);
-
-  runQuery(query)
-    .then(result => {
-      // Respond with the _uid_ of the question we created
-      res.json(result.uids.question);
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).send(err.message);
-    });
-});
-
 function catchAsyncErrors(fn) {
   return (req, res, next) => {
     const routePromise = fn(req, res, next);
@@ -172,6 +128,79 @@ async function updateQuestion(req, res, next) {
   res.json(questionUID);
 }
 
+function getQuestion(req, res, next) {
+  const { title, body } = req.body;
+  const now = new Date().toISOString();
+  const currentUserUID = req.user._uid_;
+
+  const query = `
+mutation {
+  set {
+    <_:question> <Type> "Question" .
+    <_:question> <ViewCount> "0" .
+    <_:question> <Owner> <${currentUserUID}> .
+    <_:question> <Timestamp> "${now}" .
+
+    # Create versions
+    <_:newTitle> <Timestamp> "${now}" .
+    <_:newTitle> <Post> <_:question> .
+    <_:newTitle> <Author> <${currentUserUID}> .
+    <_:newTitle> <Text> "${title}" .
+    <_:newTitle> <Type> "Title" .
+    <_:question> <Title> <_:newTitle> .
+
+    <_:newBody> <Timestamp> "${now}" .
+    <_:newBody> <Post> <_:question> .
+    <_:newBody> <Author> <${currentUserUID}> .
+    <_:newBody> <Text> "${body}" .
+    <_:newBody> <Type> "Body" .
+    <_:question> <Body> <_:newBody> .
+  }
+}
+`;
+
+  console.log(query);
+
+  runQuery(query)
+    .then(result => {
+      // Respond with the _uid_ of the question we created
+      res.json(result.uids.question);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).send(err.message);
+    });
+}
+
+async function deleteQuestion(req, res, next) {
+  const questionUID = req.params.uid;
+  const currentUserUID = req.user && req.user._uid_;
+
+  const post = await fetchPost(questionUID);
+  if (post.Owner[0]._uid_ !== currentUserUID) {
+    res.status(403).send("Only the owner can delete the question");
+    return;
+  }
+
+  const query = `
+  mutation {
+    delete {
+      <${questionUID}> * * .
+    }
+  }
+`;
+  runQuery(query)
+    .then(() => {
+      res.end();
+    })
+    .catch(err => {
+      res.status(500).send(err.message);
+    });
+}
+
+/*************** route definitions **/
+router.post("/", getQuestion);
 router.put("/:uid", catchAsyncErrors(updateQuestion));
+router.delete("/:uid", catchAsyncErrors(deleteQuestion));
 
 export default router;

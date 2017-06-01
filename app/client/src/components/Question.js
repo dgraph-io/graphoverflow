@@ -1,5 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
+import request from "superagent";
+import { withRouter } from "react-router-dom";
 
 import { runQuery } from "../lib/helpers";
 import { getQuestionQuery } from "../queries/Question";
@@ -28,6 +30,19 @@ class Question extends React.Component {
     });
   }
 
+  handleDeleteQuestion = () => {
+    const { match: { params }, history } = this.props;
+
+    request
+      .delete(`/api/questions/${params.uid}`)
+      .then(() => {
+        history.push("/");
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   render() {
     const { user } = this.props;
     const { question, questionLoaded } = this.state;
@@ -39,7 +54,11 @@ class Question extends React.Component {
         <div className="row">
           <div className="col-12">
             {questionLoaded
-              ? <QuestionLayout question={question} currentUser={currentUser} />
+              ? <QuestionLayout
+                  question={question}
+                  currentUser={currentUser}
+                  onQuestionDelete={this.handleDeleteQuestion}
+                />
               : <div>Loading</div>}
           </div>
         </div>
@@ -54,4 +73,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Question);
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(Question)
+);

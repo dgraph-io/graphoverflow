@@ -6,7 +6,7 @@ import CommentList from "./CommentList";
 import TagList from "./TagList";
 import marked from "marked";
 
-const Post = ({ post, currentUser }) => {
+const Post = ({ post, currentUser, onQuestionDelete }) => {
   const postScore = post.UpvoteCount - post.DownvoteCount;
   console.log(currentUser);
 
@@ -27,7 +27,11 @@ const Post = ({ post, currentUser }) => {
             dangerouslySetInnerHTML={{ __html: marked(post.Body[0].Text) }}
           />
           {post.Tags ? <TagList tags={post.Tags} /> : null}
-          <PostActions post={post} currentUser={currentUser} />
+          <PostActions
+            post={post}
+            currentUser={currentUser}
+            onQuestionDelete={onQuestionDelete}
+          />
           <PostHistory post={post} />
 
           {post.Comment ? <CommentList comments={post.Comment} /> : null}
