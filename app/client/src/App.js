@@ -17,10 +17,16 @@ class App extends Component {
     const { handleLogin } = this.props;
 
     // fetch current user
-    request("/api/current_user").then(res => {
-      const user = res.body;
-      handleLogin(user);
-    });
+    request("/api/current_user")
+      .then(res => {
+        const user = res.body;
+        if (user) {
+          handleLogin(user);
+        }
+      })
+      .catch(err => {
+        console.log("Error while fetching current user", err);
+      });
   }
 
   render() {
