@@ -7,7 +7,7 @@ import QuestionItemLastActivity from "./QuestionItemLastActivity";
 import "../assets/styles/QuestionItem.css";
 
 const QuestionItem = ({ question, history }) => {
-  // console.log(question._uid_);
+  console.log(question._uid_);
   const questionLink = `/questions/${question._uid_}`;
   const questionScore = question.UpvoteCount - question.DownvoteCount;
 

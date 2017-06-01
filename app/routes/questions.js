@@ -95,44 +95,65 @@ function fetchPost(uid) {
 function updatePost({ post, title, body, currentUserUID }) {
   const now = new Date().toISOString();
 
-  let titleMutation = "";
+  let titleSetMutation = "";
+  let titleDeleteMutation = "";
   if (post.Title[0].Text !== title) {
-    titleMutation = `
+    titleSetMutation = `
   <_:newTitle> <Timestamp> "${now}" .
-  <_:newTitle> <Post> <_:question> .
+  <_:newTitle> <Post> <${post._uid_}> .
   <_:newTitle> <Author> <${currentUserUID}> .
   <_:newTitle> <Text> "${title}" .
   <_:newTitle> <Type> "Title" .
   <${post._uid_}> <Title> <_:newTitle> .
 `;
+    titleDeleteMutation = `
+  <${post._uid_}> <Title> * .
+`;
   }
-  let bodyMutation = "";
+
+  let bodySetMutation = "";
+  let bodyDeleteMutation = "";
   if (post.Body[0].Text !== body) {
-    titleMutation = `
+    bodySetMutation = `
   <_:newBody> <Timestamp> "${now}" .
-  <_:newBody> <Post> <_:question> .
+  <_:newBody> <Post> <${post._uid_}> .
   <_:newBody> <Author> <${currentUserUID}> .
   <_:newBody> <Text> "${body}" .
   <_:newBody> <Type> "Body" .
   <${post._uid_}> <Body> <_:newBody> .
 `;
+    bodyDeleteMutation = `
+  <${post._uid_}> <Body> * .
+`;
   }
 
   return new Promise((resolve, reject) => {
-    if (!titleMutation && !bodyMutation) {
+    if (!titleSetMutation && !bodySetMutation) {
       resolve();
       return;
     }
 
-    const query = `
+    const deleteMutation = `
+mutation {
+  delete {
+    ${titleDeleteMutation}
+    ${bodyDeleteMutation}
+  }
+}
+`;
+    const setMutation = `
   mutation {
     set {
-      ${titleMutation}
-      ${bodyMutation}
+      ${titleSetMutation}
+      ${bodySetMutation}
     }
   }
   `;
-    runQuery(query).then(resolve).catch(reject);
+    runQuery(deleteMutation)
+      .then(() => {
+        return runQuery(setMutation).then(resolve);
+      })
+      .catch(reject);
   });
 }
 
@@ -147,6 +168,8 @@ async function updateQuestion(req, res, next) {
     return;
   }
   await updatePost({ post, title, body, currentUserUID });
+
+  res.json(questionUID);
 }
 
 router.put("/:uid", catchAsyncErrors(updateQuestion));
