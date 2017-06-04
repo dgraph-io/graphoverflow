@@ -3,11 +3,11 @@ import request from "superagent";
 import { withRouter } from "react-router";
 
 import { runQuery } from "../lib/helpers";
-import { getQuestionQuery } from "../queries/EditQuestion";
+import { getQuestionQuery } from "../queries/EditPost";
 import PostForm from "./PostForm";
 import "../assets/styles/NewQuestion.css";
 
-class EditQuestion extends React.Component {
+class EditPost extends React.Component {
   constructor(props) {
     super(props);
 
@@ -23,10 +23,11 @@ class EditQuestion extends React.Component {
     const query = getQuestionQuery(params.uid);
     runQuery(query)
       .then(res => {
-        const { question } = res;
+        const post = res.post[0];
         this.setState({
-          title: question[0].Title[0].Text,
-          body: question[0].Body[0].Text
+          title: post.Title && post.Title[0].Text,
+          body: post.Body[0].Text,
+          type: post.Type
         });
       })
       .catch(err => {
@@ -49,10 +50,10 @@ class EditQuestion extends React.Component {
       .put(`/api/posts/${params.uid}`)
       .send({ title, body })
       .then(res => {
-        // On create, redirect to the question
-        const uid = res.body;
-        const questionLink = `/questions/${uid}`;
-        history.push(questionLink);
+        // On create, redirect to the post
+        const payload = res.body;
+        const postLink = `/questions/${payload.parentUID || payload.postUID}`;
+        history.push(postLink);
       })
       .catch(err => {
         console.log(err);
@@ -60,13 +61,13 @@ class EditQuestion extends React.Component {
   };
 
   render() {
-    const { title, body } = this.state;
+    const { title, body, type } = this.state;
     return (
       <div className="container">
         <div className="row">
           <div className="col-12 col-sm-8">
             <PostForm
-              postType="Question"
+              postType={type}
               title={title}
               body={body}
               onUpdateTitle={this.handleUpdateTitle}
@@ -98,4 +99,4 @@ class EditQuestion extends React.Component {
   }
 }
 
-export default withRouter(EditQuestion);
+export default withRouter(EditPost);

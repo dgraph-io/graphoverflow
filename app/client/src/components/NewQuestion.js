@@ -31,8 +31,8 @@ class NewQuestion extends React.Component {
       .send({ title, body, postType: "Question" })
       .then(res => {
         // On create, redirect to the question
-        const uid = res.body;
-        const questionLink = `/questions/${uid}`;
+        const { postUID } = res.body;
+        const questionLink = `/questions/${postUID}`;
         history.push(questionLink);
       })
       .catch(err => {

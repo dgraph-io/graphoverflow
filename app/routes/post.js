@@ -29,6 +29,9 @@ function fetchPost(uid) {
     Owner {
       _uid_
     }
+    ~Has.Answer {
+      _uid_
+    }
   }
 }
 `;
@@ -111,7 +114,7 @@ function updatePost({ post, title, body, currentUserUID }) {
 
   let titleSetMutation = "";
   let titleDeleteMutation = "";
-  if (post.Title[0].Text !== title) {
+  if (post.Type === "Question" && post.Title[0].Text !== title) {
     titleSetMutation = `
   <_:newTitle> <Timestamp> "${now}" .
   <_:newTitle> <Post> <${post._uid_}> .
@@ -185,7 +188,17 @@ async function handleUpdatePost(req, res, next) {
   }
   await updatePost({ post, title, body, currentUserUID });
 
-  res.json(postUID);
+  let payload = {
+    postUID
+  };
+
+  if (post["~Has.Answer"]) {
+    payload = Object.assign({}, payload, {
+      parentUID: post["~Has.Answer"][0]._uid_
+    });
+  }
+
+  res.json(payload);
 }
 
 async function handleCreatePost(req, res, next) {

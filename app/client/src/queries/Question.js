@@ -20,6 +20,7 @@ Timestamp
 `;
 
 const AnswerFragment = `
+_uid_
 Body {
   Text
 }

@@ -7,7 +7,7 @@ const PostActions = ({ post, currentUser, onDeletePost }) => {
     <div>
       {isOwner
         ? <div>
-            <Link to={`/questions/${post._uid_}/edit`}>edit</Link>
+            <Link to={`/posts/${post._uid_}/edit`}>edit</Link>
             <a
               href="#delete"
               onClick={e => {

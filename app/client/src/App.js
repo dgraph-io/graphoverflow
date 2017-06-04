@@ -9,7 +9,7 @@ import Home from "./components/Home";
 import About from "./components/About";
 import Question from "./components/Question";
 import NewQuestion from "./components/NewQuestion";
-import EditQuestion from "./components/EditQuestion";
+import EditPost from "./components/EditPost";
 import { login, logout } from "./actions/session";
 import LoggedInRoute from "./components/hocs/LoggedInRoute";
 
@@ -55,7 +55,7 @@ class App extends Component {
                 component={NewQuestion}
                 authenticated={Boolean(user)}
               />
-              <Route path="/questions/:uid/edit" component={EditQuestion} />
+              <Route path="/posts/:uid/edit" component={EditPost} />
               <Route path="/questions/:uid" component={Question} />
             </Switch>
           </main>
