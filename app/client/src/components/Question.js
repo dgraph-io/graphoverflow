@@ -80,8 +80,6 @@ class Question extends React.Component {
     const { user } = this.props;
     const { question, answers, questionLoaded } = this.state;
 
-    const currentUser = user || {};
-
     return (
       <div className="container">
         <div className="row">
@@ -90,7 +88,7 @@ class Question extends React.Component {
               ? <QuestionLayout
                   question={question}
                   answers={answers}
-                  currentUser={currentUser}
+                  currentUser={user}
                   onDeletePost={this.handleDeletePost}
                   onCreateAnswer={this.handleCreateAnswer}
                 />

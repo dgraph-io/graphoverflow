@@ -40,6 +40,14 @@ Comment {
 }
 `;
 
+export function getCommentQuery(commentID) {
+  return `{
+    comment(id: ${commentID}) {
+      ${CommentFragment}
+    }
+  }`;
+}
+
 export function getAnswerQuery(answerUID) {
   return `{
     answer(id: ${answerUID}) {
