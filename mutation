@@ -18,5 +18,6 @@ mutation {
     Timestamp: datetime .
     GitHubID: string @index(exact) .
     Has.Answer: uid @reverse .
+    Comment: uid @reverse .
   }
 }

@@ -42,6 +42,22 @@ class Post extends React.Component {
       });
   };
 
+  handleDeleteComment = commentUID => {
+    const { post } = this.props;
+    const { comments } = this.state;
+
+    request
+      .delete(`/api/posts/${post._uid_}/comments/${commentUID}`)
+      .then(() => {
+        const newComments = comments.filter(comment => {
+          return comment._uid_ !== commentUID;
+        });
+        this.setState({
+          comments: newComments
+        });
+      });
+  };
+
   render() {
     const { post, currentUser, onDeletePost } = this.props;
     const { comments } = this.state;
@@ -74,7 +90,13 @@ class Post extends React.Component {
             />
             <PostHistory post={post} />
 
-            {comments ? <CommentList comments={comments} /> : null}
+            {comments
+              ? <CommentList
+                  currentUser={currentUser}
+                  comments={comments}
+                  onDeleteComment={this.handleDeleteComment}
+                />
+              : null}
             {currentUser
               ? <CommentComposer onSubmitComment={this.handleSubmitComment} />
               : null}

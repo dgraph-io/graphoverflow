@@ -12,6 +12,7 @@ Timestamp
 const CommentFragment = `
 _uid_
 Author {
+  _uid_
   DisplayName
 }
 Text

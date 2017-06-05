@@ -51,6 +51,34 @@ function fetchPost(uid) {
   });
 }
 
+function fetchComment(uid) {
+  const query = `{
+    comment(id: ${uid}) {
+      Author {
+        _uid_
+      }
+      ~Comment {
+        _uid_
+      }
+    }
+  }`;
+
+  return new Promise((resolve, reject) => {
+    runQuery(query)
+      .then(res => {
+        // res does not contain `post` if no match
+        let result = {};
+        if (res.comment) {
+          result = res.comment[0];
+        }
+        resolve(result);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+}
+
 function createPost({ title, body, postType, ownerID, parentPostID }) {
   const now = new Date().toISOString();
 
@@ -289,11 +317,43 @@ mutation {
     });
 }
 
+async function handleDeleteComment(req, res, next) {
+  const commentUID = req.params.commentUID;
+  const currentUserUID = req.user && req.user._uid_;
+
+  const comment = await fetchComment(commentUID);
+  if (comment.Author[0]._uid_ !== currentUserUID) {
+    res.status(403).send("Only the owner can delete the post");
+    return;
+  }
+  const parentPostUID = comment["~Comment"][0]._uid_;
+
+  const query = `
+  mutation {
+    delete {
+      <${commentUID}> * * .
+      <${parentPostUID}> <Comment> <${commentUID}> .
+    }
+  }
+`;
+  runQuery(query)
+    .then(() => {
+      res.end();
+    })
+    .catch(err => {
+      res.status(500).send(err.message);
+    });
+}
+
 /*************** route definitions **/
 router.post("/", catchAsyncErrors(handleCreateQuestion));
 router.put("/:uid", catchAsyncErrors(handleUpdatePost));
 router.delete("/:uid", catchAsyncErrors(handleDeletePost));
 router.post("/:uid/answers", catchAsyncErrors(handleCreateAnswer));
 router.post("/:uid/comments", handleCreateComment);
+router.delete(
+  "/:uid/comments/:commentUID",
+  catchAsyncErrors(handleDeleteComment)
+);
 
 export default router;

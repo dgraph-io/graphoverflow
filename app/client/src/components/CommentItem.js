@@ -2,7 +2,10 @@ import React from "react";
 import moment from "moment";
 import marked from "marked";
 
-const CommentItem = ({ comment }) => {
+const CommentItem = ({ comment, currentUser, onDeleteComment }) => {
+  console.log(comment);
+  const isOwner = currentUser && comment.Author[0]._uid_ === currentUser._uid_;
+
   return (
     <li className="comment-item">
       <div className="comment-score">
@@ -23,6 +26,17 @@ const CommentItem = ({ comment }) => {
         <span className="comment-timestamp">
           {moment(comment.Timestamp).fromNow()}
         </span>
+        {isOwner
+          ? <a
+              href="#delete"
+              onClick={e => {
+                e.preventDefault();
+                onDeleteComment(comment._uid_);
+              }}
+            >
+              <i className="fa fa-close" />
+            </a>
+          : null}
       </p>
     </li>
   );
