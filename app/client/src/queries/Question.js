@@ -20,6 +20,7 @@ Timestamp
 `;
 
 const AnswerFragment = `
+_uid_
 Body {
   Text
 }
@@ -38,6 +39,14 @@ Comment {
   ${CommentFragment}
 }
 `;
+
+export function getCommentQuery(commentID) {
+  return `{
+    comment(id: ${commentID}) {
+      ${CommentFragment}
+    }
+  }`;
+}
 
 export function getAnswerQuery(answerUID) {
   return `{

@@ -29,6 +29,9 @@ function fetchPost(uid) {
     Owner {
       _uid_
     }
+    ~Has.Answer {
+      _uid_
+    }
   }
 }
 `;
@@ -111,7 +114,7 @@ function updatePost({ post, title, body, currentUserUID }) {
 
   let titleSetMutation = "";
   let titleDeleteMutation = "";
-  if (post.Title[0].Text !== title) {
+  if (post.Type === "Question" && post.Title[0].Text !== title) {
     titleSetMutation = `
   <_:newTitle> <Timestamp> "${now}" .
   <_:newTitle> <Post> <${post._uid_}> .
@@ -185,10 +188,20 @@ async function handleUpdatePost(req, res, next) {
   }
   await updatePost({ post, title, body, currentUserUID });
 
-  res.json(postUID);
+  let payload = {
+    postUID
+  };
+
+  if (post["~Has.Answer"]) {
+    payload = Object.assign({}, payload, {
+      parentUID: post["~Has.Answer"][0]._uid_
+    });
+  }
+
+  res.json(payload);
 }
 
-async function handleCreatePost(req, res, next) {
+async function handleCreateQuestion(req, res, next) {
   const { title, body, postType } = req.body;
   const currentUserUID = req.user._uid_;
 
@@ -196,19 +209,23 @@ async function handleCreatePost(req, res, next) {
     title,
     body,
     postType,
-    ownerID: currentUserUID,
-    parentPostID
+    ownerID: currentUserUID
   });
 
-  res.json(postUID);
+  res.json({ postUID });
 }
 
+// deleting answer does not work yet
+// https://github.com/dgraph-io/dgraph/issues/1009 should be fixed in 0.7.8
+// https://github.com/dgraph-io/dgraph/issues/1008 also needs to be fixed
 async function handleDeletePost(req, res, next) {
   const postUID = req.params.uid;
   const currentUserUID = req.user && req.user._uid_;
 
   const post = await fetchPost(postUID);
   if (post.Owner[0]._uid_ !== currentUserUID) {
+    console.log("post owner", post.Owner[0]._uid_);
+    console.log("currentUser", currentUserUID);
     res.status(403).send("Only the owner can delete the post");
     return;
   }
@@ -244,10 +261,39 @@ async function handleCreateAnswer(req, res, next) {
   res.json(postUID);
 }
 
+function handleCreateComment(req, res, next) {
+  const parentPostUID = req.params.uid;
+  const currentUserUID = req.user && req.user._uid_;
+  const { body } = req.body;
+  const now = new Date().toISOString();
+
+  const query = `
+mutation {
+  set {
+    <_:comment> <Author> <${currentUserUID}> .
+    <${parentPostUID}> <Comment> <_:comment> .
+    <_:comment> <Score> \"0\" .
+    <_:comment> <Text> \"${body}\" .
+    <_:comment> <Timestamp> \"${now}\" .
+    <_:comment> <Type> \"Comment\" .
+  }
+}
+`;
+
+  runQuery(query)
+    .then(result => {
+      res.json({ commentUID: result.uids.comment });
+    })
+    .catch(error => {
+      console.log(err);
+    });
+}
+
 /*************** route definitions **/
-router.post("/", catchAsyncErrors(handleCreatePost));
+router.post("/", catchAsyncErrors(handleCreateQuestion));
 router.put("/:uid", catchAsyncErrors(handleUpdatePost));
 router.delete("/:uid", catchAsyncErrors(handleDeletePost));
 router.post("/:uid/answers", catchAsyncErrors(handleCreateAnswer));
+router.post("/:uid/comments", handleCreateComment);
 
 export default router;

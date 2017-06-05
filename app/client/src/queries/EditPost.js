@@ -1,7 +1,7 @@
 // getQuestionQuery generates a query to fetch the question with the given UID
 export function getQuestionQuery(questionUID) {
   return `{
-    question(id: ${questionUID}) {
+    post(id: ${questionUID}) {
       Title {
         Text
       }
@@ -11,6 +11,7 @@ export function getQuestionQuery(questionUID) {
       Tags {
         TagName: Text
       }
+      Type
       Timestamp
     }
   }`;
