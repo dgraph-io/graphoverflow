@@ -243,9 +243,6 @@ async function handleCreateQuestion(req, res, next) {
   res.json({ postUID });
 }
 
-// deleting answer does not work yet
-// https://github.com/dgraph-io/dgraph/issues/1009 should be fixed in 0.7.8
-// https://github.com/dgraph-io/dgraph/issues/1008 also needs to be fixed
 async function handleDeletePost(req, res, next) {
   const postUID = req.params.uid;
   const currentUserUID = req.user && req.user._uid_;
@@ -258,10 +255,18 @@ async function handleDeletePost(req, res, next) {
     return;
   }
 
+  // following is necessary due to https://github.com/dgraph-io/dgraph/issues/1008
+  const parentPostUID = post["~Has.Answer"] && post["~Has.Answer"][0]._uid_;
+  let hasAnswerRDF = "";
+  if (parentPostUID) {
+    hasAnswerRDF = `<${parentPostUID}> <Has.Answer> <${postUID}> .`;
+  }
+
   const query = `
   mutation {
     delete {
       <${postUID}> * * .
+      ${hasAnswerRDF}
     }
   }
 `;
