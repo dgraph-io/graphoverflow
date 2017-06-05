@@ -22,20 +22,32 @@ class Question extends React.Component {
   }
 
   componentDidMount() {
-    const { match: { params } } = this.props;
-    const query = getQuestionQuery(params.uid);
+    this.refreshQuestion(this.props.match.params.uid);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.match.params.uid !== nextProps.match.params.uid) {
+      this.refreshQuestion(nextProps.match.params.uid);
+    }
+  }
+
+  refreshQuestion = questionUID => {
+    const query = getQuestionQuery(questionUID);
 
     runQuery(query).then(res => {
+      console.log(res);
       const question = res.question[0];
+      const relatedQuestions = res.tags[0].relatedQuestions;
 
       // NOTE: `answers` is still present in `question`. Maybe we can delete it
       this.setState({
         question,
+        relatedQuestions,
         answers: cloneDeep(question["Has.Answer"]) || [],
         questionLoaded: true
       });
     });
-  }
+  };
 
   handleDeletePost = uid => {
     const { history } = this.props;
@@ -78,7 +90,7 @@ class Question extends React.Component {
 
   render() {
     const { user } = this.props;
-    const { question, answers, questionLoaded } = this.state;
+    const { question, relatedQuestions, answers, questionLoaded } = this.state;
 
     return (
       <div className="container">
@@ -87,6 +99,7 @@ class Question extends React.Component {
             {questionLoaded
               ? <QuestionLayout
                   question={question}
+                  relatedQuestions={relatedQuestions}
                   answers={answers}
                   currentUser={user}
                   onDeletePost={this.handleDeletePost}

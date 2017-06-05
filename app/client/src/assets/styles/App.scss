@@ -1,0 +1,27 @@
+.section {
+  margin: 0px 6px;
+}
+
+.side-section {
+  margin: 0px 6px 7px;
+
+  &.emphasize {
+    border: 1px solid #d8d8d8;
+    padding: 17px 11px;
+    background-color: #fffef5;
+  }
+}
+
+.main-content {
+  padding: 18px 0;
+}
+
+.tag {
+  padding: 2px 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  margin-bottom: 5px;
+  display: inline-block;
+  color: #5475b5;
+  font-size: 13px;
+}

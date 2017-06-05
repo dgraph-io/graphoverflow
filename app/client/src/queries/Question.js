@@ -78,7 +78,7 @@ export function getQuestionQuery(questionUID) {
       UpvoteCount: count(Upvote)
       DownvoteCount: count(Downvote)
 
-      Tags {
+      questionTags as Tags {
         TagName: Text
       }
 
@@ -92,6 +92,17 @@ export function getQuestionQuery(questionUID) {
 
       History: ~Post(orderdesc: Timestamp) {
         ${HistoryFragment}
+      }
+    }
+
+    tags(id: var(questionTags)) {
+      relatedQuestions: ~Tags(first: 10) {
+        _uid_
+        Title {
+          Text
+        }
+        UpvoteCount: count(Upvote)
+        DownvoteCount: count(Downvote)
       }
     }
   }`;

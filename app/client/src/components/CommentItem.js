@@ -3,7 +3,6 @@ import moment from "moment";
 import marked from "marked";
 
 const CommentItem = ({ comment, currentUser, onDeleteComment }) => {
-  console.log(comment);
   const isOwner = currentUser && comment.Author[0]._uid_ === currentUser._uid_;
 
   return (

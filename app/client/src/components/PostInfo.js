@@ -3,7 +3,7 @@ import moment from "moment";
 
 const PostInfo = ({ post }) => {
   return (
-    <div>
+    <section className="section side-section">
       <ul className="list-unstyled">
         <li>
           Asked: {moment(post.Timestamp).fromNow()}
@@ -12,7 +12,7 @@ const PostInfo = ({ post }) => {
           Viewed: {post.ViewCount} times
         </li>
       </ul>
-    </div>
+    </section>
   );
 };
 export default PostInfo;

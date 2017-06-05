@@ -3,9 +3,11 @@ import React from "react";
 import Post from "./Post";
 import PostInfo from "./PostInfo";
 import AnswerComposer from "./AnswerComposer";
+import RelatedQuestionList from "./RelatedQuestionList";
 
 const QuestionLayout = ({
   question,
+  relatedQuestions,
   answers,
   currentUser,
   onDeletePost,
@@ -41,6 +43,7 @@ const QuestionLayout = ({
         </div>
         <div className="col-12 col-sm-3">
           <PostInfo post={question} />
+          <RelatedQuestionList questions={relatedQuestions} />
         </div>
       </div>
 

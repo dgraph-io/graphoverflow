@@ -13,7 +13,7 @@ import EditPost from "./components/EditPost";
 import { login, logout } from "./actions/session";
 import LoggedInRoute from "./components/hocs/LoggedInRoute";
 
-import "./App.css";
+import "./assets/styles/App.css";
 
 class App extends Component {
   componentDidMount() {
