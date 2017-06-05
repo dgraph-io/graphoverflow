@@ -350,6 +350,94 @@ async function handleDeleteComment(req, res, next) {
     });
 }
 
+async function handleCreateVote(req, res, next) {
+  const { type } = req.body;
+  const postUID = req.params.uid;
+  const currentUserUID = req.user && req.user._uid_;
+  const now = new Date().toISOString();
+
+  const query = `
+  mutation {
+    set {
+      <${postUID}> <${type}> <_:v> .
+      <_:v> <Author> <${currentUserUID}> .
+      <_:v> <Timestamp> \"${now}\" .
+    }
+  }
+`;
+
+  runQuery(query)
+    .then(() => {
+      res.end();
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).send(err.message);
+    });
+}
+
+// voteType is either `Upvote` or `Downvote`
+function fetchVote({ postUID, authorUID, voteType }) {
+  const query = `
+  {
+    postId as var(id: ${postUID})
+
+    currentUser(id: ${authorUID}) @cascade {
+      ~Author {
+         _uid_
+         ~${voteType} @filter(var(postId))
+      }
+    }
+  }
+`;
+
+  return new Promise((resolve, reject) => {
+    runQuery(query)
+      .then(res => {
+        if (!res || !res.currentUser || !res.currentUser[0]["~Author"]) {
+          resolve({});
+          return;
+        }
+
+        const vote = res.currentUser[0]["~Author"][0];
+        resolve(vote);
+      })
+      .catch(reject);
+  });
+}
+
+// handleCancelVote cancels the current user's vote for the post
+async function handleCancelVote(req, res, next) {
+  const { type } = req.body;
+  const postUID = req.params.uid;
+  const currentUserUID = req.user && req.user._uid_;
+  const now = new Date().toISOString();
+
+  const vote = await fetchVote({
+    postUID,
+    voteType: type,
+    authorUID: currentUserUID
+  });
+
+  const query = `
+  mutation {
+    delete {
+      <${postUID}> <${type}> <${vote._uid_}> .
+      <${vote._uid_}> * * .
+    }
+  }
+`;
+
+  runQuery(query)
+    .then(() => {
+      res.end();
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).send(err.message);
+    });
+}
+
 /*************** route definitions **/
 router.post("/", catchAsyncErrors(handleCreateQuestion));
 router.put("/:uid", catchAsyncErrors(handleUpdatePost));
@@ -360,5 +448,8 @@ router.delete(
   "/:uid/comments/:commentUID",
   catchAsyncErrors(handleDeleteComment)
 );
+
+router.post("/:uid/vote", catchAsyncErrors(handleCreateVote));
+router.delete("/:uid/vote", catchAsyncErrors(handleCancelVote));
 
 export default router;

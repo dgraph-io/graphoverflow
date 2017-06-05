@@ -19,5 +19,7 @@ mutation {
     GitHubID: string @index(exact) .
     Has.Answer: uid @reverse .
     Comment: uid @reverse .
+    Upvote: uid @reverse .
+    Downvote: uid @reverse .
   }
 }

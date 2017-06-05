@@ -21,8 +21,30 @@
   }
 }
 
-.vote-count-container {
+.post-vote-container {
   width: 50px;
+}
+
+.post-vote {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.vote-btn {
+  font-size: 22px;
+  color: gainsboro;
+
+  &.voted {
+    color: #F44336;
+  }
+
+  &:hover {
+    color: #F44336;
+  }
+  &:active {
+    color: inherit;
+  }
 }
 
 .post {

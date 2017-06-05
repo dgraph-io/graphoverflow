@@ -7,6 +7,7 @@ import PostActions from "./PostActions";
 import CommentList from "./CommentList";
 import CommentComposer from "./CommentComposer";
 import TagList from "./TagList";
+import PostVote from "./PostVote";
 import { getCommentQuery } from "../queries/Question";
 import { runQuery } from "../lib/helpers";
 
@@ -15,7 +16,9 @@ class Post extends React.Component {
     super(props);
 
     this.state = {
-      comments: props.post.Comment
+      comments: props.post.Comment,
+      userUpvoted: false,
+      userDownvoted: false
     };
   }
 
@@ -58,11 +61,31 @@ class Post extends React.Component {
       });
   };
 
+  handleVote = ({ type }) => {
+    const { post } = this.props;
+
+    request.post(`/api/posts/${post._uid_}/vote`).send({ type }).then(() => {
+      this.setState({
+        userUpvoted: type === "Upvote",
+        userDownvoted: type === "Downvote"
+      });
+    });
+  };
+
+  handleCancelVote = ({ type }) => {
+    const { post } = this.props;
+
+    request.delete(`/api/posts/${post._uid_}/vote`).send({ type }).then(() => {
+      this.setState({
+        userUpvoted: false,
+        userDownvoted: false
+      });
+    });
+  };
+
   render() {
     const { post, currentUser, onDeletePost } = this.props;
-    const { comments } = this.state;
-
-    const postScore = post.UpvoteCount - post.DownvoteCount;
+    const { comments, userUpvoted, userDownvoted } = this.state;
 
     return (
       <div className="post">
@@ -72,11 +95,13 @@ class Post extends React.Component {
           : null}
 
         <div className="post-content">
-          <div className="vote-count-container">
-            <div className="vote-count">
-              {postScore}
-            </div>
-          </div>
+          <PostVote
+            post={post}
+            onVote={this.handleVote}
+            onCancelVote={this.handleCancelVote}
+            userUpvoted={userUpvoted}
+            userDownvoted={userDownvoted}
+          />
           <div className="post-body-container">
             <div
               className="post-body"
