@@ -22,7 +22,9 @@ class Question extends React.Component {
   }
 
   componentDidMount() {
-    this.refreshQuestion(this.props.match.params.uid);
+    const questionUID = this.props.match.params.uid;
+    this.refreshQuestion(questionUID);
+    this.incrementViewCount(questionUID);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -30,6 +32,12 @@ class Question extends React.Component {
       this.refreshQuestion(nextProps.match.params.uid);
     }
   }
+
+  incrementViewCount = questionUID => {
+    request.post(`/api/posts/${questionUID}/viewCount`).catch(err => {
+      console.log(err);
+    });
+  };
 
   refreshQuestion = questionUID => {
     const query = getQuestionQuery(questionUID);

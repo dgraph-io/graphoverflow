@@ -32,6 +32,7 @@ function fetchPost(uid) {
     ~Has.Answer {
       _uid_
     }
+    ViewCount
   }
 }
 `;
@@ -438,6 +439,31 @@ async function handleCancelVote(req, res, next) {
     });
 }
 
+async function handleIncrementViewCount(req, res, next) {
+  const postUID = req.params.uid;
+
+  const post = await fetchPost(postUID);
+  const viewCount = post.ViewCount;
+  const nextViewCount = viewCount + 1;
+
+  const query = `
+  mutation {
+    set {
+      <${postUID}> <ViewCount> \"${nextViewCount}\" .
+    }
+  }
+`;
+
+  runQuery(query)
+    .then(() => {
+      res.end();
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).send(err.message);
+    });
+}
+
 /*************** route definitions **/
 router.post("/", catchAsyncErrors(handleCreateQuestion));
 router.put("/:uid", catchAsyncErrors(handleUpdatePost));
@@ -448,6 +474,7 @@ router.delete(
   "/:uid/comments/:commentUID",
   catchAsyncErrors(handleDeleteComment)
 );
+router.post("/:uid/viewCount", catchAsyncErrors(handleIncrementViewCount));
 
 router.post("/:uid/vote", catchAsyncErrors(handleCreateVote));
 router.delete("/:uid/vote", catchAsyncErrors(handleCancelVote));
