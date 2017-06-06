@@ -60,6 +60,8 @@ func main() {
 		limiter = make(chan struct{}, 1)
 	}
 
+	counter := 0
+
 	for {
 		t, _ := decoder.Token()
 		if t == nil {
@@ -101,6 +103,10 @@ func main() {
 						_, err = ioutil.ReadAll(resp.Body)
 						check(err)
 						check(resp.Body.Close())
+					}
+					counter++
+					if counter%1000 == 0 {
+						fmt.Println("Processed", counter)
 					}
 					wg.Done()
 					<-limiter
