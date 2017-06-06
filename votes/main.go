@@ -5,31 +5,38 @@ package main
 
 import (
 	"bufio"
-	"bytes"
+	"compress/gzip"
 	"encoding/xml"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math/rand"
-	"net/http"
 	"os"
-	"sync"
 	"time"
 )
 
 var (
 	dir    = flag.String("dir", "", "Directory which holds Votes.xml file")
-	dryRun = flag.Bool("dryrun", true, "Only show mutations.")
+	output = flag.String("output", "out.rdf.gz", "Output rdf.gz file")
 )
 
 // random generates a random integer given a range
 func random(min, max int) int {
 	return rand.Intn(max-min) + min
+
+}
+
+func check(err error) {
+	if err != nil {
+		log.Fatal(err)
+
+	}
+
 }
 
 func init() {
 	rand.Seed(time.Now().Unix())
+
 }
 
 type Vote struct {
@@ -39,33 +46,31 @@ type Vote struct {
 	CreationDate string `xml:",attr"`
 }
 
-func check(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
 func main() {
 	flag.Parse()
+
+	err := os.RemoveAll(*output)
+	check(err)
+
+	o, err := os.OpenFile(*output, os.O_WRONLY|os.O_CREATE, 0755)
+	check(err)
 
 	f, err := os.Open(*dir + "/Votes.xml")
 	check(err)
 
+	w := gzip.NewWriter(o)
+
+	log.Println("1/2 Reading votes file")
 	c := bufio.NewReader(f)
 	decoder := xml.NewDecoder(c)
 
-	var wg sync.WaitGroup
-	limiter := make(chan struct{}, 1000)
-	if *dryRun {
-		limiter = make(chan struct{}, 1)
-	}
-
-	counter := 0
+	var str string
 
 	for {
 		t, _ := decoder.Token()
 		if t == nil {
 			break
+
 		}
 
 		switch se := t.(type) {
@@ -74,48 +79,41 @@ func main() {
 				var v Vote
 				decoder.DecodeElement(&v, &se)
 
-				var b bytes.Buffer
-
 				node := "v" + v.Id
-				b.WriteString("mutation { set { ")
+
+				authorId := random(1, 1000)
+				str = fmt.Sprintf("<%v> <Author> <u%v> .\n", node, authorId)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<%v> <Timestamp> %q .\n", node, v.CreationDate)
+				w.Write([]byte(str))
 
 				if v.VoteTypeId == 2 { // upvote
-					b.WriteString(fmt.Sprintf("<p%v> <Upvote> <%v> .\n", v.PostId, node))
+					str = fmt.Sprintf("<p%v> <Upvote> <%v> .\n", v.PostId, node)
+					w.Write([]byte(str))
 				} else if v.VoteTypeId == 3 { // downvote
-					b.WriteString(fmt.Sprintf("<p%v> <Downvote> <%v> .\n", v.PostId, node))
+					str = fmt.Sprintf("<p%v> <Downvote> <%v> .\n", v.PostId, node)
+					w.Write([]byte(str))
 				} else {
 					continue
 				}
-
-				// We generate userId for the user that casted the vote, because dataset is anonymized
-				// and does not always contain userId
-				authorId := random(3, 20000)
-				b.WriteString(fmt.Sprintf("<%v> <Author> <u%v> .\n", node, authorId))
-				b.WriteString(fmt.Sprintf("<%v> <Timestamp> %q .\n", node, v.CreationDate))
-
-				b.WriteString("}}")
-				wg.Add(1)
-				go func(b *bytes.Buffer) {
-					limiter <- struct{}{}
-					if !*dryRun {
-						resp, err := http.Post("http://127.0.0.1:8080/query", "", b)
-						check(err)
-						_, err = ioutil.ReadAll(resp.Body)
-						check(err)
-						check(resp.Body.Close())
-					}
-					counter++
-					if counter%1000 == 0 {
-						fmt.Println("Processed", counter)
-					}
-					wg.Done()
-					<-limiter
-				}(&b)
-
 			}
 		}
 	}
 
-	wg.Wait()
-	fmt.Println("processed")
+	log.Println("Finished generating RDF.")
+	err = w.Flush()
+	check(err)
+
+	err = w.Close()
+	check(err)
+
+	err = o.Close()
+	check(err)
+
+	//	log.Println("2/2 Loading RDF using dgraphloader")
+	//	cmd := exec.Command("dgraphloader", "-r", *output)
+	//	err = cmd.Run()
+	//	check(err)
+	//
+	//	log.Println("Done")
 }

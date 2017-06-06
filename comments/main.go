@@ -4,19 +4,18 @@
 package main
 
 import (
-	"bytes"
+	"bufio"
+	"compress/gzip"
 	"encoding/xml"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
-	"sync"
+	"os"
 )
 
 var (
 	dir    = flag.String("dir", "", "Directory which holds Comments.xml file")
-	dryRun = flag.Bool("dryrun", true, "Only show mutations.")
+	output = flag.String("output", "comments.rdf.gz", "Output rdf.gz file")
 )
 
 type Comment struct {
@@ -28,10 +27,6 @@ type Comment struct {
 	UserId       string `xml:",attr"`
 }
 
-type Comments struct {
-	Rows []Comment `xml:"row"`
-}
-
 func check(err error) {
 	if err != nil {
 		log.Fatal(err)
@@ -41,47 +36,60 @@ func check(err error) {
 func main() {
 	flag.Parse()
 
-	data, err := ioutil.ReadFile(*dir + "/Comments.xml")
+	err := os.RemoveAll(*output)
 	check(err)
-	var comments Comments
-	check(xml.Unmarshal(data, &comments))
 
-	var wg sync.WaitGroup
-	limiter := make(chan struct{}, 100)
-	if *dryRun {
-		limiter = make(chan struct{}, 1)
-	}
+	o, err := os.OpenFile(*output, os.O_WRONLY|os.O_CREATE, 0755)
+	check(err)
 
-	// First generate all the versions.
-	for _, c := range comments.Rows {
-		var b bytes.Buffer
+	f, err := os.Open(*dir + "/Comments.xml")
+	check(err)
 
-		node := "c" + c.Id
-		b.WriteString("mutation { set { ")
+	w := gzip.NewWriter(o)
 
-		b.WriteString(fmt.Sprintf("<%v> <Author> <u%v> .\n", node, c.UserId))
-		b.WriteString(fmt.Sprintf("<p%v> <Comment> <%v> .\n", c.PostId, node))
-		b.WriteString(fmt.Sprintf("<%v> <Score> \"%v\" .\n", node, c.Score))
-		b.WriteString(fmt.Sprintf("<%v> <Text> %q .\n", node, c.Text))
-		b.WriteString(fmt.Sprintf("<%v> <Timestamp> %q .\n", node, c.CreationDate))
-		b.WriteString(fmt.Sprintf("<%v> <Type> \"Comment\" .\n", node))
+	log.Println("1/2 Reading votes file")
+	c := bufio.NewReader(f)
+	decoder := xml.NewDecoder(c)
 
-		b.WriteString("}}")
-		wg.Add(1)
-		go func(b *bytes.Buffer) {
-			limiter <- struct{}{}
-			if !*dryRun {
-				resp, err := http.Post("http://localhost:8080/query", "", b)
-				check(err)
-				_, err = ioutil.ReadAll(resp.Body)
-				check(err)
-				check(resp.Body.Close())
+	var str string
+
+	for {
+		t, _ := decoder.Token()
+		if t == nil {
+			break
+		}
+
+		switch se := t.(type) {
+		case xml.StartElement:
+			if se.Name.Local == "row" {
+				var c Comment
+				decoder.DecodeElement(&c, &se)
+
+				node := "c" + c.Id
+
+				str = fmt.Sprintf("<%v> <Author> <u%v> .\n", node, c.UserId)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<p%v> <Comment> <%v> .\n", c.PostId, node)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<%v> <Score> \"%v\" .\n", node, c.Score)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<%v> <Text> %q .\n", node, c.Text)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<%v> <Timestamp> %q .\n", node, c.CreationDate)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<%v> <Type> \"Comment\" .\n", node)
+				w.Write([]byte(str))
 			}
-			wg.Done()
-			<-limiter
-		}(&b)
+		}
 	}
 
-	wg.Wait()
-	fmt.Println(len(comments.Rows), "processed")
+	log.Println("Finished generating RDF.")
+	err = w.Flush()
+	check(err)
+
+	err = w.Close()
+	check(err)
+
+	err = o.Close()
+	check(err)
 }

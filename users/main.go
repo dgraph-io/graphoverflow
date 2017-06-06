@@ -1,18 +1,18 @@
 package main
 
 import (
-	"bytes"
+	"bufio"
+	"compress/gzip"
 	"encoding/xml"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
-	"sync"
+	"os"
 )
 
 var (
-	dir = flag.String("dir", "", "Directory which holds Users.xml file")
+	dir    = flag.String("dir", "", "Directory which holds Users.xml file")
+	output = flag.String("output", "users.rdf.gz", "Output rdf.gz file")
 )
 
 func check(err error) {
@@ -21,11 +21,7 @@ func check(err error) {
 	}
 }
 
-type Users struct {
-	Rows []Row `xml:"row"`
-}
-
-type Row struct {
+type User struct {
 	Id             string `xml:",attr"`
 	Reputation     string `xml:",attr"`
 	CreationDate   string `xml:",attr"`
@@ -38,39 +34,60 @@ type Row struct {
 func main() {
 	flag.Parse()
 
-	data, err := ioutil.ReadFile(*dir + "/Users.xml")
+	err := os.RemoveAll(*output)
 	check(err)
-	var users Users
-	check(xml.Unmarshal(data, &users))
 
-	limiter := make(chan struct{}, 100)
-	var wg sync.WaitGroup
-	for _, u := range users.Rows {
-		var b bytes.Buffer
-		b.WriteString("mutation { set { ")
-		b.WriteString(fmt.Sprintf("<u%s> <Reputation> %q .\n", u.Id, u.Reputation))
-		b.WriteString(fmt.Sprintf("<u%s> <CreationDate> %q .\n", u.Id, u.CreationDate))
-		b.WriteString(fmt.Sprintf("<u%s> <LastAccessDate> %q .\n", u.Id, u.LastAccessDate))
-		b.WriteString(fmt.Sprintf("<u%s> <DisplayName> %q .\n", u.Id, u.DisplayName))
-		b.WriteString(fmt.Sprintf("<u%s> <Location> %q .\n", u.Id, u.Location))
-		b.WriteString(fmt.Sprintf("<u%s> <AboutMe> %q .\n", u.Id, u.AboutMe))
-		b.WriteString(fmt.Sprintf("<u%s> <Type> \"User\" .\n", u.Id))
-		b.WriteString("}}")
-		wg.Add(1)
-		go func(b *bytes.Buffer) {
-			limiter <- struct{}{}
-			fmt.Println(b.String())
-			resp, err := http.Post("http://localhost:8080/query", "", b)
-			check(err)
-			body, err := ioutil.ReadAll(resp.Body)
-			check(err)
-			fmt.Printf("%q\n", body)
-			check(resp.Body.Close())
-			wg.Done()
-			<-limiter
-		}(&b)
+	o, err := os.OpenFile(*output, os.O_WRONLY|os.O_CREATE, 0755)
+	check(err)
+
+	f, err := os.Open(*dir + "/Users.xml")
+	check(err)
+
+	w := gzip.NewWriter(o)
+
+	log.Println("1/2 Reading file")
+	c := bufio.NewReader(f)
+	decoder := xml.NewDecoder(c)
+
+	var str string
+
+	for {
+		t, _ := decoder.Token()
+		if t == nil {
+			break
+		}
+
+		switch se := t.(type) {
+		case xml.StartElement:
+			if se.Name.Local == "row" {
+				var u User
+				decoder.DecodeElement(&u, &se)
+
+				str = fmt.Sprintf("<u%s> <Reputation> %q .\n", u.Id, u.Reputation)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<u%s> <CreationDate> %q .\n", u.Id, u.CreationDate)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<u%s> <LastAccessDate> %q .\n", u.Id, u.LastAccessDate)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<u%s> <DisplayName> %q .\n", u.Id, u.DisplayName)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<u%s> <Location> %q .\n", u.Id, u.Location)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<u%s> <AboutMe> %q .\n", u.Id, u.AboutMe)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<u%s> <Type> \"User\" .\n", u.Id)
+				w.Write([]byte(str))
+			}
+		}
 	}
 
-	wg.Wait()
-	fmt.Println(len(users.Rows), "processed")
+	log.Println("Finished generating RDF.")
+	err = w.Flush()
+	check(err)
+
+	err = w.Close()
+	check(err)
+
+	err = o.Close()
+	check(err)
 }

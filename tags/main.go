@@ -1,18 +1,18 @@
 package main
 
 import (
-	"bytes"
+	"bufio"
+	"compress/gzip"
 	"encoding/xml"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
-	"sync"
+	"os"
 )
 
 var (
-	dir = flag.String("dir", "", "Directory which holds Tags.xml file")
+	dir    = flag.String("dir", "", "Directory which holds Tags.xml file")
+	output = flag.String("output", "tags.rdf.gz", "Output rdf.gz file")
 )
 
 func check(err error) {
@@ -21,11 +21,7 @@ func check(err error) {
 	}
 }
 
-type Tags struct {
-	Rows []Row `xml:"row"`
-}
-
-type Row struct {
+type Tag struct {
 	Id      string `xml:",attr"`
 	TagName string `xml:",attr"`
 	Count   string `xml:",attr"`
@@ -34,34 +30,50 @@ type Row struct {
 func main() {
 	flag.Parse()
 
-	data, err := ioutil.ReadFile(*dir + "/Tags.xml")
+	err := os.RemoveAll(*output)
 	check(err)
-	var tags Tags
-	check(xml.Unmarshal(data, &tags))
 
-	limiter := make(chan struct{}, 100)
-	var wg sync.WaitGroup
-	for _, t := range tags.Rows {
-		var b bytes.Buffer
-		b.WriteString("mutation { set { ")
-		b.WriteString(fmt.Sprintf("<t%s> <TagName> %q .\n", t.Id, t.TagName))
-		b.WriteString(fmt.Sprintf("<t%s> <PostCount> %q .\n", t.Id, t.Count))
-		b.WriteString("}}")
-		wg.Add(1)
-		go func(b *bytes.Buffer) {
-			limiter <- struct{}{}
-			fmt.Println(b.String())
-			resp, err := http.Post("http://localhost:8080/query", "", b)
-			check(err)
-			body, err := ioutil.ReadAll(resp.Body)
-			check(err)
-			fmt.Printf("%q\n", body)
-			check(resp.Body.Close())
-			wg.Done()
-			<-limiter
-		}(&b)
+	o, err := os.OpenFile(*output, os.O_WRONLY|os.O_CREATE, 0755)
+	check(err)
+
+	f, err := os.Open(*dir + "/Tags.xml")
+	check(err)
+
+	w := gzip.NewWriter(o)
+
+	log.Println("1/2 Reading votes file")
+	c := bufio.NewReader(f)
+	decoder := xml.NewDecoder(c)
+
+	var str string
+
+	for {
+		t, _ := decoder.Token()
+		if t == nil {
+			break
+		}
+
+		switch se := t.(type) {
+		case xml.StartElement:
+			if se.Name.Local == "row" {
+				var t Tag
+				decoder.DecodeElement(&t, &se)
+
+				str = fmt.Sprintf("<t%s> <TagName> %q .\n", t.Id, t.TagName)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<t%s> <PostCount> %q .\n", t.Id, t.Count)
+				w.Write([]byte(str))
+			}
+		}
 	}
 
-	wg.Wait()
-	fmt.Println(len(tags.Rows), "processed")
+	log.Println("Finished generating RDF.")
+	err = w.Flush()
+	check(err)
+
+	err = w.Close()
+	check(err)
+
+	err = o.Close()
+	check(err)
 }
