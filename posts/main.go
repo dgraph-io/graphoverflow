@@ -4,19 +4,18 @@
 package main
 
 import (
-	"bytes"
+	"bufio"
+	"compress/gzip"
 	"encoding/xml"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
-	"sync"
+	"os"
 )
 
 var (
 	dir    = flag.String("dir", "", "Directory which holds Users.xml file")
-	dryRun = flag.Bool("dry", true, "Only show mutations.")
+	output = flag.String("output", "posts.rdf.gz", "Output rdf.gz file")
 )
 
 type PostHistory struct {
@@ -44,14 +43,6 @@ type Post struct {
 	LastEditDate     string `xml:",attr"`
 	LastActivityDate string `xml:",attr"`
 	OwnerUserId      string `xml:",attr"`
-}
-
-type Posts struct {
-	Rows []Post `xml:"row"`
-}
-
-type Logs struct {
-	Rows []PostHistory `xml:"row"`
 }
 
 func check(err error) {
@@ -88,152 +79,197 @@ func parseTags(tagString string) []string {
 func main() {
 	flag.Parse()
 
-	data, err := ioutil.ReadFile(*dir + "/Posts.xml")
+	err := os.RemoveAll(*output)
 	check(err)
-	var posts Posts
-	check(xml.Unmarshal(data, &posts))
 
-	data, err = ioutil.ReadFile(*dir + "/PostHistory.xml")
+	o, err := os.OpenFile(*output, os.O_WRONLY|os.O_CREATE, 0755)
 	check(err)
-	var logs Logs
-	check(xml.Unmarshal(data, &logs))
 
-	fmt.Println("dryrun: ", *dryRun)
-	var wg sync.WaitGroup
-	limiter := make(chan struct{}, 80)
-	if *dryRun {
-		limiter = make(chan struct{}, 1)
-	}
+	pf, err := os.Open(*dir + "/Posts.xml")
+	check(err)
+	phf, err := os.Open(*dir + "/PostHistory.xml")
+	check(err)
+	w := gzip.NewWriter(o)
 
-	send := func(b *bytes.Buffer) {
-		limiter <- struct{}{}
-		// fmt.Println(b.String())
-		if *dryRun == false {
-			//fmt.Println("POSTing")
-			resp, err := http.Post("http://localhost:8080/query", "", b)
-			check(err)
-			_, err = ioutil.ReadAll(resp.Body)
-			check(err)
-			check(resp.Body.Close())
-		}
-		wg.Done()
-		<-limiter
-	}
+	log.Println("1/2 Reading file")
+	pc := bufio.NewReader(pf)
+	pcd := xml.NewDecoder(pc)
+
+	phc := bufio.NewReader(phf)
+	phd := xml.NewDecoder(phc)
+
+	var str string
+	postHistoryIdx := 0
 
 	// First generate all the versions.
-	for _, p := range posts.Rows {
-		var b bytes.Buffer
-
-		node := "p" + p.Id
-		b.WriteString("mutation { set { ")
-
-		if len(p.LastEditDate) == 0 {
-			p.LastEditDate = p.LastActivityDate
-		}
-		if len(p.LastEditorUserId) == 0 {
-			p.LastEditorUserId = p.OwnerUserId
-		}
-		if len(p.LastEditorUserId) == 0 || len(p.LastEditDate) == 0 {
-			continue
+	for {
+		t, _ := pcd.Token()
+		if t == nil {
+			break
 		}
 
-		// First create the versions correctly, and attach them to the node.
-		{
-			b.WriteString(fmt.Sprintf("_:newTitle <Timestamp> %q .\n", p.LastEditDate))
-			b.WriteString(fmt.Sprintf("_:newTitle <Author> <u%s> .\n", p.LastEditorUserId))
-			b.WriteString(fmt.Sprintf("_:newTitle <Post> <%s> .\n", node))
-			b.WriteString(fmt.Sprintf("_:newTitle <Text> %q .\n", p.Title))
-			b.WriteString(fmt.Sprintf("_:newTitle <Type> \"Title\" .\n"))
+		switch se := t.(type) {
+		case xml.StartElement:
+			if se.Name.Local == "row" {
+				var p Post
+				pcd.DecodeElement(&p, &se)
 
-			b.WriteString(fmt.Sprintf("<%s> <Title> _:newTitle .\n", node))
-		}
+				node := "p" + p.Id
 
-		// Generate tag node for each tag in the tag string
-		tagList := parseTags(p.Tags)
-		for idx, tag := range tagList {
-			b.WriteString(fmt.Sprintf("<t-%v> <Timestamp> %q .\n", idx, p.LastEditDate))
-			b.WriteString(fmt.Sprintf("<t-%v> <Author> <u%s> .\n", idx, p.LastEditorUserId))
-			b.WriteString(fmt.Sprintf("<t-%v> <Post> <%s> .\n", idx, node))
-			b.WriteString(fmt.Sprintf("<t-%v> <Text> %q .\n", idx, tag))
-			b.WriteString(fmt.Sprintf("<t-%v> <Type> \"Tag\" .\n", idx))
+				if len(p.LastEditDate) == 0 {
+					p.LastEditDate = p.LastActivityDate
+				}
+				if len(p.LastEditorUserId) == 0 {
+					p.LastEditorUserId = p.OwnerUserId
+				}
+				if len(p.LastEditorUserId) == 0 || len(p.LastEditDate) == 0 {
+					continue
+				}
 
-			b.WriteString(fmt.Sprintf("<%s> <Tags> <t-%v> .\n", node, idx))
-		}
+				// First create the versions correctly, and attach them to the node.
+				{
+					str = fmt.Sprintf("<ph%v> <Timestamp> %q .\n", postHistoryIdx, p.LastEditDate)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<ph%v> <Author> <u%s> .\n", postHistoryIdx, p.LastEditorUserId)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<ph%v> <Post> <%s> .\n", postHistoryIdx, node)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<ph%v> <Text> %q .\n", postHistoryIdx, p.Title)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<ph%v> <Type> \"Title\" .\n", postHistoryIdx)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<%s> <Title> <ph%v> .\n", node, postHistoryIdx)
+					w.Write([]byte(str))
+					postHistoryIdx++
+				}
 
-		{
-			b.WriteString(fmt.Sprintf("_:newBody <Timestamp> %q .\n", p.LastEditDate))
-			b.WriteString(fmt.Sprintf("_:newBody <Author> <u%s> .\n", p.LastEditorUserId))
-			b.WriteString(fmt.Sprintf("_:newBody <Post> <%s> .\n", node))
-			b.WriteString(fmt.Sprintf("_:newBody <Text> %q .\n", p.Body))
-			b.WriteString(fmt.Sprintf("_:newBody <Type> \"Body\" .\n"))
+				// Generate tag node for each tag in the tag string
+				tagList := parseTags(p.Tags)
+				for idx, tag := range tagList {
+					str = fmt.Sprintf("<t-%v> <Timestamp> %q .\n", idx, p.LastEditDate)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<t-%v> <Author> <u%s> .\n", idx, p.LastEditorUserId)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<t-%v> <Post> <%s> .\n", idx, node)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<t-%v> <Text> %q .\n", idx, tag)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<t-%v> <Type> \"Tag\" .\n", idx)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<%s> <Tags> <t-%v> .\n", node, idx)
+					w.Write([]byte(str))
+				}
 
-			b.WriteString(fmt.Sprintf("<%s> <Body> _:newBody .\n", node))
-		}
+				{
+					str = fmt.Sprintf("<ph%v> <Timestamp> %q .\n", postHistoryIdx, p.LastEditDate)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<ph%v> <Author> <u%s> .\n", postHistoryIdx, p.LastEditorUserId)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<ph%v> <Post> <%s> .\n", postHistoryIdx, node)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<ph%v> <Text> %q .\n", postHistoryIdx, p.Body)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<ph%v> <Type> \"Body\" .\n", postHistoryIdx)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<%s> <Body> <ph%v> .\n", node, postHistoryIdx)
+					w.Write([]byte(str))
+					postHistoryIdx++
+				}
 
-		// Now create the actual post.
-		if p.PostTypeId == 1 {
-			b.WriteString(fmt.Sprintf("<%s> <Type> \"Question\" .\n", node))
+				// Now create the actual post.
+				if p.PostTypeId == 1 {
+					str = fmt.Sprintf("<%s> <Type> \"Question\" .\n", node)
+					w.Write([]byte(str))
 
-			// Relation from question to accepted answer.
-			if len(p.AcceptedAnswerId) > 0 {
-				b.WriteString(fmt.Sprintf("<%s> <Chosen.Answer> <p%s> .\n", node, p.AcceptedAnswerId))
-				b.WriteString(fmt.Sprintf("<%s> <Has.Answer> <p%s> .\n", node, p.AcceptedAnswerId))
+					// Relation from question to accepted answer.
+					if len(p.AcceptedAnswerId) > 0 {
+						str = fmt.Sprintf("<%s> <Chosen.Answer> <p%s> .\n", node, p.AcceptedAnswerId)
+						w.Write([]byte(str))
+						str = fmt.Sprintf("<%s> <Has.Answer> <p%s> .\n", node, p.AcceptedAnswerId)
+						w.Write([]byte(str))
+					}
+
+				} else if p.PostTypeId == 2 {
+					str = fmt.Sprintf("<%s> <Type> \"Answer\" .\n", node)
+					w.Write([]byte(str))
+
+					// Relation from question to answer.
+					if len(p.ParentId) > 0 {
+						str = fmt.Sprintf("<p%s> <Has.Answer> <%s> .\n", p.ParentId, node)
+						w.Write([]byte(str))
+					}
+				} else {
+					// Not sure what this is. It isn't documented.
+					continue
+				}
+
+				if len(p.OwnerUserId) > 0 {
+					str = fmt.Sprintf("<%s> <Owner> <u%s> .\n", node, p.OwnerUserId)
+					w.Write([]byte(str))
+				}
+				//b.WriteString(fmt.Sprintf("<%s> <Score> \"%d\" .\n", node, p.Score))
+				str = fmt.Sprintf("<%s> <ViewCount> \"%d\" .\n", node, p.ViewCount)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<%s> <Timestamp> %q .\n", node, p.CreationDate)
+				w.Write([]byte(str))
 			}
-
-		} else if p.PostTypeId == 2 {
-			b.WriteString(fmt.Sprintf("<%s> <Type> \"Answer\" .\n", node))
-
-			// Relation from question to answer.
-			if len(p.ParentId) > 0 {
-				b.WriteString(fmt.Sprintf("<p%s> <Has.Answer> <%s> .\n", p.ParentId, node))
-			}
-		} else {
-			// Not sure what this is. It isn't documented.
-			continue
 		}
-
-		if len(p.OwnerUserId) > 0 {
-			b.WriteString(fmt.Sprintf("<%s> <Owner> <u%s> .\n", node, p.OwnerUserId))
-		}
-		//b.WriteString(fmt.Sprintf("<%s> <Score> \"%d\" .\n", node, p.Score))
-		b.WriteString(fmt.Sprintf("<%s> <ViewCount> \"%d\" .\n", node, p.ViewCount))
-		b.WriteString(fmt.Sprintf("<%s> <Timestamp> %q .\n", node, p.CreationDate))
-
-		b.WriteString("}}")
-		wg.Add(1)
-		go send(&b)
 	}
 
-	for _, l := range logs.Rows {
-		if l.PostHistoryTypeId > 9 {
-			// Ignore for this demo.
-			continue
+	for {
+		t, _ := phd.Token()
+		if t == nil {
+			break
 		}
-		var b bytes.Buffer
 
-		b.WriteString("mutation { set { ")
-		b.WriteString(fmt.Sprintf("_:new <Timestamp> %q .\n", l.CreationDate))
-		b.WriteString(fmt.Sprintf("_:new <Author> <u%s> .\n", l.UserId))
-		b.WriteString(fmt.Sprintf("_:new <Post> <p%s> .\n", l.PostId))
+		switch se := t.(type) {
+		case xml.StartElement:
+			if se.Name.Local == "row" {
+				var l PostHistory
+				phd.DecodeElement(&l, &se)
 
-		tid := l.PostHistoryTypeId % 3
+				if l.PostHistoryTypeId > 9 {
+					// Ignore for this demo.
+					continue
+				}
 
-		switch tid {
-		case 0: // Tags
-			b.WriteString(fmt.Sprintf("_:new <Text> %q .\n", l.Text))
-			b.WriteString(fmt.Sprintf("_:new <Type> \"Tags\" .\n"))
-		case 1: // Title
-			b.WriteString(fmt.Sprintf("_:new <Text> %q .\n", l.Text))
-			b.WriteString(fmt.Sprintf("_:new <Type> \"Title\" .\n"))
-		case 2: // Body
-			b.WriteString(fmt.Sprintf("_:new <Text> %q .\n", l.Text))
-			b.WriteString(fmt.Sprintf("_:new <Type> \"Body\" .\n"))
+				str = fmt.Sprintf("<ph%v> <Timestamp> %q .\n", postHistoryIdx, l.CreationDate)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<ph%v> <Author> <u%s> .\n", postHistoryIdx, l.UserId)
+				w.Write([]byte(str))
+				str = fmt.Sprintf("<ph%v> <Post> <p%s> .\n", postHistoryIdx, l.PostId)
+				w.Write([]byte(str))
+
+				tid := l.PostHistoryTypeId % 3
+
+				switch tid {
+				case 0: // Tags
+					str = fmt.Sprintf("<ph%v> <Text> %q .\n", postHistoryIdx, l.Text)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<ph%v> <Type> \"Tags\" .\n")
+					w.Write([]byte(str))
+				case 1: // Title
+					str = fmt.Sprintf("<ph%v> <Text> %q .\n", postHistoryIdx, l.Text)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<ph%v> <Type> \"Title\" .\n")
+					w.Write([]byte(str))
+				case 2: // Body
+					str = fmt.Sprintf("<ph%v> <Text> %q .\n", postHistoryIdx, l.Text)
+					w.Write([]byte(str))
+					str = fmt.Sprintf("<ph%v> <Type> \"Body\" .\n")
+					w.Write([]byte(str))
+				}
+			}
 		}
-		b.WriteString("}}")
-		wg.Add(1)
-		go send(&b)
 	}
-	wg.Wait()
 
-	fmt.Println(len(posts.Rows), "processed")
+	log.Println("Finished generating RDF.")
+	err = w.Flush()
+	check(err)
+
+	err = w.Close()
+	check(err)
+
+	err = o.Close()
+	check(err)
 }

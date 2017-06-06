@@ -17,7 +17,7 @@ import (
 
 var (
 	dir    = flag.String("dir", "", "Directory which holds Votes.xml file")
-	output = flag.String("output", "out.rdf.gz", "Output rdf.gz file")
+	output = flag.String("output", "votes.rdf.gz", "Output rdf.gz file")
 )
 
 // random generates a random integer given a range
