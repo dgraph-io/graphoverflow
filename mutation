@@ -14,7 +14,7 @@ mutation {
     Body: uid @reverse .
     Post: uid @reverse .
     PostCount: int @index .
-    Tag: uid @reverse .
+    Tags: uid @reverse .
     Timestamp: datetime .
     GitHubID: string @index(exact) .
     Has.Answer: uid @reverse .
