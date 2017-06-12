@@ -1,2 +1,4 @@
-out.rdf.gz
+**/*.rdf.gz
+/p
+/w
 npm-debug.log
