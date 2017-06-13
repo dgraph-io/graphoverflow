@@ -48,8 +48,11 @@
 }
 
 .post {
-  border-bottom: 1px solid #dedede;
   padding: 20px 7px;
+
+  &.answer {
+    border-bottom: 1px solid #dedede;
+  }
 }
 
 .related-question-item {

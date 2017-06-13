@@ -1,3 +1,5 @@
+import { ALL_ANSWER_TABS } from "../lib/const";
+
 const HistoryFragment = `
 Author {
   DisplayName
@@ -31,6 +33,7 @@ Owner {
   _uid_
 }
 Timestamp
+Type
 UpvoteCount: count(Upvote)
 DownvoteCount: count(Downvote)
 History: ~Post(orderdesc: Timestamp) {
@@ -57,9 +60,67 @@ export function getAnswerQuery(answerUID) {
   }`;
 }
 
+export function getAnswersQuery(
+  questionUID,
+  sortBy = ALL_ANSWER_TABS.TAB_VOTE
+) {
+  if (sortBy === ALL_ANSWER_TABS.TAB_ACTIVE) {
+    return `{
+      var (id: ${questionUID}) {
+        Has.Answer {
+          answerTs as Timestamp
+          Comment {
+            commentTs as Timestamp
+          }
+          commentTsMax as max(var(commentTs))
+          lastActive as math(max(answerTs, commentTsMax))
+        }
+      }
+
+      question(id: ${questionUID}) {
+        Has.Answer(orderdesc: var(lastActive)) {
+          ${AnswerFragment}
+        }
+      }
+    }`;
+  } else if (sortBy === ALL_ANSWER_TABS.TAB_OLDEST) {
+    return `{
+      question(id: ${questionUID}) {
+        Has.Answer(orderasc: Timestamp) {
+          ${AnswerFragment}
+        }
+      }
+    }`;
+  }
+
+  return `{
+    var (id: ${questionUID}) {
+      Has.Answer {
+        uv as count(Upvote)
+        dv as count(Downvote)
+        answer_score as math(uv - dv)
+      }
+    }
+
+    question(id: ${questionUID}) {
+      Has.Answer(orderdesc: var(answer_score)) {
+        ${AnswerFragment}
+      }
+    }
+  }`;
+}
+
 // getQuestionQuery generates a query to fetch the question with the given UID
 export function getQuestionQuery(questionUID) {
   return `{
+    var (id: ${questionUID}) {
+      Has.Answer {
+        uv as count(Upvote)
+        dv as count(Downvote)
+        answer_score as math(uv - dv)
+      }
+    }
+
     question(id: ${questionUID}) {
       _uid_
       Title {
@@ -75,6 +136,7 @@ export function getQuestionQuery(questionUID) {
       }
       ViewCount
       Timestamp
+      Type
       UpvoteCount: count(Upvote)
       DownvoteCount: count(Downvote)
 
@@ -82,7 +144,9 @@ export function getQuestionQuery(questionUID) {
         TagName: Text
       }
 
-      Has.Answer {
+      AnswerCount: count(Has.Answer)
+
+      Has.Answer(orderdesc: var(answer_score)) {
         ${AnswerFragment}
       }
 

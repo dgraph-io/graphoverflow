@@ -1,4 +1,6 @@
 import React from "react";
+import pluralize from "pluralize";
+import classnames from "classnames";
 
 import Post from "./Post";
 import PostInfo from "./PostInfo";
@@ -11,7 +13,10 @@ const QuestionLayout = ({
   answers,
   currentUser,
   onDeletePost,
-  onCreateAnswer
+  onCreateAnswer,
+  currentAnswerTab,
+  onChangeAnswerTab,
+  allAnswerTabs
 }) => {
   const questionScore = question.UpvoteCount - question.DownvoteCount;
 
@@ -24,6 +29,57 @@ const QuestionLayout = ({
             currentUser={currentUser}
             onDeletePost={onDeletePost}
           />
+
+          <div className="heading">
+            <div className="answer-count">
+              {pluralize("Answer", question.AnswerCount, true)}
+            </div>
+
+            <ul className="tab-navigation">
+              <li className="tab-item">
+                <a
+                  href="#tab-vote"
+                  className={classnames("tab-link", {
+                    active: currentAnswerTab === allAnswerTabs.TAB_ACTIVE
+                  })}
+                  onClick={e => {
+                    e.preventDefault();
+                    onChangeAnswerTab(allAnswerTabs.TAB_ACTIVE);
+                  }}
+                >
+                  Active
+                </a>
+              </li>
+              <li className="tab-item">
+                <a
+                  href="#tab-vote"
+                  className={classnames("tab-link", {
+                    active: currentAnswerTab === allAnswerTabs.TAB_OLDEST
+                  })}
+                  onClick={e => {
+                    e.preventDefault();
+                    onChangeAnswerTab(allAnswerTabs.TAB_OLDEST);
+                  }}
+                >
+                  Oldest
+                </a>
+              </li>
+              <li className="tab-item">
+                <a
+                  href="#tab-vote"
+                  className={classnames("tab-link", {
+                    active: currentAnswerTab === allAnswerTabs.TAB_VOTE
+                  })}
+                  onClick={e => {
+                    e.preventDefault();
+                    onChangeAnswerTab(allAnswerTabs.TAB_VOTE);
+                  }}
+                >
+                  Votes
+                </a>
+              </li>
+            </ul>
+          </div>
 
           {answers.length > 0
             ? <div className="answers">

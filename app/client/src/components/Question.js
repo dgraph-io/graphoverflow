@@ -5,10 +5,15 @@ import { withRouter } from "react-router-dom";
 import cloneDeep from "lodash/cloneDeep";
 
 import { runQuery } from "../lib/helpers";
-import { getQuestionQuery, getAnswerQuery } from "../queries/Question";
+import {
+  getQuestionQuery,
+  getAnswerQuery,
+  getAnswersQuery
+} from "../queries/Question";
 import QuestionLayout from "./QuestionLayout";
 
 import "../assets/styles/Question.css";
+import { ALL_ANSWER_TABS } from "../lib/const";
 
 class Question extends React.Component {
   constructor(props) {
@@ -17,7 +22,8 @@ class Question extends React.Component {
     this.state = {
       questionLoaded: false,
       question: {},
-      answers: []
+      answers: [],
+      currentAnswerTab: ALL_ANSWER_TABS.TAB_VOTE
     };
   }
 
@@ -96,9 +102,36 @@ class Question extends React.Component {
       });
   };
 
+  refreshAnswers = (questionUID, tabName) => {
+    const query = getAnswersQuery(questionUID, tabName);
+
+    runQuery(query).then(res => {
+      const question = res.question[0];
+      const answers = question["Has.Answer"];
+
+      console.log(answers);
+
+      this.setState({ answers });
+    });
+  };
+
+  handleChangeAnswerTab = tabName => {
+    const questionUID = this.props.match.params.uid;
+
+    this.setState({ currentAnswerTab: tabName }, () => {
+      this.refreshAnswers(questionUID, tabName);
+    });
+  };
+
   render() {
     const { user } = this.props;
-    const { question, relatedQuestions, answers, questionLoaded } = this.state;
+    const {
+      question,
+      relatedQuestions,
+      answers,
+      questionLoaded,
+      currentAnswerTab
+    } = this.state;
 
     return (
       <div className="container">
@@ -110,8 +143,11 @@ class Question extends React.Component {
                   relatedQuestions={relatedQuestions}
                   answers={answers}
                   currentUser={user}
+                  currentAnswerTab={currentAnswerTab}
+                  allAnswerTabs={ALL_ANSWER_TABS}
                   onDeletePost={this.handleDeletePost}
                   onCreateAnswer={this.handleCreateAnswer}
+                  onChangeAnswerTab={this.handleChangeAnswerTab}
                 />
               : <div>Loading</div>}
           </div>

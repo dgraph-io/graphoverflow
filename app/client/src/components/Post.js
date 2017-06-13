@@ -1,6 +1,7 @@
 import React from "react";
 import marked from "marked";
 import request from "superagent";
+import classnames from "classnames";
 
 import PostHistory from "./PostHistory";
 import PostActions from "./PostActions";
@@ -88,7 +89,12 @@ class Post extends React.Component {
     const { comments, userUpvoted, userDownvoted } = this.state;
 
     return (
-      <div className="post">
+      <div
+        className={classnames("post", {
+          question: post.Type === "Question",
+          answer: post.Type === "Answer"
+        })}
+      >
         {/* questions have title and answers don't */}
         {post.Title
           ? <h1 className="post-title">{post.Title[0].Text}</h1>
