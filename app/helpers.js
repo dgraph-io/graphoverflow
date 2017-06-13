@@ -9,8 +9,15 @@ export function runQuery(queryText) {
     console.log(queryText);
   }
 
+  let endpointBaseURL;
+  if (process.env.NODE_ENV === "prod") {
+    endpointBaseURL = "http://54.215.210.242";
+  } else {
+    endpointBaseURL = "http://127.0.0.1";
+  }
+
   return request
-    .post("http://localhost:8080/query")
+    .post(`${endpointBaseURL}:8080/query`)
     .send(queryText)
     .then(res => {
       return JSON.parse(res.text);
