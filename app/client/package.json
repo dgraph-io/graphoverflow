@@ -8,6 +8,7 @@
     }
   },
   "dependencies": {
+    "classnames": "^2.2.5",
     "lodash": "^4.17.4",
     "pluralize": "^5.0.0",
     "react": "^15.5.4",
