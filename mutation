@@ -2,6 +2,7 @@ mutation {
   schema {
     AboutMe: string @index(fulltext) .
     Author: uid @reverse .
+    Owner: uid @reverse .
     DisplayName: string @index(exact) .
     Location: string @index(term) .
     Reputation: int @index(int) .
