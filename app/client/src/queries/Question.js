@@ -69,11 +69,15 @@ export function getAnswersQuery(
       var (id: ${questionUID}) {
         Has.Answer {
           answerTs as Timestamp
+          ~Post {
+            historyTs as Timestamp
+          }
           Comment {
             commentTs as Timestamp
           }
           commentTsMax as max(var(commentTs))
-          lastActive as math(max(answerTs, commentTsMax))
+          historyTsMax as max(var(historyTs))
+          lastActive as math(max(max(answerTs, commentTsMax), historyTsMax))
         }
       }
 
