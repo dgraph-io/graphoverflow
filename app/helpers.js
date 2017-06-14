@@ -10,9 +10,9 @@ export function runQuery(queryText) {
   }
 
   let endpointBaseURL;
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV === "prod") {
     endpointBaseURL = "http://54.215.210.242";
-  } else if (process.env.NODE_ENV === "development") {
+  } else {
     endpointBaseURL = "http://127.0.0.1";
   }
 

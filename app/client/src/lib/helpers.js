@@ -3,8 +3,15 @@ import request from "superagent";
 // runQuery makes a post request to the server to run query and returns a
 // promise that resolves with a response
 export function runQuery(queryText) {
+  let endpointBaseURL;
+  if (process.env.NODE_ENV === "prod") {
+    endpointBaseURL = "http://54.215.210.242";
+  } else {
+    endpointBaseURL = "http://127.0.0.1";
+  }
+
   return request
-    .post("http://localhost:8080/query")
+    .post(`http://${endpointBaseURL}:8080/query`)
     .send(queryText)
     .then(res => {
       return JSON.parse(res.text);
