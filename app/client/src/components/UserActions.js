@@ -1,10 +1,13 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const UserActions = ({ onLogout, user }) => {
   return (
     <div className="actions">
       <div className="user">
-        {user.DisplayName}
+        <Link to={`/users/${user._uid_}`}>
+          {user.DisplayName}
+        </Link>
       </div>
       <div className="separator">
         ·
