@@ -2,7 +2,7 @@ import request from "superagent";
 
 export function getEndpointBaseURL() {
   let endpointBaseURL;
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV === "prod") {
     endpointBaseURL = "http://54.215.210.242";
   } else {
     endpointBaseURL = "http://127.0.0.1";

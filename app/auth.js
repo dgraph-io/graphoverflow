@@ -87,7 +87,7 @@ export function configPassport(passport) {
   });
 
   let callbackURL;
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV === "prod") {
     callbackURL = `${getEndpointBaseURL()}`;
   } else {
     callbackURL = `${getEndpointBaseURL()}:3000`;
