@@ -3,6 +3,8 @@ import React from "react";
 import CommentItem from "./CommentItem";
 import "../assets/styles/CommentList.css";
 
+const commentDisplayDefaultLimit = 4;
+
 export default class CommentList extends React.Component {
   constructor(props) {
     super(props);
@@ -24,7 +26,7 @@ export default class CommentList extends React.Component {
     if (expanded) {
       commentsOnDisplay = comments;
     } else {
-      commentsOnDisplay = comments.slice(0, 4);
+      commentsOnDisplay = comments.slice(0, commentDisplayDefaultLimit - 1);
     }
 
     return (
@@ -49,9 +51,12 @@ export default class CommentList extends React.Component {
             this.handleToggleExpanded();
           }}
         >
-          {expanded
-            ? <span>Collapse comments</span>
-            : <span>Show all {comments.length} comments</span>}
+          {comments.length > commentDisplayDefaultLimit
+            ? expanded
+                ? <span>Collapse comments</span>
+                : <span>Show all {comments.length} comments</span>
+            : null}
+
         </a>
       </div>
     );

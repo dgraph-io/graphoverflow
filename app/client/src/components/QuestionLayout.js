@@ -103,11 +103,19 @@ const QuestionLayout = ({
         </div>
       </div>
 
-      <div className="row">
-        <div className="col-9">
-          <AnswerComposer question={question} onCreateAnswer={onCreateAnswer} />
-        </div>
-      </div>
+      {currentUser
+        ? <div className="row">
+            <div className="col-9">
+              <AnswerComposer
+                question={question}
+                onCreateAnswer={onCreateAnswer}
+              />
+            </div>
+          </div>
+        : <div>
+            <a href="/api/auth">Login</a> to answer questions
+          </div>}
+
     </div>
   );
 };

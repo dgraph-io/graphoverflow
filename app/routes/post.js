@@ -82,6 +82,7 @@ function fetchComment(uid) {
 
 function createPost({ title, body, postType, ownerID, parentPostID }) {
   const now = new Date().toISOString();
+  const escapedBody = body.replace(/\n/g, "\\n");
 
   // THOUGHTS: composing RDFs dynamically using string interpolation is kinda
   // painful. But this is a common scenario when making apps.
@@ -117,7 +118,7 @@ mutation {
     <_:newBody> <Timestamp> "${now}" .
     <_:newBody> <Post> <_:post> .
     <_:newBody> <Author> <${ownerID}> .
-    <_:newBody> <Text> "${body}" .
+    <_:newBody> <Text> "${escapedBody}" .
     <_:newBody> <Type> "Body" .
     <_:post> <Body> <_:newBody> .
 
@@ -140,6 +141,7 @@ mutation {
 
 function updatePost({ post, title, body, currentUserUID }) {
   const now = new Date().toISOString();
+  const escapedBody = body.replace(/\n/g, "\\n");
 
   let titleSetMutation = "";
   let titleDeleteMutation = "";
@@ -164,7 +166,7 @@ function updatePost({ post, title, body, currentUserUID }) {
   <_:newBody> <Timestamp> "${now}" .
   <_:newBody> <Post> <${post._uid_}> .
   <_:newBody> <Author> <${currentUserUID}> .
-  <_:newBody> <Text> "${body}" .
+  <_:newBody> <Text> "${escapedBody}" .
   <_:newBody> <Type> "Body" .
   <${post._uid_}> <Body> <_:newBody> .
 `;

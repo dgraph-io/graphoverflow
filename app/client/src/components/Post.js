@@ -17,7 +17,7 @@ class Post extends React.Component {
     super(props);
 
     this.state = {
-      comments: props.post.Comment,
+      comments: props.post.Comment || [],
       userUpvoted: false,
       userDownvoted: false
     };
