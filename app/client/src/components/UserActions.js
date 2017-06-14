@@ -12,14 +12,7 @@ const UserActions = ({ onLogout, user }) => {
       <div className="separator">
         ·
       </div>
-      <a
-        href="#logout"
-        onClick={e => {
-          e.preventDefault();
-          onLogout();
-        }}
-        className="action"
-      >
+      <a href="/api/logout" className="action">
         <i className="fa fa-sign-out" /> Sign out
       </a>
     </div>

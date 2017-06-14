@@ -59,6 +59,11 @@ app.get(
   }
 );
 
+app.get("/api/logout", (req, res) => {
+  req.logout();
+  res.redirect("/");
+});
+
 app.use("/api/posts", postRoutes);
 
 app.use((err, req, res, next) => {
