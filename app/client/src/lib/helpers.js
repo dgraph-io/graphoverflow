@@ -4,7 +4,7 @@ import request from "superagent";
 // promise that resolves with a response
 export function runQuery(queryText) {
   let endpointBaseURL;
-  if (process.env.NODE_ENV === "prod") {
+  if (process.env.NODE_ENV === "production") {
     endpointBaseURL = "http://54.215.210.242";
   } else {
     endpointBaseURL = "http://127.0.0.1";
