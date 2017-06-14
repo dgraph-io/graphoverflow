@@ -1,14 +1,20 @@
 import request from "superagent";
 
-// runQuery makes a post request to the server to run query and returns a
-// promise that resolves with a response
-export function runQuery(queryText) {
+export function getEndpointBaseURL() {
   let endpointBaseURL;
   if (process.env.NODE_ENV === "production") {
     endpointBaseURL = "http://54.215.210.242";
   } else {
     endpointBaseURL = "http://127.0.0.1";
   }
+
+  return endpointBaseURL;
+}
+
+// runQuery makes a post request to the server to run query and returns a
+// promise that resolves with a response
+export function runQuery(queryText) {
+  const endpointBaseURL = getEndpointBaseURL();
 
   return request
     .post(`${endpointBaseURL}:8080/query`)

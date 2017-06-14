@@ -1,5 +1,5 @@
 import { Strategy as GitHubStrategy } from "passport-github";
-import { runQuery } from "./helpers";
+import { runQuery, getEndpointBaseURL } from "./helpers";
 
 // createUser persists a new user node
 function createUser(accessToken, displayName, GitHubID) {
@@ -86,12 +86,19 @@ export function configPassport(passport) {
       });
   });
 
+  let callbackURL;
+  if (process.env.NODE_ENV === "production") {
+    callbackURL = `${getEndpointBaseURL()}`;
+  } else {
+    callbackURL = `${getEndpointBaseURL()}:3000`;
+  }
+
   passport.use(
     new GitHubStrategy(
       {
         clientID: process.env.GitHubClientID,
         clientSecret: process.env.GitHubClientSecret,
-        callbackURL: "http://127.0.0.1:3000/api/auth/github/callback"
+        callbackURL: `${callbackURL}/api/auth/github/callback`
       },
       (accessToken, refreshToken, profile, cb) => {
         console.log(profile);
