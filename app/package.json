@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"NODE_ENV=prod npm run server\" \"npm run client\"",
-    "server": "node server.babel.js",
+    "start": "concurrently \"NODE_ENV=prod npm run server\" \"node client.js\"",
+    "server": "node api.babel.js",
     "client": "node runClient.js",
-    "dev": "concurrently \"NODE_ENV=dev node_modules/nodemon/bin/nodemon.js server.babel.js\" \"npm run client\""
+    "dev": "concurrently \"NODE_ENV=dev node_modules/nodemon/bin/nodemon.js api.babel.js\" \"npm run client\""
   },
   "author": "Sung Won Cho <mikeswcho@gmail.com> (https://sungwoncho.io/)",
   "license": "ISC",
@@ -28,6 +28,7 @@
     "dotenv": "^4.0.0",
     "express": "^4.15.3",
     "express-session": "^1.15.3",
+    "http-proxy": "^1.16.2",
     "passport": "^0.3.2",
     "passport-github": "^1.1.0",
     "react-redux": "^5.0.5",

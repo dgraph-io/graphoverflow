@@ -10,4 +10,4 @@ require("babel-polyfill");
 require("babel-register")({
   presets: ["es2015", "es2017", "stage-0"]
 });
-require("./server.js");
+require("./api.js");
