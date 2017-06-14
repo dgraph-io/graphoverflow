@@ -11,7 +11,7 @@ export function runQuery(queryText) {
   }
 
   return request
-    .post(`http://${endpointBaseURL}:8080/query`)
+    .post(`${endpointBaseURL}:8080/query`)
     .send(queryText)
     .then(res => {
       return JSON.parse(res.text);
