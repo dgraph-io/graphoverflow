@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"NODE_ENV=prod npm run server\" \"NODE_ENV=prod node client.js\"",
+    "start": "concurrently \"NODE_ENV=prod npm run server\" \"node client.js\"",
     "server": "node api.babel.js",
     "client": "node runClient.js",
     "dev": "concurrently \"NODE_ENV=dev node_modules/nodemon/bin/nodemon.js api.babel.js\" \"npm run client\""
