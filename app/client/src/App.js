@@ -10,6 +10,7 @@ import About from "./components/About";
 import Question from "./components/Question";
 import NewQuestion from "./components/NewQuestion";
 import EditPost from "./components/EditPost";
+import User from "./components/User";
 import { login, logout } from "./actions/session";
 import LoggedInRoute from "./components/hocs/LoggedInRoute";
 
@@ -48,6 +49,7 @@ class App extends Component {
           <main className="main-content">
             <Route exact path="/" component={Home} />
             <Route path="/about" component={About} />
+            <Route path="/users/:uid" component={User} />
 
             <Switch>
               <LoggedInRoute

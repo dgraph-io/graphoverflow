@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 import { trimStr, stripTags } from "../lib/helpers";
 import avatar from "../assets/images/diggy-face.png";
@@ -9,9 +10,9 @@ const TopUserItem = ({ user }) => {
       <div className="info-row">
         <img src={avatar} alt={user.DisplayName} className="user-avatar" />
         <div className="info">
-          <a href="#" className="username">
+          <Link to={`/users/${user._uid_}`} className="username">
             {user.DisplayName}
-          </a>
+          </Link>
           <p className="about-me">
             {trimStr(stripTags(user.AboutMe), 70)}
           </p>
