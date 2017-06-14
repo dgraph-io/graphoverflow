@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
 import QuestionList from "./QuestionList";
@@ -10,7 +11,8 @@ import {
   recentQuestionsQuery,
   hotQuestionsQuery,
   topTagsQuery,
-  topUsersQuery
+  topUsersQuery,
+  getRecommendedQuestionsQuery
 } from "../queries/Home";
 import "../assets/styles/Home.css";
 
@@ -18,10 +20,10 @@ import "../assets/styles/Home.css";
 const ALL_TABS = {
   TAB_RECENT: "tab/recent",
   TAB_HOT: "tab/hot",
-  TAB_INTERESTING: "tab/interesting"
+  TAB_RECOMMENDED: "tab/recommended"
 };
 
-export default class Home extends React.Component {
+class Home extends React.Component {
   constructor(props) {
     super(props);
 
@@ -51,20 +53,33 @@ export default class Home extends React.Component {
 
   // refreshQuestions fetches the questions again
   refreshQuestions = () => {
+    const { user } = this.props;
     const { currentTab } = this.state;
 
     let query = "";
     if (currentTab === ALL_TABS.TAB_HOT) {
       query = `{ ${hotQuestionsQuery} }`;
-    } else if (currentTab) {
+    } else if (currentTab === ALL_TABS.TAB_RECOMMENDED) {
+      if (!user) {
+        this.setState({ questions: [] });
+        return;
+      }
+      query = getRecommendedQuestionsQuery(user._uid_);
+    } else if (currentTab === ALL_TABS.TAB_RECENT) {
       query = `{ ${recentQuestionsQuery} }`;
     }
 
     this.setState({ questionsLoaded: false }, () => {
-      runQuery(query).then(res => {
-        const { questions } = res;
-        this.setState({ questions, questionsLoaded: true });
-      });
+      runQuery(query)
+        .then(res => {
+          const { questions } = res;
+          this.setState({ questions, questionsLoaded: true });
+        })
+        // an error can occur due to https://github.com/dgraph-io/dgraph/issues/1057
+        .catch(err => {
+          console.log(err);
+          this.setState({ questions: [], questionsLoaded: true });
+        });
     });
   };
 
@@ -73,6 +88,7 @@ export default class Home extends React.Component {
   };
 
   render() {
+    const { user } = this.props;
     const {
       questions,
       topTags,
@@ -100,6 +116,21 @@ export default class Home extends React.Component {
                 ? <QuestionList questions={questions} />
                 : <div>Loading...</div>}
 
+              {currentTab === ALL_TABS.TAB_RECOMMENDED && !user
+                ? <div className="login-needed-alert">
+                    You need to
+                    {" "}
+                    <a href="/api/auth">login</a>
+                    {" "}
+                    to view custom recommendation.
+                  </div>
+                : null}
+              {currentTab === ALL_TABS.TAB_RECOMMENDED && questions.length === 0
+                ? <div className="login-needed-alert">
+                    Start answering questions to get custom recommendation.
+                  </div>
+                : null}
+
               <div>
                 Looking for more? Try to search for a question.
               </div>
@@ -120,3 +151,11 @@ export default class Home extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  user: state.session.user
+});
+
+const mapDispatchToProps = dispatch => ({});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

@@ -60,6 +60,55 @@ questions(id: var(score), orderdesc: var(score), first: 100) {
 }
 `;
 
+export function getRecommendedQuestionsQuery(userUID) {
+  return `
+  {
+    user as var(id: ${userUID}) {
+      a as math(1)
+      ~Owner @filter(eq(Type, "Answer")) {
+        ~Has.Answer {
+          Tags {
+            sc1 as math(a)
+            Text
+          }
+        }
+      }
+    }
+
+    mytoptags as var(id: var(sc1), orderdesc: var(sc1), first: 5) {
+      Text
+      var(sc1)
+    }
+
+    var(id: var(user)) {
+      const as math(1)
+      ~Owner @filter(eq(Type, "Answer")) {
+        ~Has.Answer {
+          Has.Answer {
+            Owner {
+              sc as math(const)
+            }
+          }
+        }
+      }
+    }
+
+    var(id: var(sc), orderdesc: var(sc), first: 10) {
+      DisplayName
+      var(sc)
+      ~Owner @filter(eq(Type, "Answer")) {
+        ~Has.Answer { # @filter(not var(answered)) {
+          fscore as count(Tags @filter(var(mytoptags)))
+        }
+      }
+    }
+
+    questions(id: var(fscore), orderdesc: var(fscore), first: 5)  {
+      ${questionFragment}
+    }
+  }`;
+}
+
 export const topTagsQuery = `
 t as var(func: eq(Type, "Tag")) {
   c as count(~Tags)

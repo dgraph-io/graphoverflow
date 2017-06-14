@@ -7,6 +7,20 @@ const HomeTabNavigation = ({ currentTab, onChangeTab, allTabs }) => {
       <li className="tab-item">
         <a
           className={classnames("tab-link", {
+            active: currentTab === allTabs.TAB_RECOMMENDED
+          })}
+          href="#recommended"
+          onClick={e => {
+            e.preventDefault();
+            onChangeTab(allTabs.TAB_RECOMMENDED);
+          }}
+        >
+          Recommended
+        </a>
+      </li>
+      <li className="tab-item">
+        <a
+          className={classnames("tab-link", {
             active: currentTab === allTabs.TAB_RECENT
           })}
           href="#recent"
