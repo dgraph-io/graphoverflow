@@ -148,15 +148,13 @@ func main() {
 				for _, tag := range tagList {
 					str = fmt.Sprintf("<t-%v> <Timestamp> %q .\n", tag, p.LastEditDate)
 					w.Write([]byte(str))
-					str = fmt.Sprintf("<t-%v> <Author> <u%s> .\n", tag, p.LastEditorUserId)
-					w.Write([]byte(str))
-					str = fmt.Sprintf("<t-%v> <Post> <%s> .\n", tag, node)
-					w.Write([]byte(str))
+					//			str = fmt.Sprintf("<t-%v> <Post> <%s> .\n", tag, node)
+					//			w.Write([]byte(str))
 					str = fmt.Sprintf("<t-%v> <Text> %q .\n", tag, tag)
 					w.Write([]byte(str))
 					str = fmt.Sprintf("<t-%v> <Type> \"Tag\" .\n", tag)
 					w.Write([]byte(str))
-					str = fmt.Sprintf("<%s> <Tags> <t-%v> .\n", node, tag)
+					str = fmt.Sprintf("<%s> <Tag> <t-%v> .\n", node, tag)
 					w.Write([]byte(str))
 				}
 
@@ -259,6 +257,8 @@ func main() {
 					str = fmt.Sprintf("<ph%v> <Type> \"Body\" .\n")
 					w.Write([]byte(str))
 				}
+
+				postHistoryIdx++
 			}
 		}
 	}

@@ -22,5 +22,6 @@ mutation {
     Comment: uid @reverse .
     Upvote: uid @reverse .
     Downvote: uid @reverse .
+    Tag: uid @reverse .
   }
 }
