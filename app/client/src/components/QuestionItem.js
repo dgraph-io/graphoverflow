@@ -64,8 +64,8 @@ const QuestionItem = ({ question, history }) => {
             </Link>
           </div>
           <div className="tags">
-            {question.Tags
-              ? question.Tags.map(tag => {
+            {question.Tag
+              ? question.Tag.map(tag => {
                   return (
                     <div className="tag" key={tag.TagName}>
                       {tag.TagName}

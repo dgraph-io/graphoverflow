@@ -113,7 +113,7 @@ class Post extends React.Component {
               className="post-body"
               dangerouslySetInnerHTML={{ __html: marked(post.Body[0].Text) }}
             />
-            {post.Tags ? <TagList tags={post.Tags} /> : null}
+            {post.Tag ? <TagList tags={post.Tag} /> : null}
             <PostActions
               post={post}
               currentUser={currentUser}

@@ -13,7 +13,7 @@ Owner {
   _uid_
 }
 
-Tags {
+Tag {
   TagName: Text
 }
 
@@ -111,7 +111,7 @@ export function getRecommendedQuestionsQuery(userUID) {
 
 export const topTagsQuery = `
 t as var(func: eq(Type, "Tag")) {
-  c as count(~Tags)
+  c as count(~Tag)
 }
 
 topTags(id: var(t), orderdesc: var(c), first: 10) {

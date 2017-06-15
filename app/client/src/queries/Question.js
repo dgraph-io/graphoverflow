@@ -36,7 +36,7 @@ Timestamp
 Type
 UpvoteCount: count(Upvote)
 DownvoteCount: count(Downvote)
-History: ~Post(orderdesc: Timestamp) {
+History: ~Post(orderdesc: Timestamp, first: 1) {
   ${HistoryFragment}
 }
 Comment {
@@ -144,7 +144,7 @@ export function getQuestionQuery(questionUID) {
       UpvoteCount: count(Upvote)
       DownvoteCount: count(Downvote)
 
-      questionTags as Tags {
+      questionTags as Tag {
         TagName: Text
       }
 
@@ -158,13 +158,13 @@ export function getQuestionQuery(questionUID) {
         ${CommentFragment}
       }
 
-      History: ~Post(orderdesc: Timestamp) {
+      History: ~Post(orderdesc: Timestamp, first: 1) {
         ${HistoryFragment}
       }
     }
 
     tags(id: var(questionTags)) {
-      relatedQuestions: ~Tags(first: 10) {
+      relatedQuestions: ~Tag(first: 10) {
         _uid_
         Title {
           Text

@@ -119,6 +119,7 @@ export function configPassport(passport) {
         runQuery(query)
           .then(res => {
             console.log("res.user", res.user);
+            // FIXME
             if (!res.user) {
               createUser(
                 accessToken,
