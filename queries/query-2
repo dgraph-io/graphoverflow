@@ -1,0 +1,122 @@
+{
+  ##########################
+  # Get the question
+  ##########################
+
+  var (id: 0xd18499a5ac49c3a6) {
+    Has.Answer {
+      uv as count(Upvote)
+      dv as count(Downvote)
+      answer_score as math(uv - dv)
+    }
+  }
+
+  question(id: 0xd18499a5ac49c3a6) {
+    _uid_
+    Title {
+      Text
+    }
+    Body {
+      Text
+    }
+    Owner {
+      DisplayName
+      Reputation
+      _uid_
+    }
+    ViewCount
+    Timestamp
+    Type
+    UpvoteCount: count(Upvote)
+    DownvoteCount: count(Downvote)
+
+    questionTags as Tag {
+      TagName: Text
+    }
+
+    AnswerCount: count(Has.Answer)
+
+
+    ##########################
+    # Get all answers
+    ##########################
+
+    Has.Answer(orderdesc: var(answer_score)) {        
+      _uid_
+      Body {
+        Text
+      }
+      Owner {
+        DisplayName
+        Reputation
+        _uid_
+      }
+      Timestamp
+      Type
+      UpvoteCount: count(Upvote)
+      DownvoteCount: count(Downvote)
+      History: ~Post(orderdesc: Timestamp, first: 1) {
+        
+      Author {
+        DisplayName
+        Reputation
+        _uid_
+      }
+      Type
+      Text
+      Timestamp
+
+      }
+      Comment {
+        
+      _uid_
+      Author {
+        _uid_
+        DisplayName
+      }
+      Text
+      Score
+      Timestamp
+
+      }
+    }
+
+    Comment {        
+      _uid_
+      Author {
+        _uid_
+        DisplayName
+      }
+      Text
+      Score
+      Timestamp
+    }
+
+    History: ~Post(orderdesc: Timestamp, first: 1) {      
+      Author {
+        DisplayName
+        Reputation
+        _uid_
+      }
+      Type
+      Text
+      Timestamp
+    }
+  }
+
+
+  ##########################
+  # Get related questions
+  ##########################
+
+  tags(id: var(questionTags)) {
+    relatedQuestions: ~Tag(first: 10) {
+      _uid_
+      Title {
+        Text
+      }
+      UpvoteCount: count(Upvote)
+      DownvoteCount: count(Downvote)
+    }
+  }
+}
