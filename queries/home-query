@@ -52,7 +52,7 @@
   }
 
   ##########################
-  # Get recently popular users
+  # Get popular users
   ##########################
 
   var(func: eq(Type, "Question"), orderdesc: Timestamp, first: 100) {

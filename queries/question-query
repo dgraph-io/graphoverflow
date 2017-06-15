@@ -68,16 +68,14 @@
 
       }
       Comment {
-        
-      _uid_
-      Author {
         _uid_
-        DisplayName
-      }
-      Text
-      Score
-      Timestamp
-
+        Author {
+          _uid_
+          DisplayName
+        }
+        Text
+        Score
+        Timestamp
       }
     }
 
