@@ -22,10 +22,7 @@ export function runQuery(queryText) {
 
   const endpointBaseURL = getEndpointBaseURL();
 
-  return request
-    .post(`${endpointBaseURL}:8080/query`)
-    .send(queryText)
-    .then(res => {
-      return JSON.parse(res.text);
-    });
+  return request.post(`${endpointBaseURL}/query`).send(queryText).then(res => {
+    return JSON.parse(res.text);
+  });
 }
