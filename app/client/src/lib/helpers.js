@@ -17,7 +17,7 @@ export function runQuery(queryText) {
   const endpointBaseURL = getEndpointBaseURL();
 
   return request
-    .post(`${endpointBaseURL}:8080/query`)
+    .post(`${endpointBaseURL}:8081/query`)
     .send(queryText)
     .then(res => {
       return JSON.parse(res.text);
