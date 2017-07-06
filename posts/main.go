@@ -150,7 +150,7 @@ func main() {
 					w.Write([]byte(str))
 					//			str = fmt.Sprintf("<t-%v> <Post> <%s> .\n", tag, node)
 					//			w.Write([]byte(str))
-					str = fmt.Sprintf("<t-%v> <Text> %q .\n", tag, tag)
+					str = fmt.Sprintf("<t-%v> <Tag.Text> %q .\n", tag, tag)
 					w.Write([]byte(str))
 					str = fmt.Sprintf("<t-%v> <Type> \"Tag\" .\n", tag)
 					w.Write([]byte(str))

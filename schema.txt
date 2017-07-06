@@ -3,11 +3,12 @@ mutation {
     AboutMe: string @index(fulltext) .
     Author: uid @reverse .
     Owner: uid @reverse .
-    DisplayName: string @index(exact) .
+    DisplayName: string @index(hash) .
     Location: string @index(term) .
     Reputation: int @index(int) .
     Score: int @index .
-    Text: string @index(term) .
+    Text: string @index(fulltext) .
+    Tag.Text: string @index(hash) .
     Type: string @index(exact) .
     ViewCount: int @index .
     Vote: uid @reverse .
@@ -17,7 +18,7 @@ mutation {
     PostCount: int @index .
     Tags: uid @reverse .
     Timestamp: datetime .
-    GitHubID: string @index(exact) .
+    GitHubID: string @index(hash) .
     Has.Answer: uid @reverse .
     Comment: uid @reverse .
     Upvote: uid @reverse .
