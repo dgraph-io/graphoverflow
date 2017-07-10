@@ -145,7 +145,7 @@ export function getQuestionQuery(questionUID) {
       DownvoteCount: count(Downvote)
 
       questionTags as Tag {
-        TagName: Text
+        TagName: Tag.Text
       }
 
       AnswerCount: count(Has.Answer)

@@ -14,7 +14,7 @@ Owner {
 }
 
 Tag {
-  TagName: Text
+  TagName: Tag.Text
 }
 
 Has.Answer(orderdesc: Timestamp, first: 1) {
@@ -69,14 +69,14 @@ export function getRecommendedQuestionsQuery(userUID) {
         ~Has.Answer {
           Tags {
             sc1 as math(a)
-            Text
+            Tag.Text
           }
         }
       }
     }
 
     mytoptags as var(id: var(sc1), orderdesc: var(sc1), first: 5) {
-      Text
+      Tag.Text
       var(sc1)
     }
 
@@ -116,7 +116,7 @@ t as var(func: eq(Type, "Tag")) {
 
 topTags(id: var(t), orderdesc: var(c), first: 10) {
   _uid_
-  TagName: Text
+  TagName: Tag.Text
   QuestionCount: var(c)
 }
 `;

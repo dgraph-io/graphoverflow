@@ -9,7 +9,7 @@ export function getQuestionQuery(questionUID) {
         Text
       }
       Tags {
-        TagName: Text
+        TagName: Tag.Text
       }
       Type
       Timestamp
