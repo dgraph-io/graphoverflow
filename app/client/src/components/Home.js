@@ -67,7 +67,7 @@ class Home extends React.Component {
 
     let query = "";
     if (currentTab === ALL_TABS.TAB_HOT) {
-      query = `${getHotQuestionsQuery()}`;
+      query = `{ ${getHotQuestionsQuery()} }`;
     } else if (currentTab === ALL_TABS.TAB_RECOMMENDED) {
       if (!user) {
         this.setState({ questions: [] });
