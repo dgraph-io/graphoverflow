@@ -1,39 +1,37 @@
 export function getSearchResultQuery(searchTerm) {
   return `
-{
-  questions(func: eq(Type, "Question")) @cascade {
+questions(func: eq(Type, "Question")) @cascade {
+  _uid_
+
+  Title @filter(anyoftext(Text, "${searchTerm}")) {
+		Text
+  }
+
+  Owner {
+    DisplayName
+    Reputation
     _uid_
+  }
 
-    Title @filter(anyoftext(Text, "${searchTerm}")) {
-			Text
-    }
+  Tag {
+    TagName: Tag.Text
+  }
 
+  Has.Answer(orderdesc: Timestamp, first: 1) {
     Owner {
       DisplayName
       Reputation
       _uid_
     }
-
-    Tag {
-      TagName: Tag.Text
-    }
-
-    Has.Answer(orderdesc: Timestamp, first: 1) {
-      Owner {
-        DisplayName
-        Reputation
-        _uid_
-      }
-      Timestamp
-    }
-
-    ChosenAnswerCount: count(Chosen.Answer)
-    UpvoteCount: count(Upvote)
-    DownvoteCount: count(Downvote)
-    AnswerCount: count(Has.Answer)
-    ViewCount
     Timestamp
   }
+
+  ChosenAnswerCount: count(Chosen.Answer)
+  UpvoteCount: count(Upvote)
+  DownvoteCount: count(Downvote)
+  AnswerCount: count(Has.Answer)
+  ViewCount
+  Timestamp
 }
 `;
 

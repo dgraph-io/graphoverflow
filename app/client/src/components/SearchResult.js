@@ -2,12 +2,15 @@ import React from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import request from "superagent";
+import { Link } from "react-router-dom";
 
 import Loading from "./Loading";
 import QuestionList from "./QuestionList";
+import RelatedQuestionList from "./RelatedQuestionList";
 
 import { getSearchResultQuery } from "../queries/SearchResult";
 import { runQuery } from "../lib/helpers";
+import { getHotQuestionsQuery } from "../queries/Home";
 
 function getSearchTerm(props) {
   const search = props.location.search;
@@ -21,14 +24,35 @@ class SearchResult extends React.Component {
 
     this.state = {
       questions: [],
-      questionsLoaded: false
+      questionsLoaded: false,
+      initialDataLoaded: false
     };
   }
 
   componentDidMount() {
     const searchTerm = getSearchTerm(this.props);
+    const searchResultQuery = getSearchResultQuery(searchTerm);
 
-    this.fetchSearchResult(searchTerm);
+    const query = `
+{
+  ${searchResultQuery}
+  ${getHotQuestionsQuery("hotQuestions")}
+}
+`;
+
+    runQuery(query).then(res => {
+      const questions = res.questions || [];
+      const hotQuestions = res.hotQuestions || [];
+
+      this.setState({
+        questions,
+        hotQuestions,
+        questionsLoaded: true,
+        initialDataLoaded: true
+      });
+    });
+
+    this.refreshSearchResult(searchTerm);
   }
 
   componentWillUnmount() {
@@ -41,13 +65,13 @@ class SearchResult extends React.Component {
     if (this.props.location.search !== nextProps.location.search) {
       const searchTerm = getSearchTerm(nextProps);
 
-      this.fetchSearchResult(searchTerm);
+      this.refreshSearchResult(searchTerm);
     }
   }
 
-  fetchSearchResult = searchTerm => {
+  refreshSearchResult = searchTerm => {
     this.setState({ questionsLoaded: false }, () => {
-      const query = getSearchResultQuery(searchTerm);
+      const query = `{ ${getSearchResultQuery(searchTerm)} }`;
 
       runQuery(query).then(res => {
         const questions = res.questions || [];
@@ -61,10 +85,15 @@ class SearchResult extends React.Component {
   };
 
   render() {
-    const { questions, questionsLoaded } = this.state;
+    const {
+      questions,
+      hotQuestions,
+      questionsLoaded,
+      initialDataLoaded
+    } = this.state;
     const searchTerm = getSearchTerm(this.props);
 
-    if (!questionsLoaded) {
+    if (!initialDataLoaded) {
       return <Loading />;
     }
 
@@ -82,6 +111,20 @@ class SearchResult extends React.Component {
               {questionsLoaded
                 ? <QuestionList questions={questions} />
                 : <Loading />}
+            </section>
+          </div>
+
+          <div className="col-12 col-sm-4">
+            <div className="question-action">
+              <Link className="btn btn-primary" to="/questions/ask">
+                Ask Question
+              </Link>
+            </div>
+
+            <section className="section side-section emphasize">
+              <h2>Hot questions</h2>
+
+              <RelatedQuestionList questions={hotQuestions} />
             </section>
           </div>
         </div>

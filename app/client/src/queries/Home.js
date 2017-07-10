@@ -40,25 +40,27 @@ questions(func: eq(Type, "Question"), orderdesc: Timestamp, first: 100) {
 }
 `;
 
-export const hotQuestionsQuery = `
-var(func: eq(Type, "Question"), orderdesc: Timestamp, first: 1000) {
-  Has.Answer {
-    uv as count(Upvote)
-    dv as count(Downvote)
+export function getHotQuestionsQuery(keyName = "questions") {
+  return `
+  var(func: eq(Type, "Question"), orderdesc: Timestamp, first: 1000) {
+    Has.Answer {
+      uv as count(Upvote)
+      dv as count(Downvote)
+    }
+    ac as count(Has.Answer)
+    cc as count(Comment)
+
+    uv1 as sum(var(uv))
+    dv1 as sum(var(dv))
+
+    score as math(0.7 + ac * 0.2  + (uv1 - dv1) * 0.4 + (cc) * 0.4)
   }
-	ac as count(Has.Answer)
-  cc as count(Comment)
 
-  uv1 as sum(var(uv))
-  dv1 as sum(var(dv))
-
-  score as math(0.7 + ac * 0.2  + (uv1 - dv1) * 0.4 + (cc) * 0.4)
-}
-
-questions(id: var(score), orderdesc: var(score), first: 100) {
-	${questionFragment}
-}
+  ${keyName}(id: var(score), orderdesc: var(score), first: 100) {
+    ${questionFragment}
+  }
 `;
+}
 
 export function getRecommendedQuestionsQuery(userUID) {
   return `

@@ -11,7 +11,7 @@ import Loading from "./Loading";
 import { runQuery } from "../lib/helpers";
 import {
   recentQuestionsQuery,
-  hotQuestionsQuery,
+  getHotQuestionsQuery,
   topTagsQuery,
   topUsersQuery,
   getRecommendedQuestionsQuery
@@ -67,7 +67,7 @@ class Home extends React.Component {
 
     let query = "";
     if (currentTab === ALL_TABS.TAB_HOT) {
-      query = `{ ${hotQuestionsQuery} }`;
+      query = `${getHotQuestionsQuery()}`;
     } else if (currentTab === ALL_TABS.TAB_RECOMMENDED) {
       if (!user) {
         this.setState({ questions: [] });

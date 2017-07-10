@@ -95,11 +95,15 @@ const QuestionLayout = ({
                 })}
               </div>
             : <div>no answers yet</div>}
-
         </div>
         <div className="col-12 col-sm-3">
           <PostInfo post={question} />
-          <RelatedQuestionList questions={relatedQuestions} />
+
+          <section className="section side-section emphasize">
+            <h2>Related questions</h2>
+
+            <RelatedQuestionList questions={relatedQuestions} />
+          </section>
         </div>
       </div>
 
@@ -115,7 +119,6 @@ const QuestionLayout = ({
         : <div>
             <a href="/api/auth">Login</a> to answer questions
           </div>}
-
     </div>
   );
 };
