@@ -1,6 +1,6 @@
 // questionFragment represents the fields that needs to be fetched to render
 // the question
-const questionFragment = `
+export const questionFragment = `
 _uid_
 
 Title {

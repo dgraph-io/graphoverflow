@@ -11,12 +11,23 @@ import Question from "./components/Question";
 import NewQuestion from "./components/NewQuestion";
 import EditPost from "./components/EditPost";
 import User from "./components/User";
-import { login, logout } from "./actions/session";
 import LoggedInRoute from "./components/hocs/LoggedInRoute";
+import SearchResult from "./components/SearchResult";
+
+import { login, logout } from "./actions/session";
 
 import "./assets/styles/App.css";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+
+    // Put searchTerm in Redux to avoid unnecessary rerender
+    this.state = {
+      searchTerm: ""
+    };
+  }
+
   componentDidMount() {
     const { handleLogin } = this.props;
 
@@ -38,17 +49,34 @@ class App extends Component {
     _handleLogout();
   };
 
+  handleChangeSearchTerm = val => {
+    this.setState({ searchTerm: val });
+  };
+
   render() {
     const { user } = this.props;
+    const { searchTerm } = this.state;
 
     return (
       <Router>
         <div>
-          <Header user={user} onLogout={this.handleLogout} />
+          <Header
+            user={user}
+            onLogout={this.handleLogout}
+            searchTerm={searchTerm}
+            onChangeSearchTerm={this.handleChangeSearchTerm}
+          />
 
           <main className="main-content">
             <Route exact path="/" component={Home} />
             <Route path="/about" component={About} />
+            <Route
+              path="/search"
+              render={() =>
+                <SearchResult
+                  onChangeSearchTerm={this.handleChangeSearchTerm}
+                />}
+            />
             <Route path="/users/:uid" component={User} />
 
             <Switch>
