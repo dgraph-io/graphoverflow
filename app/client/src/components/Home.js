@@ -6,6 +6,8 @@ import QuestionList from "./QuestionList";
 import HomeTabNavigation from "./HomeTabNavigation";
 import TopTagList from "./TopTagList";
 import TopUserList from "./TopUserList";
+import Loading from "./Loading";
+
 import { runQuery } from "../lib/helpers";
 import {
   recentQuestionsQuery,
@@ -28,6 +30,7 @@ class Home extends React.Component {
     super(props);
 
     this.state = {
+      initialDataLoaded: false,
       questionsLoaded: false,
       questions: [],
       topTags: [],
@@ -47,7 +50,13 @@ class Home extends React.Component {
     runQuery(query).then(res => {
       const { questions, topTags, topUsers } = res;
 
-      this.setState({ questions, topTags, topUsers, questionsLoaded: true });
+      this.setState({
+        questions,
+        topTags,
+        topUsers,
+        initialDataLoaded: true,
+        questionsLoaded: true
+      });
     });
   }
 
@@ -94,8 +103,13 @@ class Home extends React.Component {
       topTags,
       topUsers,
       currentTab,
-      questionsLoaded
+      questionsLoaded,
+      initialDataLoaded
     } = this.state;
+
+    if (!initialDataLoaded) {
+      return <Loading />;
+    }
 
     return (
       <div className="container">
@@ -114,15 +128,12 @@ class Home extends React.Component {
 
               {questionsLoaded
                 ? <QuestionList questions={questions} />
-                : <div>Loading...</div>}
+                : <Loading />}
 
               {currentTab === ALL_TABS.TAB_RECOMMENDED && !user
                 ? <div className="login-needed-alert">
-                    You need to
-                    {" "}
-                    <a href="/api/auth">login</a>
-                    {" "}
-                    to view custom recommendation.
+                    You need to <a href="/api/auth">login</a> to view custom
+                    recommendation.
                   </div>
                 : null}
               {currentTab === ALL_TABS.TAB_RECOMMENDED && questions.length === 0
@@ -131,9 +142,7 @@ class Home extends React.Component {
                   </div>
                 : null}
 
-              <div>
-                Looking for more? Try to search for a question.
-              </div>
+              <div>Looking for more? Try to search for a question.</div>
             </section>
           </div>
 

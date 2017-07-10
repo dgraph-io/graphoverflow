@@ -11,6 +11,7 @@ import {
   getAnswersQuery
 } from "../queries/Question";
 import QuestionLayout from "./QuestionLayout";
+import Loading from "./Loading";
 
 import "../assets/styles/Question.css";
 import { ALL_ANSWER_TABS } from "../lib/const";
@@ -149,7 +150,7 @@ class Question extends React.Component {
                   onCreateAnswer={this.handleCreateAnswer}
                   onChangeAnswerTab={this.handleChangeAnswerTab}
                 />
-              : <div>Loading</div>}
+              : <Loading />}
           </div>
         </div>
       </div>
