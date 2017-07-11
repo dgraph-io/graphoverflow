@@ -7,6 +7,7 @@ import QuestionItemLastActivity from "./QuestionItemLastActivity";
 import "../assets/styles/QuestionItem.css";
 
 const QuestionItem = ({ question, history }) => {
+  // console.log(question._uid_);
   const questionLink = `/questions/${question._uid_}`;
   const questionScore = question.UpvoteCount - question.DownvoteCount;
 
@@ -15,6 +16,9 @@ const QuestionItem = ({ question, history }) => {
       className={classnames("question-item", {
         unanswered: question.ChosenAnswerCount === 0
       })}
+      onClick={() => {
+        history.push(questionLink);
+      }}
     >
       <div className="row">
         <div className="col-12 col-sm-3">
@@ -23,28 +27,39 @@ const QuestionItem = ({ question, history }) => {
               <div className="number">
                 {questionScore}
               </div>
-              <div className="noun">Votes</div>
+              <div className="noun">
+                Votes
+              </div>
             </div>
 
             <div className="stat">
               <div className="number">
                 {question.AnswerCount}
               </div>
-              <div className="noun">Answers</div>
+              <div className="noun">
+                Answers
+              </div>
             </div>
 
             <div className="stat">
               <div className="number">
                 {question.ViewCount}
               </div>
-              <div className="noun">Views</div>
+              <div className="noun">
+                Views
+              </div>
             </div>
           </div>
-        </div>
 
+        </div>
         <div className="col-12 col-sm-9">
           <div>
-            <Link to={questionLink}>
+            <Link
+              to={questionLink}
+              onClick={e => {
+                e.stopPropagation();
+              }}
+            >
               {JSON.stringify(question.Title[0].Text)}
             </Link>
           </div>

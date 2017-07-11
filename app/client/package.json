@@ -16,9 +16,11 @@
     "pluralize": "^5.0.0",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
+    "react-highlight-words": "^0.8.0",
     "react-redux": "^5.0.5",
     "react-router-dom": "^4.1.1",
     "redux": "^3.7.1",
+    "striptags": "^3.0.1",
     "superagent": "^3.5.2"
   },
   "devDependencies": {

@@ -5,13 +5,15 @@ import request from "superagent";
 import { Link } from "react-router-dom";
 
 import Loading from "./Loading";
-import QuestionList from "./QuestionList";
+import SearchResultList from "./SearchResultList";
 import RelatedQuestionList from "./RelatedQuestionList";
 
 import { updateSearchTerm } from "../actions/search";
 import { getSearchResultQuery } from "../queries/SearchResult";
 import { runQuery } from "../lib/helpers";
 import { getHotQuestionsQuery } from "../queries/Home";
+
+import "../assets/styles/SearchResult.css";
 
 function getSearchTerm(props) {
   const search = props.location.search;
@@ -24,8 +26,8 @@ class SearchResult extends React.Component {
     super(props);
 
     this.state = {
-      questions: [],
-      questionsLoaded: false,
+      posts: [],
+      postsLoaded: false,
       initialDataLoaded: false
     };
   }
@@ -42,13 +44,13 @@ class SearchResult extends React.Component {
 `;
 
     runQuery(query).then(res => {
-      const questions = res.questions || [];
+      const posts = res.posts || [];
       const hotQuestions = res.hotQuestions || [];
 
       this.setState({
-        questions,
+        posts,
         hotQuestions,
-        questionsLoaded: true,
+        postsLoaded: true,
         initialDataLoaded: true
       });
     });
@@ -71,27 +73,26 @@ class SearchResult extends React.Component {
   }
 
   refreshSearchResult = searchTerm => {
-    this.setState({ questionsLoaded: false }, () => {
+    if (!searchTerm) {
+      return;
+    }
+
+    this.setState({ postsLoaded: false }, () => {
       const query = `{ ${getSearchResultQuery(searchTerm)} }`;
 
       runQuery(query).then(res => {
-        const questions = res.questions || [];
+        const posts = res.posts || [];
 
         this.setState({
-          questions,
-          questionsLoaded: true
+          posts,
+          postsLoaded: true
         });
       });
     });
   };
 
   render() {
-    const {
-      questions,
-      hotQuestions,
-      questionsLoaded,
-      initialDataLoaded
-    } = this.state;
+    const { posts, hotQuestions, postsLoaded, initialDataLoaded } = this.state;
     const searchTerm = getSearchTerm(this.props);
 
     if (!initialDataLoaded) {
@@ -109,8 +110,8 @@ class SearchResult extends React.Component {
                 </h2>
               </div>
 
-              {questionsLoaded
-                ? <QuestionList questions={questions} />
+              {postsLoaded
+                ? <SearchResultList posts={posts} searchTerm={searchTerm} />
                 : <Loading />}
             </section>
           </div>
@@ -134,7 +135,9 @@ class SearchResult extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  searchTerm: state.search.searchTerm
+});
 const mapDispatchToProps = dispatch => ({
   handleChangeSearchTerm(searchTerm) {
     dispatch(updateSearchTerm(searchTerm));

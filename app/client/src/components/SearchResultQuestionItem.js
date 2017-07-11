@@ -1,21 +1,16 @@
 import React from "react";
-import { Link, withRouter } from "react-router-dom";
-import classnames from "classnames";
+import { Link } from "react-router-dom";
+import striptags from "striptags";
+import Highlighter from "react-highlight-words";
 
-import QuestionItemLastActivity from "./QuestionItemLastActivity";
+import { excerpt } from "../lib/helpers";
 
-import "../assets/styles/QuestionItem.css";
-
-const QuestionItem = ({ question, history }) => {
+const SearchResultQuestionItem = ({ question, searchTerm }) => {
   const questionLink = `/questions/${question._uid_}`;
   const questionScore = question.UpvoteCount - question.DownvoteCount;
 
   return (
-    <li
-      className={classnames("question-item", {
-        unanswered: question.ChosenAnswerCount === 0
-      })}
-    >
+    <li className="search-result-item">
       <div className="row">
         <div className="col-12 col-sm-3">
           <div className="stats">
@@ -43,28 +38,28 @@ const QuestionItem = ({ question, history }) => {
         </div>
 
         <div className="col-12 col-sm-9">
-          <div>
+          <div className="title">
             <Link to={questionLink}>
-              {JSON.stringify(question.Title[0].Text)}
+              Q:{" "}
+              <Highlighter
+                searchWords={[searchTerm]}
+                textToHighlight={question.Title[0].Text}
+              />
             </Link>
           </div>
-          <div className="tags">
-            {question.Tag
-              ? question.Tag.map(tag => {
-                  return (
-                    <div className="tag" key={tag.TagName}>
-                      {tag.TagName}
-                    </div>
-                  );
-                })
-              : null}
-          </div>
-          <div className="last-activity">
-            <QuestionItemLastActivity question={question} />
+
+          <div className="exerpt">
+            <Highlighter
+              searchWords={[searchTerm]}
+              textToHighlight={excerpt(
+                striptags(question.Body[0].Text),
+                searchTerm
+              )}
+            />
           </div>
         </div>
       </div>
     </li>
   );
 };
-export default withRouter(QuestionItem);
+export default SearchResultQuestionItem;

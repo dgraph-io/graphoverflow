@@ -15,12 +15,7 @@ const QuestionItemLastActivity = ({ question }) => {
     const owner = question.Owner[0];
     return (
       <div>
-        asked
-        {" "}
-        {moment(questionCreatedAt).fromNow()}
-        {" "}
-        by
-        {" "}
+        asked {moment(questionCreatedAt).fromNow()} by{" "}
         <Link
           to={`/users/${owner._uid_}`}
           onClick={e => {
@@ -28,8 +23,7 @@ const QuestionItemLastActivity = ({ question }) => {
           }}
         >
           {owner.DisplayName || "no_username"}
-        </Link>
-        {" "}
+        </Link>{" "}
         <span className="reputation">{kFormat(owner.Reputation)}</span>
       </div>
     );
@@ -40,20 +34,11 @@ const QuestionItemLastActivity = ({ question }) => {
 
   return (
     <div>
-      answered {moment(lastAnswerCreatedAt).fromNow()} by
-      {" "}
-      <Link
-        to={`/users/${lastAnswer.Owner[0]._uid_}`}
-        onClick={e => {
-          e.stopPropagation();
-        }}
-      >
+      answered {moment(lastAnswerCreatedAt).fromNow()} by{" "}
+      <Link to={`/users/${lastAnswer.Owner[0]._uid_}`}>
         {lastAnswerOwner.DisplayName || "no_username"}
-      </Link>
-      {" "}
-      <span className="reputation">
-        {kFormat(lastAnswerOwner.Reputation)}
-      </span>
+      </Link>{" "}
+      <span className="reputation">{kFormat(lastAnswerOwner.Reputation)}</span>
     </div>
   );
 };
