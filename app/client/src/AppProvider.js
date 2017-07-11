@@ -1,5 +1,7 @@
 import React from "react";
 import { Provider } from "react-redux";
+import { BrowserRouter as Router } from "react-router-dom";
+
 import App from "./App";
 
 import createStore from "./lib/createStore";
@@ -10,7 +12,9 @@ export default class AppProvider extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <App />
+        <Router>
+          <App />
+        </Router>
       </Provider>
     );
   }

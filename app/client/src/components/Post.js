@@ -95,9 +95,12 @@ class Post extends React.Component {
           answer: post.Type === "Answer"
         })}
       >
+        <div href="#" id={post._uid_} />
         {/* questions have title and answers don't */}
         {post.Title
-          ? <h1 className="post-title">{post.Title[0].Text}</h1>
+          ? <h1 className="post-title">
+              {post.Title[0].Text}
+            </h1>
           : null}
 
         <div className="post-content">

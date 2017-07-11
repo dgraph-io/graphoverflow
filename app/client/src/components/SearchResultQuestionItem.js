@@ -12,7 +12,7 @@ const SearchResultQuestionItem = ({ question, searchTerm }) => {
   return (
     <li className="search-result-item">
       <div className="row">
-        <div className="col-12 col-sm-3">
+        <div className="col-12 col-sm-2">
           <div className="stats">
             <div className="stat">
               <div className="number">
@@ -20,24 +20,10 @@ const SearchResultQuestionItem = ({ question, searchTerm }) => {
               </div>
               <div className="noun">Votes</div>
             </div>
-
-            <div className="stat">
-              <div className="number">
-                {question.AnswerCount}
-              </div>
-              <div className="noun">Answers</div>
-            </div>
-
-            <div className="stat">
-              <div className="number">
-                {question.ViewCount}
-              </div>
-              <div className="noun">Views</div>
-            </div>
           </div>
         </div>
 
-        <div className="col-12 col-sm-9">
+        <div className="col-12 col-sm-10">
           <div className="title">
             <Link to={questionLink}>
               Q:{" "}

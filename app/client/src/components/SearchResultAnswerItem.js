@@ -12,7 +12,7 @@ const SearchResultAnswerItem = ({ answer, searchTerm }) => {
   return (
     <li className="search-result-item">
       <div className="row">
-        <div className="col-12 col-sm-3">
+        <div className="col-12 col-sm-2">
           <div className="stats">
             <div className="stat">
               <div className="number">
@@ -23,7 +23,7 @@ const SearchResultAnswerItem = ({ answer, searchTerm }) => {
           </div>
         </div>
 
-        <div className="col-12 col-sm-9">
+        <div className="col-12 col-sm-10">
           <div className="title">
             <Link to={questionLink}>
               A:{" "}

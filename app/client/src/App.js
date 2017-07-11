@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import request from "superagent";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -20,7 +21,7 @@ import "./assets/styles/App.css";
 
 class App extends Component {
   componentDidMount() {
-    const { handleLogin } = this.props;
+    const { handleLogin, history } = this.props;
 
     // fetch current user
     request("/api/current_user")
@@ -33,7 +34,30 @@ class App extends Component {
       .catch(err => {
         console.log("Error while fetching current user", err);
       });
+
+    // browserHistory returns a function to unlisten
+    this.unlisten = history.listen(state => {
+      this.hashLinkScroll();
+    });
   }
+
+  componentWillUnmount() {
+    this.unlisten();
+  }
+
+  hashLinkScroll = () => {
+    const { hash } = window.location;
+    if (hash !== "") {
+      // Push onto callback queue so it runs after the DOM is updated,
+      // this is required when navigating from a different page so that
+      // the element is rendered on the page before trying to getElementById.
+      setTimeout(() => {
+        const id = hash.replace("#", "");
+        const element = document.getElementById(id);
+        if (element) element.scrollIntoView();
+      }, 800);
+    }
+  };
 
   handleLogout = () => {
     const { _handleLogout } = this.props;
@@ -44,30 +68,28 @@ class App extends Component {
     const { user } = this.props;
 
     return (
-      <Router>
-        <div>
-          <Header user={user} onLogout={this.handleLogout} />
+      <div>
+        <Header user={user} onLogout={this.handleLogout} />
 
-          <main className="main-content">
-            <Route exact path="/" component={Home} />
-            <Route path="/about" component={About} />
-            <Route path="/search" component={SearchResult} />
-            <Route path="/users/:uid" component={User} />
+        <main className="main-content">
+          <Route exact path="/" component={Home} />
+          <Route path="/about" component={About} />
+          <Route path="/search" component={SearchResult} />
+          <Route path="/users/:uid" component={User} />
 
-            <Switch>
-              <LoggedInRoute
-                path="/questions/ask"
-                component={NewQuestion}
-                authenticated={Boolean(user)}
-              />
-              <Route path="/posts/:uid/edit" component={EditPost} />
-              <Route path="/questions/:uid" component={Question} />
-            </Switch>
-          </main>
+          <Switch>
+            <LoggedInRoute
+              path="/questions/ask"
+              component={NewQuestion}
+              authenticated={Boolean(user)}
+            />
+            <Route path="/posts/:uid/edit" component={EditPost} />
+            <Route path="/questions/:uid" component={Question} />
+          </Switch>
+        </main>
 
-          <Footer />
-        </div>
-      </Router>
+        <Footer />
+      </div>
     );
   }
 }
@@ -85,4 +107,4 @@ const mapDispatchToProps = dispatch => ({
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
