@@ -1,7 +1,9 @@
 import React from "react";
 import classnames from "classnames";
-
+import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
+
+import { updateSearchTerm } from "../actions/search";
 
 import "../assets/styles/SearchInput.css";
 
@@ -31,7 +33,7 @@ class SearchInput extends React.Component {
   };
 
   render() {
-    const { searchTerm, onChangeSearchTerm } = this.props;
+    const { searchTerm, handleChangeSearchTerm } = this.props;
     const { inputFocused } = this.state;
 
     return (
@@ -53,7 +55,7 @@ class SearchInput extends React.Component {
           value={searchTerm}
           onChange={e => {
             const val = e.target.value;
-            onChangeSearchTerm(val);
+            handleChangeSearchTerm(val);
           }}
         />
         {/*
@@ -68,4 +70,16 @@ class SearchInput extends React.Component {
   }
 }
 
-export default withRouter(SearchInput);
+const mapStateToProps = state => ({
+  searchTerm: state.search.searchTerm
+});
+
+const mapDispatchToProps = dispatch => ({
+  handleChangeSearchTerm(searchTerm) {
+    dispatch(updateSearchTerm(searchTerm));
+  }
+});
+
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(SearchInput)
+);

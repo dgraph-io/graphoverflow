@@ -9,7 +9,7 @@ import "../assets/styles/Header.css";
 
 import logo from "../assets/images/logo.svg";
 
-const Header = ({ user, onLogout, searchTerm, onChangeSearchTerm }) => {
+const Header = ({ user, onLogout }) => {
   return (
     <nav className="navbar navbar-light bg-faded">
       <div className="container">
@@ -21,10 +21,7 @@ const Header = ({ user, onLogout, searchTerm, onChangeSearchTerm }) => {
               <span className="name">Graphoverflow</span>
             </Link>
 
-            <SearchInput
-              searchTerm={searchTerm}
-              onChangeSearchTerm={onChangeSearchTerm}
-            />
+            <SearchInput />
           </div>
 
           {user

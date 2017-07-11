@@ -19,15 +19,6 @@ import { login, logout } from "./actions/session";
 import "./assets/styles/App.css";
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-
-    // Put searchTerm in Redux to avoid unnecessary rerender
-    this.state = {
-      searchTerm: ""
-    };
-  }
-
   componentDidMount() {
     const { handleLogin } = this.props;
 
@@ -49,34 +40,18 @@ class App extends Component {
     _handleLogout();
   };
 
-  handleChangeSearchTerm = val => {
-    this.setState({ searchTerm: val });
-  };
-
   render() {
     const { user } = this.props;
-    const { searchTerm } = this.state;
 
     return (
       <Router>
         <div>
-          <Header
-            user={user}
-            onLogout={this.handleLogout}
-            searchTerm={searchTerm}
-            onChangeSearchTerm={this.handleChangeSearchTerm}
-          />
+          <Header user={user} onLogout={this.handleLogout} />
 
           <main className="main-content">
             <Route exact path="/" component={Home} />
             <Route path="/about" component={About} />
-            <Route
-              path="/search"
-              render={() =>
-                <SearchResult
-                  onChangeSearchTerm={this.handleChangeSearchTerm}
-                />}
-            />
+            <Route path="/search" component={SearchResult} />
             <Route path="/users/:uid" component={User} />
 
             <Switch>

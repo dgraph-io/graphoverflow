@@ -8,6 +8,7 @@ import Loading from "./Loading";
 import QuestionList from "./QuestionList";
 import RelatedQuestionList from "./RelatedQuestionList";
 
+import { updateSearchTerm } from "../actions/search";
 import { getSearchResultQuery } from "../queries/SearchResult";
 import { runQuery } from "../lib/helpers";
 import { getHotQuestionsQuery } from "../queries/Home";
@@ -56,9 +57,9 @@ class SearchResult extends React.Component {
   }
 
   componentWillUnmount() {
-    const { onChangeSearchTerm } = this.props;
+    const { handleChangeSearchTerm } = this.props;
     this.props.location.search = "";
-    onChangeSearchTerm("");
+    handleChangeSearchTerm("");
   }
 
   componentWillReceiveProps(nextProps) {
@@ -134,7 +135,11 @@ class SearchResult extends React.Component {
 }
 
 const mapStateToProps = state => ({});
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = dispatch => ({
+  handleChangeSearchTerm(searchTerm) {
+    dispatch(updateSearchTerm(searchTerm));
+  }
+});
 
 export default withRouter(
   connect(mapStateToProps, mapDispatchToProps)(SearchResult)

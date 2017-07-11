@@ -12,6 +12,7 @@
     "lodash": "^4.17.4",
     "marked": "^0.3.6",
     "moment": "^2.18.1",
+    "node-sass": "^4.5.3",
     "pluralize": "^5.0.0",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
