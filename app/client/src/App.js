@@ -14,6 +14,7 @@ import EditPost from "./components/EditPost";
 import User from "./components/User";
 import LoggedInRoute from "./components/hocs/LoggedInRoute";
 import SearchResult from "./components/SearchResult";
+import Tag from "./components/Tag";
 
 import { login, logout } from "./actions/session";
 
@@ -76,6 +77,7 @@ class App extends Component {
           <Route path="/about" component={About} />
           <Route path="/search" component={SearchResult} />
           <Route path="/users/:uid" component={User} />
+          <Route path="/tags/:tagName" component={Tag} />
 
           <Switch>
             <LoggedInRoute

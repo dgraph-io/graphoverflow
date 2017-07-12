@@ -53,7 +53,9 @@ const QuestionItem = ({ question, history }) => {
               ? question.Tag.map(tag => {
                   return (
                     <div className="tag" key={tag.TagName}>
-                      {tag.TagName}
+                      <Link to={`/tags/${tag.TagName}`}>
+                        {tag.TagName}
+                      </Link>
                     </div>
                   );
                 })
