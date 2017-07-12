@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 import "../assets/styles/TopTagList.css";
 
@@ -12,9 +13,10 @@ const TopTagList = ({ tags }) => {
           return (
             <li className="tag-item" key={tag._uid_}>
               <span className="tag">
-                {tag.TagName}
-                {" "}
-                <span className="count">x {tag.QuestionCount}</span>
+                <Link to={`/tags/${tag.TagName}`}>
+                  {tag.TagName}{" "}
+                  <span className="count">x {tag.QuestionCount}</span>
+                </Link>
               </span>
             </li>
           );
