@@ -1,11 +1,11 @@
 import React from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 
 import Loading from "./Loading";
 import QuestionList from "./QuestionList";
 
 import { runQuery } from "../lib/helpers";
-import { getQuestionByTagNameQuery } from "../queries/Tag";
+import { getQuestionByTagNameQuery, getRelatedTags } from "../queries/Tag";
 
 class Tag extends React.Component {
   constructor(props) {
@@ -20,12 +20,17 @@ class Tag extends React.Component {
 
   componentDidMount() {
     const { match: { params: { tagName } } } = this.props;
-    const query = getQuestionByTagNameQuery(tagName);
+    const query = `
+{
+  ${getQuestionByTagNameQuery(tagName)}
+  ${getRelatedTags(tagName)}
+}`;
     runQuery(query).then(res => {
-      const { questions, topTags, topUsers } = res;
+      const { questions, relatedTags } = res;
 
       this.setState({
         questions,
+        relatedTags,
         initialDataLoaded: true,
         questionsLoaded: true
       });
@@ -39,13 +44,18 @@ class Tag extends React.Component {
   }
 
   refreshQuestions = tagName => {
-    const query = getQuestionByTagNameQuery(tagName);
+    const query = `
+{
+  ${getQuestionByTagNameQuery(tagName)}
+  ${getRelatedTags(tagName)}
+}`;
 
     runQuery(query).then(res => {
-      const { questions, topTags, topUsers } = res;
+      const { questions, relatedTags, topTags, topUsers } = res;
 
       this.setState({
         questions,
+        relatedTags,
         questionsLoaded: true
       });
     });
@@ -53,7 +63,12 @@ class Tag extends React.Component {
 
   render() {
     const { match: { params: { tagName } } } = this.props;
-    const { initialDataLoaded, questionsLoaded, questions } = this.state;
+    const {
+      initialDataLoaded,
+      questionsLoaded,
+      questions,
+      relatedTags
+    } = this.state;
 
     if (!initialDataLoaded) {
       return <Loading />;
@@ -62,7 +77,7 @@ class Tag extends React.Component {
     return (
       <div className="container">
         <div className="row">
-          <div className="col-12">
+          <div className="col-12 col-sm-8">
             <section className="section">
               <div className="heading">
                 <h2>
@@ -74,6 +89,34 @@ class Tag extends React.Component {
                 ? <QuestionList questions={questions} />
                 : <Loading />}
             </section>
+          </div>
+
+          <div className="col-12 col-sm-4">
+            <div className="question-action">
+              <Link className="btn btn-primary" to="/questions/ask">
+                Ask Question
+              </Link>
+            </div>
+            <div>
+              <section className="side-section emphasize">
+                <h2>Related tags</h2>
+
+                <ul className="list-unstyled">
+                  {relatedTags.map(tag => {
+                    return (
+                      <li key={tag._uid_}>
+                        <span className="tag">
+                          <Link to={`/tags/${tag.TagName}`}>
+                            {tag.TagName}
+                          </Link>
+                        </span>
+                        x {tag.OverlapCount}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            </div>
           </div>
         </div>
       </div>
