@@ -1,12 +1,12 @@
 mutation {
   schema {
-    AboutMe: string @index(fulltext) .
+    AboutMe: string .
     Author: uid @reverse .
     Owner: uid @reverse .
-    DisplayName: string @index(hash) .
-    Location: string @index(term) .
-    Reputation: int @index(int) .
-    Score: int @index .
+    DisplayName: string .
+    Location: string .
+    Reputation: int .
+    Score: int .
     Text: string @index(fulltext) .
     Tag.Text: string @index(hash) .
     Type: string @index(exact) .
@@ -20,9 +20,9 @@ mutation {
     Timestamp: datetime .
     GitHubID: string @index(hash) .
     Has.Answer: uid @reverse .
-    Comment: uid @reverse .
-    Upvote: uid @reverse .
-    Downvote: uid @reverse .
+    Comment: uid .
+    Upvote: uid .
+    Downvote: uid .
     Tag: uid @reverse .
   }
 }
