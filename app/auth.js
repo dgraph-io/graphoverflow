@@ -88,9 +88,9 @@ export function configPassport(passport) {
 
   let callbackURL;
   if (process.env.NODE_ENV === "prod") {
-    callbackURL = `${getEndpointBaseURL()}`;
+    callbackURL = "https://graphoverflow.dgraph.io";
   } else {
-    callbackURL = `${getEndpointBaseURL()}:3000`;
+    callbackURL = "http://127.0.0.1:3000";
   }
 
   passport.use(
