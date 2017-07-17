@@ -63,6 +63,8 @@ func main() {
 				var u User
 				decoder.DecodeElement(&u, &se)
 
+				str = fmt.Sprintf("<u%s> <Id> %q .\n", u.Id, u.Id)
+				w.Write([]byte(str))
 				str = fmt.Sprintf("<u%s> <Reputation> %q .\n", u.Id, u.Reputation)
 				w.Write([]byte(str))
 				str = fmt.Sprintf("<u%s> <CreationDate> %q .\n", u.Id, u.CreationDate)

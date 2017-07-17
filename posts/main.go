@@ -175,6 +175,9 @@ func main() {
 				}
 
 				// Now create the actual post.
+				str = fmt.Sprintf("<%s> <Id> %q .\n", p.Id)
+				w.Write([]byte(str))
+
 				if p.PostTypeId == 1 {
 					str = fmt.Sprintf("<%s> <Type> \"Question\" .\n", node)
 					w.Write([]byte(str))
