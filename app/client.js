@@ -1,5 +1,6 @@
 const express = require("express");
 const httpProxy = require("http-proxy");
+const path = require("path");
 
 var app = express();
 var apiEndpoint = "http://127.0.0.1:3001/api";
