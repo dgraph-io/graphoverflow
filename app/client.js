@@ -14,7 +14,7 @@ app.use("/api", (req, res) => {
 
 // Always return index.html, so pre-specified URL can be rendered in client
 app.get("*", (req, res) => {
-  res.sendFile("client/build/index.html");
+  res.sendFile(path.resolve(__dirname, "client/build", "index.html"));
 });
 
 app.listen(3000, () => {
