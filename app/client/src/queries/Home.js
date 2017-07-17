@@ -124,7 +124,7 @@ topTags(id: var(t), orderdesc: var(c), first: 10) {
 `;
 
 export const topUsersQuery = `
-var(func: eq(Type, "Question"), orderdesc: Timestamp, first: 100) {
+var(func: eq(Type, "Question"), orderdesc: Timestamp, first: 50) {
   ca as Chosen.Answer
 }
 

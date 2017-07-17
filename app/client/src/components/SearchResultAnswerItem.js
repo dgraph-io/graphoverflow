@@ -6,6 +6,11 @@ import Highlighter from "react-highlight-words";
 import { excerpt } from "../lib/helpers";
 
 const SearchResultAnswerItem = ({ answer, searchTerm }) => {
+  // The dataset has data integrity issue. Some answers do not belong to questions
+  if (!answer.question || !answer.question[0].Title) {
+    return null;
+  }
+
   const questionLink = `/questions/${answer.question[0]._uid_}#${answer._uid_}`;
   const score = answer.UpvoteCount - answer.DownvoteCount;
 
