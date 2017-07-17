@@ -5,7 +5,7 @@ export function getEndpointBaseURL() {
   if (process.env.NODE_ENV === "production") {
     endpointBaseURL = "https://graphoverflow.dgraph.io";
   } else {
-    endpointBaseURL = "http://127.0.0.1";
+    endpointBaseURL = "http://127.0.0.1:8080";
   }
 
   return endpointBaseURL;
@@ -14,9 +14,9 @@ export function getEndpointBaseURL() {
 // runQuery makes a post request to the server to run query and returns a
 // promise that resolves with a response
 export function runQuery(queryText) {
-  const endpoint = `${getEndpointBaseURL()}:8080`;
+  const endpointBaseURL = getEndpointBaseURL();
 
-  return request.post(`${endpoint}/query`).send(queryText).then(res => {
+  return request.post(`${endpointBaseURL}/query`).send(queryText).then(res => {
     return JSON.parse(res.text);
   });
 }
