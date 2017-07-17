@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const TagList = ({ tags }) => {
   return (
@@ -6,7 +7,9 @@ const TagList = ({ tags }) => {
       {tags.map(tag => {
         return (
           <div className="tag" key={tag.TagName}>
-            {tag.TagName}
+            <Link to={`/tags/${tag.TagName}`}>
+              {tag.TagName}
+            </Link>
           </div>
         );
       })}
