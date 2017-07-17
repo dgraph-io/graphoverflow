@@ -70,16 +70,6 @@ app.use((err, req, res, next) => {
   next();
 });
 
-// Serve react app statically in production
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"));
-
-  // Always return the main index.html, so react-router render the route in the client
-  app.get("*", (req, res) => {
-    res.sendFile("client/build/index.html");
-  });
-}
-
 app.listen(app.get("port"), () => {
-  console.log(`Server running on: http://127.0.0.1:${app.get("port")}/`); // eslint-disable-line no-console
+  console.log(`API server running on: http://127.0.0.1:${app.get("port")}/`); // eslint-disable-line no-console
 });
