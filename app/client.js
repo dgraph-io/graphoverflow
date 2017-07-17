@@ -12,6 +12,13 @@ app.use("/api", (req, res) => {
   proxy.web(req, res, { target: apiEndpoint });
 });
 
+if (process.env.NODE_ENV === "prod") {
+  // Always return index.html, so pre-specified URL can be rendered in client
+  app.get("*", (req, res) => {
+    res.sendFile("client/build/index.html");
+  });
+}
+
 app.listen(3000, () => {
-  console.log(`Server running on: http://127.0.0.1:3000/`); // eslint-disable-line no-console
+  console.log(`Client server running on: http://127.0.0.1:3000/`); // eslint-disable-line no-console
 });
