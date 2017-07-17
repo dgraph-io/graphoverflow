@@ -50,7 +50,6 @@ class Question extends React.Component {
     const query = getQuestionQuery(questionUID);
 
     runQuery(query).then(res => {
-      console.log(res);
       const question = res.question[0];
       const relatedQuestions = res.tags[0].relatedQuestions;
 

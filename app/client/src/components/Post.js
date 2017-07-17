@@ -23,6 +23,14 @@ class Post extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.post._uid_ !== nextProps.post._uid_) {
+      this.setState({
+        comments: nextProps.post.Comment
+      });
+    }
+  }
+
   handleSubmitComment = body => {
     const { post } = this.props;
 
