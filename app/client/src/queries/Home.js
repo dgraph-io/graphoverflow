@@ -69,7 +69,7 @@ export function getRecommendedQuestionsQuery(userUID) {
       a as math(1)
       ~Owner @filter(eq(Type, "Answer")) {
         ~Has.Answer {
-          Tags {
+          Tag {
             sc1 as math(a)
             Tag.Text
           }
@@ -100,7 +100,7 @@ export function getRecommendedQuestionsQuery(userUID) {
       var(sc)
       ~Owner @filter(eq(Type, "Answer")) {
         ~Has.Answer { # @filter(not var(answered)) {
-          fscore as count(Tags @filter(var(mytoptags)))
+          fscore as count(Tag @filter(var(mytoptags)))
         }
       }
     }
