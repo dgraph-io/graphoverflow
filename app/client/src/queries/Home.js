@@ -2,6 +2,7 @@
 // the question
 export const questionFragment = `
 _uid_
+Id
 
 Title {
   Text
@@ -84,6 +85,7 @@ export function getRecommendedQuestionsQuery(userUID) {
 
     var(id: var(user)) {
       const as math(1)
+
       ~Owner @filter(eq(Type, "Answer")) {
         ~Has.Answer {
           Has.Answer {
@@ -96,8 +98,6 @@ export function getRecommendedQuestionsQuery(userUID) {
     }
 
     var(id: var(sc), orderdesc: var(sc), first: 10) {
-      DisplayName
-      var(sc)
       ~Owner @filter(eq(Type, "Answer")) {
         ~Has.Answer { # @filter(not var(answered)) {
           fscore as count(Tag @filter(var(mytoptags)))

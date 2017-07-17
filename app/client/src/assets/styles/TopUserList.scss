@@ -2,6 +2,10 @@
   margin: 0;
   padding-left: 0;
   list-style: none;
+
+  .username {
+    font-size: 16px;
+  }
 }
 
 .top-user-item {
@@ -23,10 +27,6 @@
 .about-me {
   font-size: 13px;
   color: #777777;
-}
-
-.username {
-  font-size: 16px;
 }
 
 .info-row {

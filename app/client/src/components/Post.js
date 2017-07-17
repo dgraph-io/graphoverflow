@@ -98,9 +98,16 @@ class Post extends React.Component {
         <div href="#" id={post._uid_} />
         {/* questions have title and answers don't */}
         {post.Title
-          ? <h1 className="post-title">
-              {post.Title[0].Text}
-            </h1>
+          ? <div className="post-title-container">
+              <h1 className="post-title">{post.Title[0].Text}</h1>{" "}
+              <a
+                className="attribution-link"
+                href={`https://lifehacks.stackexchange.com/questions/${post.Id}`}
+                target="_blank"
+              >
+                <i className="fa fa-external-link" />
+              </a>
+            </div>
           : null}
 
         <div className="post-content">

@@ -48,25 +48,31 @@ export default class User extends React.Component {
     } = this.state;
 
     if (!userLoaded) {
-      return (
-        <div>
-          Loading
-        </div>
-      );
+      return <div>Loading</div>;
     }
 
     return (
       <div className="container">
         <div className="row">
           <div className="col-12">
-            <h1>{user.DisplayName}</h1>
+            <div className="username-container">
+              <h1 className="username">
+                {user.DisplayName}
+              </h1>
+              <a
+                href={`https://lifehacks.stackexchange.com/users/${user.Id}`}
+                className="attribution-link"
+                target="_blank"
+              >
+                <i className="fa fa-external-link" />
+              </a>
+            </div>
             <p>
               Reputation: {user.Reputation}
             </p>
             <section className="user-section">
               <h2>About Me</h2>
               <div dangerouslySetInnerHTML={{ __html: user.AboutMe }} />
-
             </section>
           </div>
         </div>

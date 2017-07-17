@@ -24,6 +24,7 @@ export function getUserQuery(userUID) {
 
       user(id: ${userUID}) {
         _uid_
+        Id
         Reputation
         DisplayName
         AboutMe

@@ -5,6 +5,16 @@
   padding-bottom: 12px;
 }
 
+.post-title-container {
+  position: relative;
+
+  .attribution-link {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
+
 .post-content {
   display: flex;
 }
@@ -36,11 +46,11 @@
   color: gainsboro;
 
   &.voted {
-    color: #F44336;
+    color: #f44336;
   }
 
   &:hover {
-    color: #F44336;
+    color: #f44336;
   }
   &:active {
     color: inherit;

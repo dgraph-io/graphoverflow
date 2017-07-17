@@ -127,6 +127,7 @@ export function getQuestionQuery(questionUID) {
 
     question(id: ${questionUID}) {
       _uid_
+      Id # id from Stack Exchange
       Title {
         Text
       }
