@@ -6,7 +6,7 @@ export function getSearchResultQuery(searchTerm) {
       }
     }
 
-    posts(id: var(p), first: 25) {
+    posts(func: uid(p), first: 25) {
       _uid_
 
       Type

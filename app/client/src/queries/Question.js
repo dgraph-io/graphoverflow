@@ -46,7 +46,7 @@ Comment {
 
 export function getCommentQuery(commentID) {
   return `{
-    comment(id: ${commentID}) {
+    comment(func: uid(${commentID})) {
       ${CommentFragment}
     }
   }`;
@@ -54,7 +54,7 @@ export function getCommentQuery(commentID) {
 
 export function getAnswerQuery(answerUID) {
   return `{
-    answer(id: ${answerUID}) {
+    answer(func: uid(${answerUID})) {
       ${AnswerFragment}
     }
   }`;
@@ -66,7 +66,7 @@ export function getAnswersQuery(
 ) {
   if (sortBy === ALL_ANSWER_TABS.TAB_ACTIVE) {
     return `{
-      var (id: ${questionUID}) {
+      var (func: uid(${questionUID})) {
         Has.Answer {
           answerTs as Timestamp
           ~Post {
@@ -75,21 +75,21 @@ export function getAnswersQuery(
           Comment {
             commentTs as Timestamp
           }
-          commentTsMax as max(var(commentTs))
-          historyTsMax as max(var(historyTs))
+          commentTsMax as max(val(commentTs))
+          historyTsMax as max(val(historyTs))
           lastActive as math(max(max(answerTs, commentTsMax), historyTsMax))
         }
       }
 
-      question(id: ${questionUID}) {
-        Has.Answer(orderdesc: var(lastActive)) {
+      question(func: uid(${questionUID})) {
+        Has.Answer(orderdesc: val(lastActive)) {
           ${AnswerFragment}
         }
       }
     }`;
   } else if (sortBy === ALL_ANSWER_TABS.TAB_OLDEST) {
     return `{
-      question(id: ${questionUID}) {
+      question(func: uid(${questionUID})) {
         Has.Answer(orderasc: Timestamp) {
           ${AnswerFragment}
         }
@@ -98,7 +98,7 @@ export function getAnswersQuery(
   }
 
   return `{
-    var (id: ${questionUID}) {
+    var (func: uid(${questionUID})) {
       Has.Answer {
         uv as count(Upvote)
         dv as count(Downvote)
@@ -106,8 +106,8 @@ export function getAnswersQuery(
       }
     }
 
-    question(id: ${questionUID}) {
-      Has.Answer(orderdesc: var(answer_score)) {
+    question(func: uid(${questionUID})) {
+      Has.Answer(orderdesc: val(answer_score)) {
         ${AnswerFragment}
       }
     }
@@ -117,7 +117,7 @@ export function getAnswersQuery(
 // getQuestionQuery generates a query to fetch the question with the given UID
 export function getQuestionQuery(questionUID) {
   return `{
-    var (id: ${questionUID}) {
+    var (func: uid(${questionUID})) {
       Has.Answer {
         uv as count(Upvote)
         dv as count(Downvote)
@@ -125,7 +125,7 @@ export function getQuestionQuery(questionUID) {
       }
     }
 
-    question(id: ${questionUID}) {
+    question(func: uid(${questionUID})) {
       _uid_
       Id # id from Stack Exchange
       Title {
@@ -151,7 +151,7 @@ export function getQuestionQuery(questionUID) {
 
       AnswerCount: count(Has.Answer)
 
-      Has.Answer(orderdesc: var(answer_score)) {
+      Has.Answer(orderdesc: val(answer_score)) {
         ${AnswerFragment}
       }
 
@@ -164,7 +164,7 @@ export function getQuestionQuery(questionUID) {
       }
     }
 
-    tags(id: var(questionTags)) {
+    tags(func: uid(questionTags)) {
       relatedQuestions: ~Tag(first: 10) {
         _uid_
         Title {

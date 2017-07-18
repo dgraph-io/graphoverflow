@@ -18,7 +18,7 @@ function catchAsyncErrors(fn) {
 function fetchPost(uid) {
   const query = `
 {
-  post(id: ${uid}) {
+  post(func: uid(${uid})) {
     _uid_
     Title {
       Text
@@ -33,6 +33,7 @@ function fetchPost(uid) {
       _uid_
     }
     ViewCount
+    Type
   }
 }
 `;
@@ -54,7 +55,7 @@ function fetchPost(uid) {
 
 function fetchComment(uid) {
   const query = `{
-    comment(id: ${uid}) {
+    comment(func: uid(${uid})) {
       Author {
         _uid_
       }
@@ -145,6 +146,7 @@ function updatePost({ post, title, body, currentUserUID }) {
 
   let titleSetMutation = "";
   let titleDeleteMutation = "";
+
   if (post.Type === "Question" && post.Title[0].Text !== title) {
     titleSetMutation = `
   <_:newTitle> <Timestamp> "${now}" .
@@ -214,7 +216,7 @@ async function handleUpdatePost(req, res, next) {
 
   const post = await fetchPost(postUID);
   if (post.Owner[0]._uid_ !== currentUserUID) {
-    res.status(403).send("Only the owner can update the psot");
+    res.status(403).send("Only the owner can update the post");
     return;
   }
   await updatePost({ post, title, body, currentUserUID });
@@ -383,12 +385,12 @@ async function handleCreateVote(req, res, next) {
 function fetchVote({ postUID, authorUID, voteType }) {
   const query = `
   {
-    postId as var(id: ${postUID})
+    postId as var(func: uid(${postUID}))
 
-    currentUser(id: ${authorUID}) @cascade {
+    currentUser(func: uid(${authorUID})) @cascade {
       ~Author {
          _uid_
-         ~${voteType} @filter(var(postId))
+         ~${voteType} @filter(uid(postId))
       }
     }
   }

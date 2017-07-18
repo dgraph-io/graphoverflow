@@ -4,7 +4,7 @@ var(func: eq(Tag.Text, "${tagName}")) {
 	p	as ~Tag(first: 25)
 }
 
-questions(id: var(p)) {
+questions(func: uid(p)) {
   _uid_
 
   Title {
@@ -71,9 +71,9 @@ me as var(func: eq(Tag.Text, "${tagName}")) {
   }
 }
 
-relatedTags(id: var(sc), orderdesc: var(sc)) @filter(not var(me)) {
+relatedTags(func: uid(sc), orderdesc: val(sc)) @filter(not uid(me)) {
 	TagName: Tag.Text
-  OverlapCount: var(sc)
+  OverlapCount: val(sc)
 }
 `;
 }

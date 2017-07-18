@@ -51,13 +51,13 @@ export function getHotQuestionsQuery(keyName = "questions") {
     ac as count(Has.Answer)
     cc as count(Comment)
 
-    uv1 as sum(var(uv))
-    dv1 as sum(var(dv))
+    uv1 as sum(val(uv))
+    dv1 as sum(val(dv))
 
     score as math(0.7 + ac * 0.2  + (uv1 - dv1) * 0.4 + (cc) * 0.4)
   }
 
-  ${keyName}(id: var(score), orderdesc: var(score), first: 100) {
+  ${keyName}(func: uid(score), orderdesc: val(score), first: 100) {
     ${questionFragment}
   }
 `;
@@ -66,7 +66,7 @@ export function getHotQuestionsQuery(keyName = "questions") {
 export function getRecommendedQuestionsQuery(userUID) {
   return `
   {
-    user as var(id: ${userUID}) {
+    user as var(func: uid(${userUID})) {
       a as math(1)
       ~Owner @filter(eq(Type, "Answer")) {
         ~Has.Answer {
@@ -78,12 +78,12 @@ export function getRecommendedQuestionsQuery(userUID) {
       }
     }
 
-    mytoptags as var(id: var(sc1), orderdesc: var(sc1), first: 5) {
+    mytoptags as var(func: uid(sc1), orderdesc: val(sc1), first: 5) {
       Tag.Text
-      var(sc1)
+      val(sc1)
     }
 
-    var(id: var(user)) {
+    var(func: uid(user)) {
       const as math(1)
 
       ~Owner @filter(eq(Type, "Answer")) {
@@ -97,15 +97,15 @@ export function getRecommendedQuestionsQuery(userUID) {
       }
     }
 
-    var(id: var(sc), orderdesc: var(sc), first: 10) {
+    var(func: uid(sc), orderdesc: val(sc), first: 10) {
       ~Owner @filter(eq(Type, "Answer")) {
-        ~Has.Answer { # @filter(not var(answered)) {
-          fscore as count(Tag @filter(var(mytoptags)))
+        ~Has.Answer { # @filter(not val(answered)) {
+          fscore as count(Tag @filter(uid(mytoptags)))
         }
       }
     }
 
-    questions(id: var(fscore), orderdesc: var(fscore), first: 5)  {
+    questions(func: uid(fscore), orderdesc: val(fscore), first: 5)  {
       ${questionFragment}
     }
   }`;
@@ -116,10 +116,10 @@ t as var(func: eq(Type, "Tag")) {
   c as count(~Tag)
 }
 
-topTags(id: var(t), orderdesc: var(c), first: 10) {
+topTags(func: uid(t), orderdesc: val(c), first: 10) {
   _uid_
   TagName: Tag.Text
-  QuestionCount: var(c)
+  QuestionCount: val(c)
 }
 `;
 
@@ -128,15 +128,15 @@ var(func: eq(Type, "Question"), orderdesc: Timestamp, first: 50) {
   ca as Chosen.Answer
 }
 
-var(id: var(ca)) @groupby(Owner) {
+var(func: uid(ca)) @groupby(Owner) {
   a as count(_uid_)
 }
 
-topUsers(id: var(a), orderdesc: var(a)) {
+topUsers(func: uid(a), orderdesc: val(a)) {
   _uid_
   AboutMe
   DisplayName
   Reputation
-  NumAcceptedAnswers: var(a)
+  NumAcceptedAnswers: val(a)
 }
 `;

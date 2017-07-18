@@ -10,7 +10,7 @@ downvoteCount: count(Downvote)
 export function getUserQuery(userUID) {
   return `
     {
-      var(id: ${userUID}) {
+      var(func: uid(${userUID})) {
         authored as ~Owner(first: 5, orderdesc: Timestamp) @filter(eq(Type, "Question"))
 
         answers: ~Owner(first: 5, orderdesc: Timestamp) @filter(eq(Type, "Answer")) {
@@ -22,7 +22,7 @@ export function getUserQuery(userUID) {
         }
       }
 
-      user(id: ${userUID}) {
+      user(func: uid(${userUID})) {
         _uid_
         Id
         Reputation
@@ -30,11 +30,11 @@ export function getUserQuery(userUID) {
         AboutMe
       }
 
-      authoredQuestions(id: var(authored)) {
+      authoredQuestions(func: uid(authored)) {
         ${questionFragment}
       }
 
-      answeredQuestions(id: var(answered)) {
+      answeredQuestions(func: uid(answered)) {
         ${questionFragment}
       }
     }

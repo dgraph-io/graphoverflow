@@ -4,6 +4,8 @@ import cloneDeep from "lodash/cloneDeep";
 import { getUserQuery } from "../queries/User";
 import { runQuery } from "../lib/helpers";
 import UserPostList from "./UserPostList";
+import Loading from "./Loading";
+
 import "../assets/styles/User.css";
 
 export default class User extends React.Component {
@@ -48,7 +50,7 @@ export default class User extends React.Component {
     } = this.state;
 
     if (!userLoaded) {
-      return <div>Loading</div>;
+      return <Loading />;
     }
 
     return (

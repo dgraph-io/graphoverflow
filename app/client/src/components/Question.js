@@ -51,7 +51,7 @@ class Question extends React.Component {
 
     runQuery(query).then(res => {
       const question = res.question[0];
-      const relatedQuestions = res.tags[0].relatedQuestions;
+      const relatedQuestions = res.tags ? res.tags[0].relatedQuestions : [];
 
       // NOTE: `answers` is still present in `question`. Maybe we can delete it
       this.setState({
