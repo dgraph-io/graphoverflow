@@ -16,18 +16,26 @@ const History = ({ author, verb, timestamp }) => {
       <div className="timestamp">
         {verb.toLowerCase()} {moment(timestamp).fromNow()}
       </div>
-      <div className="author-info">
-        <div className="meta">
-          <div className="author-name">
-            <Link to={`/users/${author._uid_}`}>
-              {author.DisplayName}
-            </Link>
+
+      {author
+        ? <div className="author-info">
+            <div className="meta">
+              <div className="author-name">
+                <Link to={`/users/${author._uid_}`}>
+                  {author.DisplayName}
+                </Link>
+              </div>
+              <div className="author-rep">
+                {author.Reputation}
+              </div>
+            </div>
           </div>
-          <div className="author-rep">
-            {author.Reputation}
-          </div>
-        </div>
-      </div>
+        : <div className="author-info">
+            <div className="meta">
+              <div className="author-name">Deleted user</div>
+              <div className="author-rep">0</div>
+            </div>
+          </div>}
     </div>
   );
 };

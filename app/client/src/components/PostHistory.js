@@ -18,7 +18,13 @@ const PostHistory = ({ post }) => {
             timestamp={post.History[0].Timestamp}
           />
         : null}
-      <History author={post.Owner[0]} verb="asked" timestamp={post.Timestamp} />
+
+      {/* In the dataset, Some posts have no owner */}
+      <History
+        author={post.Owner ? post.Owner[0] : null}
+        verb="asked"
+        timestamp={post.Timestamp}
+      />
     </div>
   );
 };
