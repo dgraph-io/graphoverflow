@@ -47,7 +47,12 @@ class Question extends React.Component {
   };
 
   refreshQuestion = questionUID => {
-    const query = getQuestionQuery(questionUID);
+    const { user } = this.props;
+    let currentUserUID;
+    if (user) {
+      currentUserUID = user._uid_;
+    }
+    const query = getQuestionQuery(questionUID, currentUserUID);
 
     runQuery(query).then(res => {
       const question = res.question[0];

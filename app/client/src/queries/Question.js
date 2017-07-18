@@ -44,6 +44,19 @@ Comment {
 }
 `;
 
+function getUserVoteCountFragment(userUID) {
+  if (userUID) {
+    // parseInt necessary for https://github.com/dgraph-io/dgraph/issues/1204
+    const userUIDInDec = parseInt(userUID);
+    return `
+      UserUpvoteCount: count(Upvote @filter(uid_in(Author, ${userUIDInDec})))
+      UserDownvoteCount: count(Downvote @filter(uid_in(Author, ${userUIDInDec})))
+    `;
+  }
+
+  return "";
+}
+
 export function getCommentQuery(commentID) {
   return `{
     comment(func: uid(${commentID})) {
@@ -115,7 +128,7 @@ export function getAnswersQuery(
 }
 
 // getQuestionQuery generates a query to fetch the question with the given UID
-export function getQuestionQuery(questionUID) {
+export function getQuestionQuery(questionUID, currentUserUID) {
   return `{
     var (func: uid(${questionUID})) {
       Has.Answer {
@@ -153,6 +166,7 @@ export function getQuestionQuery(questionUID) {
 
       Has.Answer(orderdesc: val(answer_score)) {
         ${AnswerFragment}
+        ${getUserVoteCountFragment(currentUserUID)}
       }
 
       Comment {
@@ -162,6 +176,8 @@ export function getQuestionQuery(questionUID) {
       History: ~Post(orderdesc: Timestamp, first: 1) {
         ${HistoryFragment}
       }
+
+      ${getUserVoteCountFragment(currentUserUID)}
     }
 
     tags(func: uid(questionTags)) {

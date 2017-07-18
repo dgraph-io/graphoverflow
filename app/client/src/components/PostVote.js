@@ -45,7 +45,9 @@ const PostVote = ({
         </div>
         <a
           href="#downvote"
-          className={classnames("vote-btn", { voted: userDownvoted })}
+          className={classnames("vote-btn", {
+            voted: userDownvoted
+          })}
           onClick={e => {
             e.preventDefault();
             if (!currentUser) {

@@ -52,8 +52,21 @@
   &:hover {
     color: #f44336;
   }
-  &:active {
-    color: inherit;
+  &.voted {
+    &:active {
+      color: #f44336;
+    }
+    &:focus {
+      color: #f44336;
+    }
+  }
+  &:not(.voted) {
+    &:active {
+      color: gainsboro;
+    }
+    &:focus {
+      color: gainsboro;
+    }
   }
 }
 

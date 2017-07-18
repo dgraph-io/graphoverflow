@@ -18,8 +18,8 @@ class Post extends React.Component {
 
     this.state = {
       comments: props.post.Comment || [],
-      userUpvoted: false,
-      userDownvoted: false
+      userUpvoted: props.post.UserUpvoteCount === 1,
+      userDownvoted: props.post.UserDownvoteCount === 1
     };
   }
 
