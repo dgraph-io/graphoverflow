@@ -8,6 +8,7 @@ import { excerpt } from "../lib/helpers";
 const SearchResultQuestionItem = ({ question, searchTerm }) => {
   const questionLink = `/questions/${question._uid_}`;
   const questionScore = question.UpvoteCount - question.DownvoteCount;
+  const searchTermWords = searchTerm.split(" ");
 
   return (
     <li className="search-result-item">
@@ -28,7 +29,7 @@ const SearchResultQuestionItem = ({ question, searchTerm }) => {
             <Link to={questionLink}>
               Q:{" "}
               <Highlighter
-                searchWords={[searchTerm]}
+                searchWords={searchTermWords}
                 textToHighlight={question.Title[0].Text}
               />
             </Link>
@@ -36,7 +37,7 @@ const SearchResultQuestionItem = ({ question, searchTerm }) => {
 
           <div className="exerpt">
             <Highlighter
-              searchWords={[searchTerm]}
+              searchWords={searchTermWords}
               textToHighlight={excerpt(
                 striptags(question.Body[0].Text),
                 searchTerm

@@ -1,6 +1,6 @@
 export function getSearchResultQuery(searchTerm) {
   return `
-    var(func: anyoftext(Text, "${searchTerm}")) @cascade {
+    var(func: alloftext(Text, "${searchTerm}")) @cascade {
     	p as Post {
         ~Post(orderdesc: Timestamp, first: 1) @filter(anyoftext(Text, "${searchTerm}"))
       }

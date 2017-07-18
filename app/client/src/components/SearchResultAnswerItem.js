@@ -13,6 +13,7 @@ const SearchResultAnswerItem = ({ answer, searchTerm }) => {
 
   const questionLink = `/questions/${answer.question[0]._uid_}#${answer._uid_}`;
   const score = answer.UpvoteCount - answer.DownvoteCount;
+  const searchTermWords = searchTerm.split(" ");
 
   return (
     <li className="search-result-item">
@@ -33,7 +34,7 @@ const SearchResultAnswerItem = ({ answer, searchTerm }) => {
             <Link to={questionLink}>
               A:{" "}
               <Highlighter
-                searchWords={[searchTerm]}
+                searchWords={searchTermWords}
                 textToHighlight={answer.question[0].Title[0].Text}
               />
             </Link>
@@ -41,7 +42,7 @@ const SearchResultAnswerItem = ({ answer, searchTerm }) => {
 
           <div className="exerpt">
             <Highlighter
-              searchWords={[searchTerm]}
+              searchWords={searchTermWords}
               textToHighlight={excerpt(
                 striptags(answer.Body[0].Text),
                 searchTerm
