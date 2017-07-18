@@ -125,6 +125,7 @@ class Post extends React.Component {
             onCancelVote={this.handleCancelVote}
             userUpvoted={userUpvoted}
             userDownvoted={userDownvoted}
+            currentUser={currentUser}
           />
           <div className="post-body-container">
             <div
