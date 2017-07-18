@@ -20,7 +20,7 @@ mutation {
     Timestamp: datetime .
     GitHubID: string @index(hash) .
     Has.Answer: uid @reverse .
-    Comment: uid .
+    Comment: uid @reverse .
     Upvote: uid .
     Downvote: uid .
     Tag: uid @reverse .
