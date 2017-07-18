@@ -3,7 +3,7 @@ import React from "react";
 import SearchResultQuestionItem from "./SearchResultQuestionItem";
 import SearchResultAnswerItem from "./SearchResultAnswerItem";
 
-const SearchResultList = ({ posts, searchTerm }) => {
+const SearchResultList = ({ posts, searchTerm, searchTermWords }) => {
   return (
     <ul className="list-unstyled search-result-list">
       {posts.map(post => {
@@ -12,6 +12,7 @@ const SearchResultList = ({ posts, searchTerm }) => {
             <SearchResultQuestionItem
               question={post}
               searchTerm={searchTerm}
+              searchTermWords={searchTermWords}
               key={post._uid_}
             />
           );
@@ -20,6 +21,7 @@ const SearchResultList = ({ posts, searchTerm }) => {
             <SearchResultAnswerItem
               answer={post}
               searchTerm={searchTerm}
+              searchTermWords={searchTermWords}
               key={post._uid_}
             />
           );

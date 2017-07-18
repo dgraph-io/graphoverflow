@@ -94,6 +94,7 @@ class SearchResult extends React.Component {
   render() {
     const { posts, hotQuestions, postsLoaded, initialDataLoaded } = this.state;
     const searchTerm = getSearchTerm(this.props);
+    const searchTermWords = searchTerm.split(" ");
 
     if (!initialDataLoaded) {
       return <Loading />;
@@ -111,7 +112,11 @@ class SearchResult extends React.Component {
               </div>
 
               {postsLoaded
-                ? <SearchResultList posts={posts} searchTerm={searchTerm} />
+                ? <SearchResultList
+                    posts={posts}
+                    searchTerm={searchTerm}
+                    searchTermWords={searchTermWords}
+                  />
                 : <Loading />}
             </section>
           </div>

@@ -5,10 +5,13 @@ import Highlighter from "react-highlight-words";
 
 import { excerpt } from "../lib/helpers";
 
-const SearchResultQuestionItem = ({ question, searchTerm }) => {
+const SearchResultQuestionItem = ({
+  question,
+  searchTerm,
+  searchTermWords
+}) => {
   const questionLink = `/questions/${question._uid_}`;
   const questionScore = question.UpvoteCount - question.DownvoteCount;
-  const searchTermWords = searchTerm.split(" ");
 
   return (
     <li className="search-result-item">

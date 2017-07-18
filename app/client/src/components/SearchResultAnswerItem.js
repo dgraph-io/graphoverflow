@@ -5,7 +5,7 @@ import Highlighter from "react-highlight-words";
 
 import { excerpt } from "../lib/helpers";
 
-const SearchResultAnswerItem = ({ answer, searchTerm }) => {
+const SearchResultAnswerItem = ({ answer, searchTerm, searchTermWords }) => {
   // The dataset has data integrity issue. Some answers do not belong to questions
   if (!answer.question || !answer.question[0].Title) {
     return null;
@@ -13,7 +13,6 @@ const SearchResultAnswerItem = ({ answer, searchTerm }) => {
 
   const questionLink = `/questions/${answer.question[0]._uid_}#${answer._uid_}`;
   const score = answer.UpvoteCount - answer.DownvoteCount;
-  const searchTermWords = searchTerm.split(" ");
 
   return (
     <li className="search-result-item">
