@@ -22,8 +22,8 @@ mutation {
     Has.Answer: uid @reverse @count .
     Chosen.Answer: uid @count .
     Comment: uid @reverse .
-    Upvote: uid @count .
-    Downvote: uid @count .
+    Upvote: uid @reverse @count .
+    Downvote: uid @reverse @count .
     Tag: uid @reverse .
   }
 }
