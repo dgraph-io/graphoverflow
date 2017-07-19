@@ -136,10 +136,10 @@ class Home extends React.Component {
                     recommendation.
                   </div>
                 : null}
-              {currentTab === ALL_TABS.TAB_RECOMMENDED && questions.length === 0
-                ? <div className="login-needed-alert">
-                    Start answering questions to get custom recommendation.
-                  </div>
+              {user &&
+              currentTab === ALL_TABS.TAB_RECOMMENDED &&
+              questions.length === 0
+                ? <p>Upvote or answer questions to get recommendation</p>
                 : null}
 
               <div>Looking for more? Try to search for a question.</div>

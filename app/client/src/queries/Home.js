@@ -64,6 +64,7 @@ export function getHotQuestionsQuery(keyName = "questions") {
 }
 
 export function getRecommendedQuestionsQuery(userUID) {
+  // READ MORE AT: https://open.dgraph.io/post/recommendation2/
   return `
   {
     user as var(func: uid(${userUID})) {
@@ -73,6 +74,16 @@ export function getRecommendedQuestionsQuery(userUID) {
           Tag {
             sc1 as math(a)
             Tag.Text
+          }
+        }
+      }
+
+      ~Author {
+        seen as ~Upvote {
+          Upvote {
+            Author {
+              sc2 as math(a)
+            }
           }
         }
       }
@@ -100,12 +111,22 @@ export function getRecommendedQuestionsQuery(userUID) {
     var(func: uid(sc), orderdesc: val(sc), first: 10) {
       ~Owner @filter(eq(Type, "Answer")) {
         ~Has.Answer { # @filter(not val(answered)) {
-          fscore as count(Tag @filter(uid(mytoptags)))
+          fscore1 as count(Tag @filter(uid(mytoptags)))
         }
       }
     }
 
-    questions(func: uid(fscore), orderdesc: val(fscore), first: 5)  {
+    var(func: uid(sc2), orderdesc: val(sc2), first: 10) @filter(not uid(user)) {
+      b as math(1)
+      ~Author {
+        ~Upvote @filter(not uid(seen) and eq(Type, "Question")) {
+          fscore2 as math(b)
+          fscore3 as math(fscore1 + fscore2)
+        }
+      }
+    }
+
+    questions(func: uid(fscore3), orderdesc: val(fscore3), first: 25)  {
       ${questionFragment}
     }
   }`;
