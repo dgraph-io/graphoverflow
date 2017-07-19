@@ -136,6 +136,9 @@ class Home extends React.Component {
                     recommendation.
                   </div>
                 : null}
+              {currentTab === ALL_TABS.TAB_RECOMMENDED && user
+                ? <div>Recommended based on your upvote and answers</div>
+                : null}
               {user &&
               currentTab === ALL_TABS.TAB_RECOMMENDED &&
               questions.length === 0
