@@ -9,15 +9,9 @@ const PostVote = ({
   userUpvoted,
   userDownvoted,
   currentUser,
-  history
+  history,
+  postScore
 }) => {
-  let postScore = post.UpvoteCount - post.DownvoteCount;
-  if (userUpvoted) {
-    postScore++;
-  } else if (userDownvoted) {
-    postScore--;
-  }
-
   return (
     <div className="post-vote-container">
       <div className="post-vote">
