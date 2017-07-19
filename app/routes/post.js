@@ -18,7 +18,7 @@ function catchAsyncErrors(fn) {
 function fetchPost(uid) {
   const query = `
 {
-  post(id: ${uid}) {
+  post(func: uid(${uid})) {
     _uid_
     Title {
       Text
@@ -33,6 +33,7 @@ function fetchPost(uid) {
       _uid_
     }
     ViewCount
+    Type
   }
 }
 `;
@@ -54,7 +55,7 @@ function fetchPost(uid) {
 
 function fetchComment(uid) {
   const query = `{
-    comment(id: ${uid}) {
+    comment(func: uid(${uid})) {
       Author {
         _uid_
       }
@@ -145,6 +146,7 @@ function updatePost({ post, title, body, currentUserUID }) {
 
   let titleSetMutation = "";
   let titleDeleteMutation = "";
+
   if (post.Type === "Question" && post.Title[0].Text !== title) {
     titleSetMutation = `
   <_:newTitle> <Timestamp> "${now}" .
@@ -214,7 +216,7 @@ async function handleUpdatePost(req, res, next) {
 
   const post = await fetchPost(postUID);
   if (post.Owner[0]._uid_ !== currentUserUID) {
-    res.status(403).send("Only the owner can update the psot");
+    res.status(403).send("Only the owner can update the post");
     return;
   }
   await updatePost({ post, title, body, currentUserUID });
@@ -369,6 +371,19 @@ async function handleCreateVote(req, res, next) {
   }
 `;
 
+  let oppositeVoteType;
+  if (type === "Upvote") {
+    oppositeVoteType = "Downvote";
+  } else if (type === "Downvote") {
+    oppositeVoteType = "Upvote";
+  }
+
+  await cancelVote({
+    postUID,
+    type: oppositeVoteType,
+    authorUID: currentUserUID
+  });
+
   runQuery(query)
     .then(() => {
       res.end();
@@ -379,16 +394,17 @@ async function handleCreateVote(req, res, next) {
     });
 }
 
+// fetchVote returns a promise that resolves with a vote
 // voteType is either `Upvote` or `Downvote`
 function fetchVote({ postUID, authorUID, voteType }) {
   const query = `
   {
-    postId as var(id: ${postUID})
+    postId as var(func: uid(${postUID}))
 
-    currentUser(id: ${authorUID}) @cascade {
+    currentUser(func: uid(${authorUID})) @cascade {
       ~Author {
          _uid_
-         ~${voteType} @filter(var(postId))
+         ~${voteType} @filter(uid(postId))
       }
     }
   }
@@ -409,17 +425,13 @@ function fetchVote({ postUID, authorUID, voteType }) {
   });
 }
 
-// handleCancelVote cancels the current user's vote for the post
-async function handleCancelVote(req, res, next) {
-  const { type } = req.body;
-  const postUID = req.params.uid;
-  const currentUserUID = req.user && req.user._uid_;
-  const now = new Date().toISOString();
-
+// cancelVote returns a promise that resolves when the query for cancelling vote
+// is complete
+async function cancelVote({ postUID, type, authorUID }) {
   const vote = await fetchVote({
     postUID,
     voteType: type,
-    authorUID: currentUserUID
+    authorUID
   });
 
   const query = `
@@ -431,7 +443,17 @@ async function handleCancelVote(req, res, next) {
   }
 `;
 
-  runQuery(query)
+  return runQuery(query);
+}
+
+// handleCancelVote cancels the current user's vote for the post
+async function handleCancelVote(req, res, next) {
+  const { type } = req.body;
+  const postUID = req.params.uid;
+  const currentUserUID = req.user && req.user._uid_;
+  const now = new Date().toISOString();
+
+  cancelVote({ postUID, type, authorUID: currentUserUID })
     .then(() => {
       res.end();
     })

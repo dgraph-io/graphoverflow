@@ -1,20 +1,17 @@
 import React from "react";
 import classnames from "classnames";
+import { withRouter } from "react-router-dom";
 
 const PostVote = ({
   post,
   onVote,
   onCancelVote,
   userUpvoted,
-  userDownvoted
+  userDownvoted,
+  currentUser,
+  history,
+  postScore
 }) => {
-  let postScore = post.UpvoteCount - post.DownvoteCount;
-  if (userUpvoted) {
-    postScore++;
-  } else if (userDownvoted) {
-    postScore--;
-  }
-
   return (
     <div className="post-vote-container">
       <div className="post-vote">
@@ -23,6 +20,10 @@ const PostVote = ({
           className={classnames("vote-btn", { voted: userUpvoted })}
           onClick={e => {
             e.preventDefault();
+            if (!currentUser) {
+              history.push("/login");
+              return;
+            }
 
             if (userUpvoted) {
               onCancelVote({ type: "Upvote" });
@@ -38,9 +39,15 @@ const PostVote = ({
         </div>
         <a
           href="#downvote"
-          className={classnames("vote-btn", { voted: userDownvoted })}
+          className={classnames("vote-btn", {
+            voted: userDownvoted
+          })}
           onClick={e => {
             e.preventDefault();
+            if (!currentUser) {
+              history.push("/login");
+              return;
+            }
 
             if (userDownvoted) {
               onCancelVote({ type: "Downvote" });
@@ -55,4 +62,4 @@ const PostVote = ({
     </div>
   );
 };
-export default PostVote;
+export default withRouter(PostVote);

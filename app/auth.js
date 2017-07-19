@@ -35,7 +35,7 @@ export function findUserByUID(uid) {
   console.log("finding user", uid);
   const query = `
 {
-  user(id: ${uid}) {
+  user(func: uid(${uid})) {
     _uid_
     Reputation
     DisplayName
@@ -63,7 +63,7 @@ export function configPassport(passport) {
   passport.deserializeUser(function(id, done) {
     const query = `
   {
-    user(id: ${id}) {
+    user(func: uid(${id})) {
       _uid_
       Reputation
       CreationDate

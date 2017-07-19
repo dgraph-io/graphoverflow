@@ -19,10 +19,11 @@ mutation {
     Tags: uid @reverse .
     Timestamp: datetime .
     GitHubID: string @index(hash) .
-    Has.Answer: uid @reverse .
+    Has.Answer: uid @reverse @count .
+    Chosen.Answer: uid @count .
     Comment: uid @reverse .
-    Upvote: uid .
-    Downvote: uid .
+    Upvote: uid @reverse @count .
+    Downvote: uid @reverse @count .
     Tag: uid @reverse .
   }
 }

@@ -18,8 +18,9 @@ class Post extends React.Component {
 
     this.state = {
       comments: props.post.Comment || [],
-      userUpvoted: false,
-      userDownvoted: false
+      userUpvoted: props.post.UserUpvoteCount === 1,
+      userDownvoted: props.post.UserDownvoteCount === 1,
+      postScore: props.post.UpvoteCount - props.post.DownvoteCount
     };
   }
 
@@ -72,29 +73,57 @@ class Post extends React.Component {
 
   handleVote = ({ type }) => {
     const { post } = this.props;
+    const { userUpvoted, userDownvoted } = this.state;
 
     request.post(`/api/posts/${post._uid_}/vote`).send({ type }).then(() => {
-      this.setState({
-        userUpvoted: type === "Upvote",
-        userDownvoted: type === "Downvote"
+      let scoreDelta = 0;
+      if (type === "Upvote") {
+        if (userDownvoted) {
+          scoreDelta = 2;
+        } else {
+          scoreDelta = 1;
+        }
+      } else if (type === "Downvote") {
+        if (userUpvoted) {
+          scoreDelta = -2;
+        } else {
+          scoreDelta = -1;
+        }
+      }
+
+      this.setState(prevState => {
+        return {
+          userUpvoted: type === "Upvote",
+          userDownvoted: type === "Downvote",
+          postScore: prevState.postScore + scoreDelta
+        };
       });
     });
   };
 
-  handleCancelVote = ({ type }) => {
+  handleCancelVote = ({ type }, done) => {
     const { post } = this.props;
+    let scoreDelta = 0;
+    if (type === "Upvote") {
+      scoreDelta = -1;
+    } else if (type === "Downvote") {
+      scoreDelta = 1;
+    }
 
     request.delete(`/api/posts/${post._uid_}/vote`).send({ type }).then(() => {
-      this.setState({
-        userUpvoted: false,
-        userDownvoted: false
-      });
+      this.setState(prevState => {
+        return {
+          userUpvoted: false,
+          userDownvoted: false,
+          postScore: prevState.postScore + scoreDelta
+        };
+      }, done);
     });
   };
 
   render() {
     const { post, currentUser, onDeletePost } = this.props;
-    const { comments, userUpvoted, userDownvoted } = this.state;
+    const { comments, userUpvoted, userDownvoted, postScore } = this.state;
 
     return (
       <div
@@ -125,6 +154,8 @@ class Post extends React.Component {
             onCancelVote={this.handleCancelVote}
             userUpvoted={userUpvoted}
             userDownvoted={userDownvoted}
+            currentUser={currentUser}
+            postScore={postScore}
           />
           <div className="post-body-container">
             <div
