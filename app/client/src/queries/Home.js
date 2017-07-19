@@ -109,9 +109,12 @@ export function getRecommendedQuestionsQuery(userUID) {
     }
 
     var(func: uid(sc), orderdesc: val(sc), first: 10) {
+      c as math(0)
+
       ~Owner @filter(eq(Type, "Answer")) {
         ~Has.Answer { # @filter(not val(answered)) {
-          fscore1 as count(Tag @filter(uid(mytoptags)))
+          c1 as count(Tag @filter(uid(mytoptags)))
+          fscore1 as math(max(c1, c))
         }
       }
     }
