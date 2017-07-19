@@ -27,7 +27,10 @@ class Post extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.post._uid_ !== nextProps.post._uid_) {
       this.setState({
-        comments: nextProps.post.Comment
+        comments: nextProps.post.Comment,
+        userUpvoted: nextProps.post.UserUpvoteCount === 1,
+        userDownvoted: nextProps.post.UserDownvoteCount === 1,
+        postScore: nextProps.post.UpvoteCount - nextProps.post.DownvoteCount
       });
     }
   }
