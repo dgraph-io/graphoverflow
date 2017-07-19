@@ -16,12 +16,21 @@ import LoggedInRoute from "./components/hocs/LoggedInRoute";
 import SearchResult from "./components/SearchResult";
 import Tag from "./components/Tag";
 import Login from "./components/Login";
+import Loading from "./components/Loading";
 
 import { login, logout } from "./actions/session";
 
 import "./assets/styles/App.css";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      authChecked: false
+    };
+  }
+
   componentDidMount() {
     const { handleLogin, history } = this.props;
 
@@ -29,9 +38,12 @@ class App extends Component {
     request("/api/current_user")
       .then(res => {
         const user = res.body;
+
         if (user) {
           handleLogin(user);
         }
+
+        this.setState({ authChecked: true });
       })
       .catch(err => {
         console.log("Error while fetching current user", err);
@@ -68,6 +80,11 @@ class App extends Component {
 
   render() {
     const { user } = this.props;
+    const { authChecked } = this.state;
+
+    if (!authChecked) {
+      return <Loading />;
+    }
 
     return (
       <div>
