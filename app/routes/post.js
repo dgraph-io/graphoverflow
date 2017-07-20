@@ -265,6 +265,24 @@ async function handleDeletePost(req, res, next) {
   let hasAnswerRDF = "";
   if (parentPostUID) {
     hasAnswerRDF = `<${parentPostUID}> <Has.Answer> <${postUID}> .`;
+  } else {
+    // find all the answers and remove them as well
+    const res = await runQuery(`
+{
+  question(func: uid(${postUID})) {
+    Has.Answer {
+      _uid_
+    }
+  }
+}
+`);
+
+    let answerUIDs = [];
+    if (res.question[0]["Has.Answer"]) {
+      answerUIDs = res.question[0]["Has.Answer"].map(ans => ans._uid_);
+    }
+
+    hasAnswerRDF = answerUIDs.map(uid => `<${uid}> * * .`).join("\n");
   }
 
   const query = `
