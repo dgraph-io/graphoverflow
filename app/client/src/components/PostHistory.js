@@ -9,12 +9,21 @@ const PostHistory = ({ post }) => {
   const isEdited =
     new Date(post.History[0].Timestamp) > new Date(post.Timestamp);
 
+  let verb;
+  if (isEdited) {
+    verb = "edited";
+  } else if (post.Type === "Question") {
+    verb = "asked";
+  } else {
+    verb = "answered";
+  }
+
   return (
     <div className="history-container">
       {isEdited
         ? <History
             author={post.History[0].Author[0]}
-            verb="edited"
+            verb={verb}
             timestamp={post.History[0].Timestamp}
           />
         : null}
@@ -22,7 +31,7 @@ const PostHistory = ({ post }) => {
       {/* In the dataset, Some posts have no owner */}
       <History
         author={post.Owner ? post.Owner[0] : null}
-        verb="asked"
+        verb={verb}
         timestamp={post.Timestamp}
       />
     </div>
