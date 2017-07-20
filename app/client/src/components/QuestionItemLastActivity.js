@@ -30,15 +30,21 @@ const QuestionItemLastActivity = ({ question }) => {
   }
 
   const lastAnswer = question["Has.Answer"][0];
-  const lastAnswerOwner = lastAnswer.Owner[0];
+  const lastAnswerOwner = lastAnswer.Owner ? lastAnswer.Owner[0] : null;
 
   return (
     <div>
       answered {moment(lastAnswerCreatedAt).fromNow()} by{" "}
-      <Link to={`/users/${lastAnswer.Owner[0]._uid_}`}>
-        {lastAnswerOwner.DisplayName || "no_username"}
-      </Link>{" "}
-      <span className="reputation">{kFormat(lastAnswerOwner.Reputation)}</span>
+      {lastAnswerOwner
+        ? <div>
+            <Link to={`/users/${lastAnswer.Owner[0]._uid_}`}>
+              {lastAnswerOwner.DisplayName || "no_username"}
+            </Link>{" "}
+            <span className="reputation">
+              {kFormat(lastAnswerOwner.Reputation)}
+            </span>
+          </div>
+        : <div>Unknown user</div>}
     </div>
   );
 };
