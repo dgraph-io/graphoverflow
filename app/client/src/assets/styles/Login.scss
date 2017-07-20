@@ -6,10 +6,15 @@
   margin-bottom: 32px;
 
   h1 {
-    margin-bottom: 29px;
+    margin: 29px 0;
+    font-size: 26px;
   }
 
   .diggy {
     width: 350px;
+
+    @media (max-width: 425px) {
+      width: 182px;
+    }
   }
 }

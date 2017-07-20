@@ -11,6 +11,10 @@
 .stats {
   display: flex;
   flex-direction: row;
+
+  @media (max-width: 425px) {
+    display: none;
+  }
 }
 
 .stat {
@@ -31,6 +35,11 @@
 
 .tags {
   float: left;
+
+  @media (max-width: 425px) {
+    float: none;
+    margin-top: 9px;
+  }
 }
 
 .last-activity {
@@ -38,6 +47,11 @@
   font-size: 14px;
   color: gray;
   padding-top: 5px;
+
+  @media (max-width: 425px) {
+    float: none;
+    text-align: right;
+  }
 }
 
 .reputation {

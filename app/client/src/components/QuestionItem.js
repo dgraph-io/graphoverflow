@@ -44,7 +44,7 @@ const QuestionItem = ({ question, history }) => {
 
         <div className="col-12 col-sm-9">
           <div>
-            <Link to={questionLink}>
+            <Link to={questionLink} className="question-title">
               {JSON.stringify(question.Title[0].Text)}
             </Link>
           </div>

@@ -17,6 +17,10 @@
 
 .post-content {
   display: flex;
+
+  @media (max-width: 425px) {
+    display: block;
+  }
 }
 
 .post-body-container {
@@ -33,6 +37,11 @@
 
 .post-vote-container {
   width: 50px;
+
+  @media (max-width: 425px) {
+    float: left;
+    margin-right: 20px;
+  }
 }
 
 .post-vote {

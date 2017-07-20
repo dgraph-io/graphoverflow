@@ -4,6 +4,16 @@
   align-items: center;
   padding: 1px 12px 0px;
   border-bottom: 1px solid #d8d8d8;
+
+  @media (max-width: 425px) {
+    display: block;
+    padding: 0;
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 21px;
+    }
+  }
 }
 
 .tab-navigation {
@@ -38,6 +48,10 @@
 
   &:focus {
     text-decoration: none;
+  }
+
+  @media (max-width: 320px) {
+    font-size: 9px;
   }
 }
 

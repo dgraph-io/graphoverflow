@@ -22,6 +22,15 @@
   .action {
     color: black;
   }
+
+  @media (max-width: 425px) {
+    .user {
+      display: none;
+    }
+    .separator {
+      display: none;
+    }
+  }
 }
 
 .separator {

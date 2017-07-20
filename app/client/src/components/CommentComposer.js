@@ -25,16 +25,16 @@ export default class CommentComposer extends React.Component {
           }}
         >
           <div className="row">
-            <div className="col-9">
+            <div className="col-12 col-sm-12 col-md-9">
               <textarea
-                className="form-control"
+                className="form-control comment-input"
                 value={body}
                 onChange={e => {
                   this.setState({ body: e.target.value });
                 }}
               />
             </div>
-            <div className="col-3">
+            <div className="col-12 col-sm-12 col-md-3">
               <input
                 type="submit"
                 value="Add Comment"

@@ -2,6 +2,10 @@
   display: inline-block;
   position: relative;
 
+  @media (max-width: 425px) {
+    display: none;
+  }
+
   .search-icon {
     position: absolute;
     top: 10px;
@@ -44,6 +48,10 @@
 
     .search-input {
       width: 400px;
+
+      @media (max-width: 768px) {
+        width: 220px;
+      }
 
       padding-left: 9px;
       border-top-right-radius: 0;

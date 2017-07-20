@@ -114,7 +114,7 @@ class Home extends React.Component {
     return (
       <div className="container">
         <div className="row">
-          <div className="col-12 col-sm-8">
+          <div className="col-12 col-sm-12 col-md-12 col-lg-8">
             <section className="section">
               <div className="heading">
                 <h2>Top Questions</h2>
@@ -149,7 +149,7 @@ class Home extends React.Component {
             </section>
           </div>
 
-          <div className="col-12 col-sm-4">
+          <div className="col-12 col-sm-12 col-md-12 col-lg-4">
             <div className="question-action">
               <Link className="btn btn-primary" to="/questions/ask">
                 Ask Question

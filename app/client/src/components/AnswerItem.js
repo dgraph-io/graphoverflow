@@ -27,30 +27,23 @@ const QuestionItem = ({ question, history }) => {
               <div className="number">
                 {questionScore}
               </div>
-              <div className="noun">
-                Votes
-              </div>
+              <div className="noun">Votes</div>
             </div>
 
             <div className="stat">
               <div className="number">
                 {question.AnswerCount}
               </div>
-              <div className="noun">
-                Answers
-              </div>
+              <div className="noun">Answers</div>
             </div>
 
             <div className="stat">
               <div className="number">
                 {question.ViewCount}
               </div>
-              <div className="noun">
-                Views
-              </div>
+              <div className="noun">Views</div>
             </div>
           </div>
-
         </div>
         <div className="col-12 col-sm-9">
           <div>

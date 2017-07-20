@@ -1,5 +1,9 @@
 .history-container {
   text-align: right;
+
+  @media (max-width: 425px) {
+    margin-top: 43px;
+  }
 }
 
 .history {
@@ -9,6 +13,10 @@
 
   &.asked {
     background-color: #ebebff;
+  }
+
+  @media (max-width: 425px) {
+    width: 140px;
   }
 }
 
