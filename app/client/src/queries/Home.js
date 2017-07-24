@@ -148,7 +148,7 @@ topTags(func: uid(t), orderdesc: val(c), first: 10) {
 `;
 
 export const topUsersQuery = `
-var(func: eq(Type, "Question"), orderdesc: Timestamp, first: 50) {
+var(func: eq(Type, "Question"), orderdesc: Timestamp, first: 50)  @filter(has(Chosen.Answer)) {
   ca as Chosen.Answer
 }
 

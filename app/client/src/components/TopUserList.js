@@ -10,9 +10,11 @@ const TopUserList = ({ users }) => {
         Who got the most answers accepted this month?
       </p>
       <ul className="top-user-list">
-        {users.map(user => {
-          return <TopUserItem key={user._uid_} user={user} />;
-        })}
+        {users
+          ? users.map(user => {
+              return <TopUserItem key={user._uid_} user={user} />;
+            })
+          : <div>No ranking available. Not enough recent acitivities.</div>}
       </ul>
     </section>
   );
