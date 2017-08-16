@@ -10,20 +10,20 @@ mutation {
     Text: string @index(fulltext) .
     Tag.Text: string @index(hash) .
     Type: string @index(exact) .
-    ViewCount: int @index .
+    ViewCount: int @index(int) .
     Vote: uid @reverse .
     Title: uid @reverse .
     Body: uid @reverse .
     Post: uid @reverse .
-    PostCount: int @index .
+    PostCount: int @index(int) .
     Tags: uid @reverse .
     Timestamp: datetime .
     GitHubID: string @index(hash) .
     Has.Answer: uid @reverse @count .
     Chosen.Answer: uid @count .
     Comment: uid @reverse .
-    Upvote: uid @reverse @count .
-    Downvote: uid @reverse @count .
+    Upvote: uid @reverse .
+    Downvote: uid @reverse .
     Tag: uid @reverse .
   }
 }
