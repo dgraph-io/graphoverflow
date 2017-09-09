@@ -48,7 +48,7 @@ class Home extends React.Component {
 }
 `;
     runQuery(query).then(res => {
-      const { questions, topTags, topUsers } = res;
+      const { data: { questions, topTags, topUsers }} = res;
 
       this.setState({
         questions,

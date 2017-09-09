@@ -4,6 +4,10 @@ A blazingly fast Stack Overflow clone running the real Stack Exchange dataset.
 
 [Live](https://graphoverflow.dgraph.io)
 
+## Compatibility
+
+Currently compatible with graph v0.8.1
+
 ## Running locally
 
 1. Run `npm install` in the root directory
