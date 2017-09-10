@@ -45,8 +45,8 @@ class Post extends React.Component {
         const { commentUID } = res.body;
         const commentQuery = getCommentQuery(commentUID);
 
-        return runQuery(commentQuery).then(res => {
-          const comment = res.comment[0];
+        return runQuery(commentQuery).then(({ data }) => {
+          const comment = data.comment[0];
 
           this.setState({
             comments: [...this.state.comments, comment]

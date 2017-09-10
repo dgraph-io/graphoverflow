@@ -54,9 +54,9 @@ class Question extends React.Component {
     }
     const query = getQuestionQuery(questionUID, currentUserUID);
 
-    runQuery(query).then(res => {
-      const question = res.question[0];
-      const relatedQuestions = res.tags ? res.tags[0].relatedQuestions : [];
+    runQuery(query).then(({ data }) => {
+      const question = data.question[0];
+      const relatedQuestions = data.tags ? data.tags[0].relatedQuestions : [];
 
       // NOTE: `answers` is still present in `question`. Maybe we can delete it
       this.setState({
@@ -94,8 +94,8 @@ class Question extends React.Component {
         // fields to fetch (see /quries/Question). It is generally a good idea
         // to keep the shape of the required objects in a single place to avoid
         // overfetching, or worse, underfetching
-        return runQuery(answerQuery).then(res => {
-          const answer = res.answer[0];
+        return runQuery(answerQuery).then(({ data }) => {
+          const answer = data.answer[0];
 
           this.setState({
             answers: [...this.state.answers, answer]
@@ -110,13 +110,15 @@ class Question extends React.Component {
   refreshAnswers = (questionUID, tabName) => {
     const query = getAnswersQuery(questionUID, tabName);
 
-    runQuery(query).then(res => {
-      const question = res.question[0];
-      const answers = question["Has.Answer"];
+    runQuery(query).then(({ data }) => {
+      if (data && data.question) {
+        const question = data.question[0];
+        const answers = question["Has.Answer"];
 
-      console.log(answers);
+        console.log(answers);
 
-      this.setState({ answers });
+        this.setState({ answers });
+      }
     });
   };
 

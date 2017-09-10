@@ -43,9 +43,9 @@ class SearchResult extends React.Component {
 }
 `;
 
-    runQuery(query).then(res => {
-      const posts = res.posts || [];
-      const hotQuestions = res.hotQuestions || [];
+    runQuery(query).then(({ data }) => {
+      const posts = data.posts || [];
+      const hotQuestions = data.hotQuestions || [];
 
       this.setState({
         posts,

@@ -47,8 +47,8 @@ class Home extends React.Component {
   ${topUsersQuery}
 }
 `;
-    runQuery(query).then(res => {
-      const { data: { questions, topTags, topUsers }} = res;
+    runQuery(query).then(({ data }) => {
+      const { questions, topTags, topUsers } = data;
 
       this.setState({
         questions,
@@ -80,8 +80,8 @@ class Home extends React.Component {
 
     this.setState({ questionsLoaded: false }, () => {
       runQuery(query)
-        .then(res => {
-          const { questions } = res;
+        .then(({ data }) => {
+          const { questions } = data;
           this.setState({ questions, questionsLoaded: true });
         })
         // an error can occur due to https://github.com/dgraph-io/dgraph/issues/1057
