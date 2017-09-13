@@ -50,7 +50,6 @@ class EditPost extends React.Component {
       .put(`/api/posts/${params.uid}`)
       .send({ title, body })
       .then(res => {
-        console.log(res)
         // On create, redirect to the post
         const payload = res.body;
         const postLink = `/questions/${payload.parentUID || payload.postUID}`;
