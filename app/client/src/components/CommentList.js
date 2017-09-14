@@ -51,7 +51,7 @@ export default class CommentList extends React.Component {
             this.handleToggleExpanded();
           }}
         >
-          {comments.length > commentDisplayDefaultLimit
+          {comments.length >= commentDisplayDefaultLimit
             ? expanded
                 ? <span>Collapse comments</span>
                 : <span>Show all {comments.length} comments</span>

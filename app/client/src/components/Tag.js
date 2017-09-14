@@ -25,8 +25,8 @@ class Tag extends React.Component {
   ${getQuestionByTagNameQuery(tagName)}
   ${getRelatedTags(tagName)}
 }`;
-    runQuery(query).then(res => {
-      const { questions, relatedTags } = res;
+    runQuery(query).then(({ data }) => {
+      const { questions, relatedTags } = data;
 
       this.setState({
         questions,
@@ -50,8 +50,8 @@ class Tag extends React.Component {
   ${getRelatedTags(tagName)}
 }`;
 
-    runQuery(query).then(res => {
-      const { questions, relatedTags, topTags, topUsers } = res;
+    runQuery(query).then(({ data }) => {
+      const { questions, relatedTags, topTags, topUsers } = data;
 
       this.setState({
         questions,
@@ -100,7 +100,6 @@ class Tag extends React.Component {
             <div>
               <section className="side-section emphasize">
                 <h2>Related tags</h2>
-
                 <ul className="list-unstyled">
                   {relatedTags.map(tag => {
                     return (

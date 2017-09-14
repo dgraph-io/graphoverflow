@@ -25,9 +25,9 @@ export default class User extends React.Component {
 
     const query = getUserQuery(userUID);
     runQuery(query)
-      .then(res => {
-        const user = res.user[0];
-        const { answeredQuestions, authoredQuestions } = res;
+      .then(({ data }) => {
+        const user = data.user[0];
+        const { answeredQuestions, authoredQuestions } = data;
 
         this.setState({
           user,

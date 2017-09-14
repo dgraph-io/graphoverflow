@@ -20,8 +20,8 @@ mutation {
 `;
 
   return runQuery(query)
-    .then(res => {
-      const userUID = res.uids.user;
+    .then(({ data }) => {
+      const userUID = data.uids.user;
 
       return findUserByUID(userUID);
     })
@@ -48,9 +48,8 @@ export function findUserByUID(uid) {
 }
 `;
 
-  return runQuery(query).then(res => {
-    const user = res.user[0];
-    return user;
+  return runQuery(query).then(({ data }) => {
+    return data.user[0];
   });
 }
 
@@ -76,8 +75,8 @@ export function configPassport(passport) {
   `;
 
     runQuery(query)
-      .then(res => {
-        const user = res.user[0];
+      .then(({ data }) => {
+        const user = data.user[0];
 
         done(null, user);
       })
@@ -87,6 +86,7 @@ export function configPassport(passport) {
   });
 
   let callbackURL;
+
   if (process.env.NODE_ENV === "prod") {
     callbackURL = "https://graphoverflow.dgraph.io";
   } else {
@@ -117,10 +117,10 @@ export function configPassport(passport) {
   }
   `;
         runQuery(query)
-          .then(res => {
-            console.log("res.user", res.user);
+          .then(({ data }) => {
+            console.log("data.user", data.user);
             // FIXME
-            if (!res.user) {
+            if (!data.user) {
               createUser(
                 accessToken,
                 profile.username,
@@ -131,7 +131,7 @@ export function configPassport(passport) {
               return;
             }
 
-            const user = res.user[0];
+            const user = data.user[0];
             cb(null, user);
           })
           .catch(err => {

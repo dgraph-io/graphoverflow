@@ -22,8 +22,8 @@ class EditPost extends React.Component {
 
     const query = getQuestionQuery(params.uid);
     runQuery(query)
-      .then(res => {
-        const post = res.post[0];
+      .then(({ data }) => {
+        const post = data.post[0];
         this.setState({
           title: post.Title && post.Title[0].Text,
           body: post.Body[0].Text,

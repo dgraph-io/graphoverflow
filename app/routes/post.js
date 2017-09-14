@@ -39,11 +39,11 @@ function fetchPost(uid) {
 `;
   return new Promise((resolve, reject) => {
     runQuery(query)
-      .then(res => {
+      .then(({ data }) => {
         // res does not contain `post` if no match
         let result = {};
-        if (res.post) {
-          result = res.post[0];
+        if (data.post) {
+          result = data.post[0];
         }
         resolve(result);
       })
@@ -67,11 +67,11 @@ function fetchComment(uid) {
 
   return new Promise((resolve, reject) => {
     runQuery(query)
-      .then(res => {
+      .then(({ data }) => {
         // res does not contain `post` if no match
         let result = {};
-        if (res.comment) {
-          result = res.comment[0];
+        if (data.comment) {
+          result = data.comment[0];
         }
         resolve(result);
       })
@@ -130,12 +130,12 @@ mutation {
 
   return new Promise((resolve, reject) => {
     runQuery(query)
-      .then(result => {
-        resolve(result.uids.post);
+      .then(({ data }) => {
+        resolve(data.uids.post);
       })
-      .catch(err => {
-        console.log(err);
-        reject(err);
+      .catch(({ errors }) => {
+        console.log(errors);
+        reject(errors);
       });
   });
 }
@@ -267,7 +267,7 @@ async function handleDeletePost(req, res, next) {
     hasAnswerRDF = `<${parentPostUID}> <Has.Answer> <${postUID}> .`;
   } else {
     // find all the answers and remove them as well
-    const res = await runQuery(`
+    const { data } = await runQuery(`
 {
   question(func: uid(${postUID})) {
     Has.Answer {
@@ -278,8 +278,8 @@ async function handleDeletePost(req, res, next) {
 `);
 
     let answerUIDs = [];
-    if (res.question[0]["Has.Answer"]) {
-      answerUIDs = res.question[0]["Has.Answer"].map(ans => ans._uid_);
+    if (data.question && data.question[0]["Has.Answer"]) {
+      answerUIDs = data.question[0]["Has.Answer"].map(ans => ans._uid_);
     }
 
     hasAnswerRDF = answerUIDs.map(uid => `<${uid}> * * .`).join("\n");
@@ -337,8 +337,8 @@ mutation {
 `;
 
   runQuery(query)
-    .then(result => {
-      res.json({ commentUID: result.uids.comment });
+    .then(({ data }) => {
+      res.json({ commentUID: data.uids.comment });
     })
     .catch(error => {
       console.log(err);
@@ -430,13 +430,13 @@ function fetchVote({ postUID, authorUID, voteType }) {
 
   return new Promise((resolve, reject) => {
     runQuery(query)
-      .then(res => {
-        if (!res || !res.currentUser || !res.currentUser[0]["~Author"]) {
+      .then(({ data }) => {
+        if (!data || !data.currentUser || !data.currentUser[0]["~Author"]) {
           resolve({});
           return;
         }
 
-        const vote = res.currentUser[0]["~Author"][0];
+        const vote = data.currentUser[0]["~Author"][0];
         resolve(vote);
       })
       .catch(reject);
