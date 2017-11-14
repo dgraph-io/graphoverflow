@@ -2,6 +2,8 @@
 
 A blazingly fast Stack Overflow clone running the real Stack Exchange dataset.
 
+**NOTE: The repository is no longer being actively maintained by the Dgraph team. If something is broken, we'd happily accept a pull request from you, but won't fix anything ourselves.**
+
 [Live](https://graphoverflow.dgraph.io)
 
 ## Running locally
