@@ -13,7 +13,7 @@ const app = express();
 // Configure authentication using pasport.js
 configPassport(passport);
 
-app.use(cookieParser(process.env.CookieSecret));
+app.use(cookieParser("aa4f902do5d98810d7ae1119ac551a12"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
