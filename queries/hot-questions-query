@@ -14,7 +14,7 @@
   }
 
   questions(id: var(score), orderdesc: var(score), first: 100) {
-    _uid_
+    uid
 
     Title {
       Text
@@ -23,7 +23,7 @@
     Owner {
       DisplayName
       Reputation
-      _uid_
+      uid
     }
 
     Tag {
@@ -34,7 +34,7 @@
       Owner {
         DisplayName
         Reputation
-        _uid_
+        uid
       }
       Timestamp
     }

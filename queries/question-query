@@ -12,7 +12,7 @@
   }
 
   question(id: 0xd18499a5ac49c3a6) {
-    _uid_
+    uid
     Title {
       Text
     }
@@ -22,7 +22,7 @@
     Owner {
       DisplayName
       Reputation
-      _uid_
+      uid
     }
     ViewCount
     Timestamp
@@ -42,14 +42,14 @@
     ##########################
 
     Has.Answer(orderdesc: var(answer_score)) {        
-      _uid_
+      uid
       Body {
         Text
       }
       Owner {
         DisplayName
         Reputation
-        _uid_
+        uid
       }
       Timestamp
       Type
@@ -60,7 +60,7 @@
       Author {
         DisplayName
         Reputation
-        _uid_
+        uid
       }
       Type
       Text
@@ -68,9 +68,9 @@
 
       }
       Comment {
-        _uid_
+        uid
         Author {
-          _uid_
+          uid
           DisplayName
         }
         Text
@@ -80,9 +80,9 @@
     }
 
     Comment {        
-      _uid_
+      uid
       Author {
-        _uid_
+        uid
         DisplayName
       }
       Text
@@ -94,7 +94,7 @@
       Author {
         DisplayName
         Reputation
-        _uid_
+        uid
       }
       Type
       Text
@@ -109,7 +109,7 @@
 
   tags(id: var(questionTags)) {
     relatedQuestions: ~Tag(first: 10) {
-      _uid_
+      uid
       Title {
         Text
       }

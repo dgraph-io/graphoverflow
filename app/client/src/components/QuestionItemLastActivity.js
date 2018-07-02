@@ -17,7 +17,7 @@ const QuestionItemLastActivity = ({ question }) => {
       <div>
         asked {moment(questionCreatedAt).fromNow()} by{" "}
         <Link
-          to={`/users/${owner._uid_}`}
+          to={`/users/${owner.uid}`}
           onClick={e => {
             e.stopPropagation();
           }}
@@ -37,7 +37,7 @@ const QuestionItemLastActivity = ({ question }) => {
       answered {moment(lastAnswerCreatedAt).fromNow()} by{" "}
       {lastAnswerOwner
         ? <div>
-            <Link to={`/users/${lastAnswer.Owner[0]._uid_}`}>
+            <Link to={`/users/${lastAnswer.Owner[0].uid}`}>
               {lastAnswerOwner.DisplayName || "no_username"}
             </Link>{" "}
             <span className="reputation">

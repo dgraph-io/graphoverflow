@@ -86,7 +86,7 @@ const QuestionLayout = ({
                 {answers.map(answer => {
                   return (
                     <Post
-                      key={answer._uid_}
+                      key={answer.uid}
                       post={answer}
                       currentUser={currentUser}
                       onDeletePost={onDeletePost}

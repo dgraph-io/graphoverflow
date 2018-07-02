@@ -2,17 +2,17 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const PostActions = ({ post, currentUser, onDeletePost }) => {
-  const isOwner = currentUser && post.Owner[0]._uid_ === currentUser._uid_;
+  const isOwner = currentUser && post.Owner[0].uid === currentUser.uid;
   return (
     <div>
       {isOwner
         ? <div>
-            <Link to={`/posts/${post._uid_}/edit`}>edit</Link>
+            <Link to={`/posts/${post.uid}/edit`}>edit</Link>
             <a
               href="#delete"
               onClick={e => {
                 e.preventDefault();
-                onDeletePost(post._uid_);
+                onDeletePost(post.uid);
               }}
             >
               Delete

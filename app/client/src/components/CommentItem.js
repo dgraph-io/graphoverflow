@@ -4,7 +4,7 @@ import moment from "moment";
 import marked from "marked";
 
 const CommentItem = ({ comment, currentUser, onDeleteComment }) => {
-  const isOwner = currentUser && comment.Author[0]._uid_ === currentUser._uid_;
+  const isOwner = currentUser && comment.Author[0].uid === currentUser.uid;
   const author = comment.Author[0];
 
   return (
@@ -19,7 +19,7 @@ const CommentItem = ({ comment, currentUser, onDeleteComment }) => {
         />{" "}
         -{" "}
         <span className="comment-author-name">
-          <Link to={`/users/${author._uid_}`}>
+          <Link to={`/users/${author.uid}`}>
             {author.DisplayName}
           </Link>
         </span>{" "}
@@ -31,7 +31,7 @@ const CommentItem = ({ comment, currentUser, onDeleteComment }) => {
               href="#delete"
               onClick={e => {
                 e.preventDefault();
-                onDeleteComment(comment._uid_);
+                onDeleteComment(comment.uid);
               }}
             >
               <i className="fa fa-close" />

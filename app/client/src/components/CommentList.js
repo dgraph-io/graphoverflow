@@ -35,7 +35,7 @@ export default class CommentList extends React.Component {
           {commentsOnDisplay.map(comment => {
             return (
               <CommentItem
-                key={comment._uid_}
+                key={comment.uid}
                 comment={comment}
                 currentUser={currentUser}
                 onDeleteComment={onDeleteComment}

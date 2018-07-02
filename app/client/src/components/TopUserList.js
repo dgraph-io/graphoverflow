@@ -12,7 +12,7 @@ const TopUserList = ({ users }) => {
       <ul className="top-user-list">
         {users
           ? users.map(user => {
-              return <TopUserItem key={user._uid_} user={user} />;
+              return <TopUserItem key={user.uid} user={user} />;
             })
           : <div>No ranking available. Not enough recent acitivities.</div>}
       </ul>

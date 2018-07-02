@@ -1,7 +1,7 @@
 // questionFragment represents the fields that needs to be fetched to render
 // the question
 export const questionFragment = `
-_uid_
+uid
 Id
 
 Title {
@@ -11,7 +11,7 @@ Title {
 Owner {
   DisplayName
   Reputation
-  _uid_
+  uid
 }
 
 Tag {
@@ -22,7 +22,7 @@ Has.Answer(orderdesc: Timestamp, first: 1) {
   Owner {
     DisplayName
     Reputation
-    _uid_
+    uid
   }
   Timestamp
 }
@@ -141,7 +141,7 @@ t as var(func: eq(Type, "Tag")) {
 }
 
 topTags(func: uid(t), orderdesc: val(c), first: 10) {
-  _uid_
+  uid
   TagName: Tag.Text
   QuestionCount: val(c)
 }
@@ -153,11 +153,11 @@ var(func: eq(Type, "Question"), orderdesc: Timestamp, first: 50)  @filter(has(Ch
 }
 
 var(func: uid(ca)) @groupby(Owner) {
-  a as count(_uid_)
+  a as count(uid)
 }
 
 topUsers(func: uid(a), orderdesc: val(a)) {
-  _uid_
+  uid
   AboutMe
   DisplayName
   Reputation

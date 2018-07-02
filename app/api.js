@@ -34,7 +34,7 @@ app.get("/api/current_user", (req, res) => {
     return;
   }
 
-  findUserByUID(req.user._uid_)
+  findUserByUID(req.user.uid)
     .then(user => {
       console.log("user found", user);
       res.json(user);

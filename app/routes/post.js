@@ -19,7 +19,7 @@ function fetchPost(uid) {
   const query = `
 {
   post(func: uid(${uid})) {
-    _uid_
+    uid
     Title {
       Text
     }
@@ -27,10 +27,10 @@ function fetchPost(uid) {
       Text
     }
     Owner {
-      _uid_
+      uid
     }
     ~Has.Answer {
-      _uid_
+      uid
     }
     ViewCount
     Type
@@ -57,10 +57,10 @@ function fetchComment(uid) {
   const query = `{
     comment(func: uid(${uid})) {
       Author {
-        _uid_
+        uid
       }
       ~Comment {
-        _uid_
+        uid
       }
     }
   }`;
@@ -150,14 +150,14 @@ function updatePost({ post, title, body, currentUserUID }) {
   if (post.Type === "Question" && post.Title[0].Text !== title) {
     titleSetMutation = `
   <_:newTitle> <Timestamp> "${now}" .
-  <_:newTitle> <Post> <${post._uid_}> .
+  <_:newTitle> <Post> <${post.uid}> .
   <_:newTitle> <Author> <${currentUserUID}> .
   <_:newTitle> <Text> "${title}" .
   <_:newTitle> <Type> "Title" .
-  <${post._uid_}> <Title> <_:newTitle> .
+  <${post.uid}> <Title> <_:newTitle> .
 `;
     titleDeleteMutation = `
-  <${post._uid_}> <Title> * .
+  <${post.uid}> <Title> * .
 `;
   }
 
@@ -166,14 +166,14 @@ function updatePost({ post, title, body, currentUserUID }) {
   if (post.Body[0].Text !== body) {
     bodySetMutation = `
   <_:newBody> <Timestamp> "${now}" .
-  <_:newBody> <Post> <${post._uid_}> .
+  <_:newBody> <Post> <${post.uid}> .
   <_:newBody> <Author> <${currentUserUID}> .
   <_:newBody> <Text> "${escapedBody}" .
   <_:newBody> <Type> "Body" .
-  <${post._uid_}> <Body> <_:newBody> .
+  <${post.uid}> <Body> <_:newBody> .
 `;
     bodyDeleteMutation = `
-  <${post._uid_}> <Body> * .
+  <${post.uid}> <Body> * .
 `;
   }
 
@@ -212,10 +212,10 @@ async function handleUpdatePost(req, res, next) {
   console.log("req.params", req.params);
   const { title, body } = req.body;
   const postUID = req.params.uid;
-  const currentUserUID = req.user && req.user._uid_;
+  const currentUserUID = req.user && req.user.uid;
 
   const post = await fetchPost(postUID);
-  if (post.Owner[0]._uid_ !== currentUserUID) {
+  if (post.Owner[0].uid !== currentUserUID) {
     res.status(403).send("Only the owner can update the post");
     return;
   }
@@ -227,7 +227,7 @@ async function handleUpdatePost(req, res, next) {
 
   if (post["~Has.Answer"]) {
     payload = Object.assign({}, payload, {
-      parentUID: post["~Has.Answer"][0]._uid_
+      parentUID: post["~Has.Answer"][0].uid
     });
   }
 
@@ -236,7 +236,7 @@ async function handleUpdatePost(req, res, next) {
 
 async function handleCreateQuestion(req, res, next) {
   const { title, body, postType } = req.body;
-  const currentUserUID = req.user._uid_;
+  const currentUserUID = req.user.uid;
 
   const postUID = await createPost({
     title,
@@ -250,18 +250,18 @@ async function handleCreateQuestion(req, res, next) {
 
 async function handleDeletePost(req, res, next) {
   const postUID = req.params.uid;
-  const currentUserUID = req.user && req.user._uid_;
+  const currentUserUID = req.user && req.user.uid;
 
   const post = await fetchPost(postUID);
-  if (post.Owner[0]._uid_ !== currentUserUID) {
-    console.log("post owner", post.Owner[0]._uid_);
+  if (post.Owner[0].uid !== currentUserUID) {
+    console.log("post owner", post.Owner[0].uid);
     console.log("currentUser", currentUserUID);
     res.status(403).send("Only the owner can delete the post");
     return;
   }
 
   // following is necessary due to https://github.com/dgraph-io/dgraph/issues/1008
-  const parentPostUID = post["~Has.Answer"] && post["~Has.Answer"][0]._uid_;
+  const parentPostUID = post["~Has.Answer"] && post["~Has.Answer"][0].uid;
   let hasAnswerRDF = "";
   if (parentPostUID) {
     hasAnswerRDF = `<${parentPostUID}> <Has.Answer> <${postUID}> .`;
@@ -271,7 +271,7 @@ async function handleDeletePost(req, res, next) {
 {
   question(func: uid(${postUID})) {
     Has.Answer {
-      _uid_
+      uid
     }
   }
 }
@@ -279,7 +279,7 @@ async function handleDeletePost(req, res, next) {
 
     let answerUIDs = [];
     if (data.question && data.question[0]["Has.Answer"]) {
-      answerUIDs = data.question[0]["Has.Answer"].map(ans => ans._uid_);
+      answerUIDs = data.question[0]["Has.Answer"].map(ans => ans.uid);
     }
 
     hasAnswerRDF = answerUIDs.map(uid => `<${uid}> * * .`).join("\n");
@@ -305,7 +305,7 @@ async function handleDeletePost(req, res, next) {
 async function handleCreateAnswer(req, res, next) {
   const parentPostID = req.params.uid;
   const { body, postType } = req.body;
-  const currentUserUID = req.user && req.user._uid_;
+  const currentUserUID = req.user && req.user.uid;
 
   const postUID = await createPost({
     body,
@@ -319,7 +319,7 @@ async function handleCreateAnswer(req, res, next) {
 
 function handleCreateComment(req, res, next) {
   const parentPostUID = req.params.uid;
-  const currentUserUID = req.user && req.user._uid_;
+  const currentUserUID = req.user && req.user.uid;
   const { body } = req.body;
   const now = new Date().toISOString();
 
@@ -347,14 +347,14 @@ mutation {
 
 async function handleDeleteComment(req, res, next) {
   const commentUID = req.params.commentUID;
-  const currentUserUID = req.user && req.user._uid_;
+  const currentUserUID = req.user && req.user.uid;
 
   const comment = await fetchComment(commentUID);
-  if (comment.Author[0]._uid_ !== currentUserUID) {
+  if (comment.Author[0].uid !== currentUserUID) {
     res.status(403).send("Only the owner can delete the post");
     return;
   }
-  const parentPostUID = comment["~Comment"][0]._uid_;
+  const parentPostUID = comment["~Comment"][0].uid;
 
   const query = `
   mutation {
@@ -376,7 +376,7 @@ async function handleDeleteComment(req, res, next) {
 async function handleCreateVote(req, res, next) {
   const { type } = req.body;
   const postUID = req.params.uid;
-  const currentUserUID = req.user && req.user._uid_;
+  const currentUserUID = req.user && req.user.uid;
   const now = new Date().toISOString();
 
   const query = `
@@ -421,7 +421,7 @@ function fetchVote({ postUID, authorUID, voteType }) {
 
     currentUser(func: uid(${authorUID})) @cascade {
       ~Author {
-         _uid_
+         uid
          ~${voteType} @filter(uid(postId))
       }
     }
@@ -455,8 +455,8 @@ async function cancelVote({ postUID, type, authorUID }) {
   const query = `
   mutation {
     delete {
-      <${postUID}> <${type}> <${vote._uid_}> .
-      <${vote._uid_}> * * .
+      <${postUID}> <${type}> <${vote.uid}> .
+      <${vote.uid}> * * .
     }
   }
 `;
@@ -468,7 +468,7 @@ async function cancelVote({ postUID, type, authorUID }) {
 async function handleCancelVote(req, res, next) {
   const { type } = req.body;
   const postUID = req.params.uid;
-  const currentUserUID = req.user && req.user._uid_;
+  const currentUserUID = req.user && req.user.uid;
   const now = new Date().toISOString();
 
   cancelVote({ postUID, type, authorUID: currentUserUID })

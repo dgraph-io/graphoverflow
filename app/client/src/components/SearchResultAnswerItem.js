@@ -11,7 +11,7 @@ const SearchResultAnswerItem = ({ answer, searchTerm, searchTermWords }) => {
     return null;
   }
 
-  const questionLink = `/questions/${answer.question[0]._uid_}#${answer._uid_}`;
+  const questionLink = `/questions/${answer.question[0].uid}#${answer.uid}`;
   const score = answer.UpvoteCount - answer.DownvoteCount;
 
   return (

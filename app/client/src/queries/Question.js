@@ -4,7 +4,7 @@ const HistoryFragment = `
 Author {
   DisplayName
   Reputation
-  _uid_
+  uid
 }
 Type
 Text
@@ -12,9 +12,9 @@ Timestamp
 `;
 
 const CommentFragment = `
-_uid_
+uid
 Author {
-  _uid_
+  uid
   DisplayName
 }
 Text
@@ -23,14 +23,14 @@ Timestamp
 `;
 
 const AnswerFragment = `
-_uid_
+uid
 Body {
   Text
 }
 Owner {
   DisplayName
   Reputation
-  _uid_
+  uid
 }
 Timestamp
 Type
@@ -139,7 +139,7 @@ export function getQuestionQuery(questionUID, currentUserUID) {
     }
 
     question(func: uid(${questionUID})) {
-      _uid_
+      uid
       Id # id from Stack Exchange
       Title {
         Text
@@ -150,7 +150,7 @@ export function getQuestionQuery(questionUID, currentUserUID) {
       Owner {
         DisplayName
         Reputation
-        _uid_
+        uid
       }
       ViewCount
       Timestamp
@@ -182,7 +182,7 @@ export function getQuestionQuery(questionUID, currentUserUID) {
 
     tags(func: uid(questionTags)) {
       relatedQuestions: ~Tag(first: 10) {
-        _uid_
+        uid
         Title {
           Text
         }

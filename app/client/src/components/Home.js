@@ -73,7 +73,7 @@ class Home extends React.Component {
         this.setState({ questions: [] });
         return;
       }
-      query = getRecommendedQuestionsQuery(user._uid_);
+      query = getRecommendedQuestionsQuery(user.uid);
     } else if (currentTab === ALL_TABS.TAB_RECENT) {
       query = `{ ${recentQuestionsQuery} }`;
     }

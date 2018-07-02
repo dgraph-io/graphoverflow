@@ -103,7 +103,7 @@ class Tag extends React.Component {
                 <ul className="list-unstyled">
                   {relatedTags.map(tag => {
                     return (
-                      <li key={tag._uid_}>
+                      <li key={tag.uid}>
                         <span className="tag">
                           <Link to={`/tags/${tag.TagName}`}>
                             {tag.TagName}

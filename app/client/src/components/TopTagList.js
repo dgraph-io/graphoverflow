@@ -11,7 +11,7 @@ const TopTagList = ({ tags }) => {
       <ul className="tag-list">
         {tags.map(tag => {
           return (
-            <li className="tag-item" key={tag._uid_}>
+            <li className="tag-item" key={tag.uid}>
               <span className="tag">
                 <Link to={`/tags/${tag.TagName}`}>
                   {tag.TagName}{" "}

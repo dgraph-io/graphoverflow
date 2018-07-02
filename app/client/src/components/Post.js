@@ -25,7 +25,7 @@ class Post extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.post._uid_ !== nextProps.post._uid_) {
+    if (this.props.post.uid !== nextProps.post.uid) {
       this.setState({
         comments: nextProps.post.Comment,
         userUpvoted: nextProps.post.UserUpvoteCount === 1,
@@ -39,7 +39,7 @@ class Post extends React.Component {
     const { post } = this.props;
 
     request
-      .post(`/api/posts/${post._uid_}/comments`)
+      .post(`/api/posts/${post.uid}/comments`)
       .send({ body })
       .then(res => {
         const { commentUID } = res.body;
@@ -63,10 +63,10 @@ class Post extends React.Component {
     const { comments } = this.state;
 
     request
-      .delete(`/api/posts/${post._uid_}/comments/${commentUID}`)
+      .delete(`/api/posts/${post.uid}/comments/${commentUID}`)
       .then(() => {
         const newComments = comments.filter(comment => {
-          return comment._uid_ !== commentUID;
+          return comment.uid !== commentUID;
         });
         this.setState({
           comments: newComments
@@ -78,7 +78,7 @@ class Post extends React.Component {
     const { post } = this.props;
     const { userUpvoted, userDownvoted } = this.state;
 
-    request.post(`/api/posts/${post._uid_}/vote`).send({ type }).then(() => {
+    request.post(`/api/posts/${post.uid}/vote`).send({ type }).then(() => {
       let scoreDelta = 0;
       if (type === "Upvote") {
         if (userDownvoted) {
@@ -113,7 +113,7 @@ class Post extends React.Component {
       scoreDelta = 1;
     }
 
-    request.delete(`/api/posts/${post._uid_}/vote`).send({ type }).then(() => {
+    request.delete(`/api/posts/${post.uid}/vote`).send({ type }).then(() => {
       this.setState(prevState => {
         return {
           userUpvoted: false,
@@ -135,7 +135,7 @@ class Post extends React.Component {
           answer: post.Type === "Answer"
         })}
       >
-        <div href="#" id={post._uid_} />
+        <div href="#" id={post.uid} />
         {/* questions have title and answers don't */}
         {post.Title
           ? <div className="post-title-container">

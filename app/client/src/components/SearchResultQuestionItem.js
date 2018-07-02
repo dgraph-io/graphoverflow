@@ -10,7 +10,7 @@ const SearchResultQuestionItem = ({
   searchTerm,
   searchTermWords
 }) => {
-  const questionLink = `/questions/${question._uid_}`;
+  const questionLink = `/questions/${question.uid}`;
   const questionScore = question.UpvoteCount - question.DownvoteCount;
 
   return (

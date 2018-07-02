@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const UserPostItem = ({ post }) => {
   const score = post.upvoteCount - post.downvoteCount;
-  const questionLink = `/questions/${post._uid_}`;
+  const questionLink = `/questions/${post.uid}`;
 
   return (
     <li className="user-post-item">

@@ -6,7 +6,7 @@ const UserPostList = ({ posts }) => {
   return (
     <ul className="list-unstyled">
       {posts.map(post => {
-        return <UserPostItem key={post._uid_} post={post} />;
+        return <UserPostItem key={post.uid} post={post} />;
       })}
     </ul>
   );

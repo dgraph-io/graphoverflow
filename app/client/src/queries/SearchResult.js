@@ -7,13 +7,13 @@ export function getSearchResultQuery(searchTerm) {
     }
 
     posts(func: uid(p), first: 25) {
-      _uid_
+      uid
 
       Type
 
       # question will be fetched if this post is an answer
       question: ~Has.Answer {
-        _uid_
+        uid
         Title {
           Text
         }
@@ -28,7 +28,7 @@ export function getSearchResultQuery(searchTerm) {
       Owner {
         DisplayName
         Reputation
-        _uid_
+        uid
       }
       Tag {
         TagName: Tag.Text
@@ -37,7 +37,7 @@ export function getSearchResultQuery(searchTerm) {
         Owner {
           DisplayName
           Reputation
-          _uid_
+          uid
         }
         Timestamp
       }

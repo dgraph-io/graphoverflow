@@ -5,7 +5,7 @@ var(func: eq(Tag.Text, "${tagName}")) {
 }
 
 questions(func: uid(p)) {
-  _uid_
+  uid
 
   Title {
     Text
@@ -14,7 +14,7 @@ questions(func: uid(p)) {
   Owner {
     DisplayName
     Reputation
-    _uid_
+    uid
   }
 
   Tag {
@@ -25,7 +25,7 @@ questions(func: uid(p)) {
     Owner {
       DisplayName
       Reputation
-      _uid_
+      uid
     }
     Timestamp
   }

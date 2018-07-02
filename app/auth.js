@@ -5,7 +5,7 @@ import { runQuery, getEndpointBaseURL } from "./helpers";
 function createUser(accessToken, displayName, GitHubID) {
   console.log("creating user...", accessToken);
   const query = `
-mutation {
+ {
   set {
     <_:user> <DisplayName> "${displayName}" .
     <_:user> <GitHubAccessToken> "${accessToken}" .
@@ -36,7 +36,7 @@ export function findUserByUID(uid) {
   const query = `
 {
   user(func: uid(${uid})) {
-    _uid_
+    uid
     Reputation
     DisplayName
     CreationDate
@@ -56,14 +56,14 @@ export function findUserByUID(uid) {
 // configPassport configures passport using GitHub strategy
 export function configPassport(passport) {
   passport.serializeUser(function(user, done) {
-    done(null, user._uid_);
+    done(null, user.uid);
   });
 
   passport.deserializeUser(function(id, done) {
     const query = `
   {
     user(func: uid(${id})) {
-      _uid_
+      uid
       Reputation
       CreationDate
       LastAccessDate
@@ -105,7 +105,7 @@ export function configPassport(passport) {
         const query = `
   {
     user(func: eq(GitHubID, ${profile.id})) {
-      _uid_
+      uid
       Reputation
       DisplayName
       CreationDate

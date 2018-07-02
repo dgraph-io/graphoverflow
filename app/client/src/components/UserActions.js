@@ -5,7 +5,7 @@ const UserActions = ({ onLogout, user }) => {
   return (
     <div className="actions">
       <div className="user">
-        <Link to={`/users/${user._uid_}`}>
+        <Link to={`/users/${user.uid}`}>
           {user.DisplayName}
         </Link>
       </div>

@@ -1,6 +1,6 @@
 {
   var(func: eq(Type, "Title")) @groupby(Author) {
-    c as count(_uid_)  # Stores author -> count of versions
+    c as count(uid)  # Stores author -> count of versions
   }
   active(id: var(c), orderdesc: var(c), first: 10) {
     DisplayName

@@ -5,11 +5,11 @@ const RelatedQuestionList = ({ questions }) => {
   return (
     <ul className="list-unstyled">
       {questions.map(question => {
-        const questionLink = `/questions/${question._uid_}`;
+        const questionLink = `/questions/${question.uid}`;
         const questionScore = question.UpvoteCount - question.DownvoteCount;
 
         return (
-          <li className="related-question-item" key={question._uid_}>
+          <li className="related-question-item" key={question.uid}>
             <Link to={questionLink}>
               <span className="related-question-score">
                 {questionScore}

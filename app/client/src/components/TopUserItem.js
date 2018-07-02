@@ -9,7 +9,7 @@ const TopUserItem = ({ user }) => {
     <div className="top-user-item">
       <div className="info-row">
         <div className="info">
-          <Link to={`/users/${user._uid_}`} className="username">
+          <Link to={`/users/${user.uid}`} className="username">
             {user.DisplayName}
           </Link>
           <p className="about-me">

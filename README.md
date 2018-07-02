@@ -4,6 +4,9 @@ A blazingly fast Stack Overflow clone running the real Stack Exchange dataset.
 
 **NOTE: The repository is no longer being actively maintained by the Dgraph team. If something is broken, we'd happily accept a pull request from you, but won't fix anything ourselves.**
 
+**Update: I'll (MichelDiz) start a kind of "support" for this PJ, so right now I'm on Windows and I will create a Branch
+just for my tests. Some things may be different on other systems. I will not change anything drasticly on this branch, I will only modify some syntax changes and give some tips on how to handle this project. For this branch, read the file "syntax_changes.txt ".
+
 [Live](https://graphoverflow.dgraph.io)
 
 ## Running locally

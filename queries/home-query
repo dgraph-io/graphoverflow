@@ -4,7 +4,7 @@
   ##########################
 
   questions(func: eq(Type, "Question"), orderdesc: Timestamp, first: 100) {
-    _uid_
+    uid
 
     Title {
       Text
@@ -13,7 +13,7 @@
     Owner {
       DisplayName
       Reputation
-      _uid_
+      uid
     }
 
     Tag {
@@ -24,7 +24,7 @@
       Owner {
         DisplayName
         Reputation
-        _uid_
+        uid
       }
       Timestamp
     }
@@ -46,7 +46,7 @@
   }
 
   topTags(id: var(t), orderdesc: var(c), first: 10) {
-    _uid_
+    uid
     TagName: Text
     QuestionCount: var(c)
   }
@@ -60,11 +60,11 @@
   }
 
   var(id: var(ca)) @groupby(Owner) {
-    a as count(_uid_)
+    a as count(uid)
   }
 
   topUsers(id: var(a), orderdesc: var(a)) {
-    _uid_
+    uid
     AboutMe
     DisplayName
     Reputation

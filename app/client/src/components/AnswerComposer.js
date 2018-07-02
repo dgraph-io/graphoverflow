@@ -23,7 +23,7 @@ export default class AnswerComposer extends React.Component {
           body={body}
           onUpdateBody={this.handleUpdateBody}
           onSubmitPost={() => {
-            onCreateAnswer(question._uid_, body);
+            onCreateAnswer(question.uid, body);
             this.setState({ body: "" });
           }}
         />

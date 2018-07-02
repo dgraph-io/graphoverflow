@@ -50,7 +50,7 @@ class Question extends React.Component {
     const { user } = this.props;
     let currentUserUID;
     if (user) {
-      currentUserUID = user._uid_;
+      currentUserUID = user.uid;
     }
     const query = getQuestionQuery(questionUID, currentUserUID);
 

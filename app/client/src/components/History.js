@@ -21,7 +21,7 @@ const History = ({ author, verb, timestamp }) => {
         ? <div className="author-info">
             <div className="meta">
               <div className="author-name">
-                <Link to={`/users/${author._uid_}`}>
+                <Link to={`/users/${author.uid}`}>
                   {author.DisplayName}
                 </Link>
               </div>

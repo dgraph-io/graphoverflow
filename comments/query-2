@@ -1,6 +1,6 @@
 {
   var(func: eq(Type, "Comment")) @groupby(Author) {
-    a as count(_uid_)
+    a as count(uid)
   }
   TopCommenters(id: var(a), orderdesc: var(a), first: 10) {
     DisplayName

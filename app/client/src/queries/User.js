@@ -1,5 +1,5 @@
 const questionFragment = `
-_uid_
+uid
 Title {
   Text
 }
@@ -23,7 +23,7 @@ export function getUserQuery(userUID) {
       }
 
       user(func: uid(${userUID})) {
-        _uid_
+        uid
         Id
         Reputation
         DisplayName

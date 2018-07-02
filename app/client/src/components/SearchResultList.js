@@ -13,7 +13,7 @@ const SearchResultList = ({ posts, searchTerm, searchTermWords }) => {
               question={post}
               searchTerm={searchTerm}
               searchTermWords={searchTermWords}
-              key={post._uid_}
+              key={post.uid}
             />
           );
         } else {
@@ -22,7 +22,7 @@ const SearchResultList = ({ posts, searchTerm, searchTermWords }) => {
               answer={post}
               searchTerm={searchTerm}
               searchTermWords={searchTermWords}
-              key={post._uid_}
+              key={post.uid}
             />
           );
         }
