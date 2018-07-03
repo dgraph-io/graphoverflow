@@ -1,5 +1,14 @@
 import request from "superagent";
 
+const dgraph = require("dgraph-js-http");
+
+const clientStub = new dgraph.DgraphClientStub(
+  // addr: optional, default: "http://localhost:8080"
+  "http://localhost:8080",
+);
+const dgraphC = new dgraph.DgraphClient(clientStub);
+
+// Todo: Clean the old code later
 export function getEndpointBaseURL() {
   let endpointBaseURL;
   if (process.env.NODE_ENV === "production") {
@@ -13,14 +22,66 @@ export function getEndpointBaseURL() {
 
 // runQuery makes a post request to the server to run query and returns a
 // promise that resolves with a response
-export function runQuery(queryText) {
-  const endpointBaseURL = getEndpointBaseURL();
+export async function runQuery(queryText) {
+  let ppl;
 
-  return request.post(`${endpointBaseURL}/query`).send(queryText).then(res => {
-    return JSON.parse(res.text);
-  });
+  if (process.env.NODE_ENV === "dev") {
+    console.log("Running query:");
+    console.log(queryText);
+  }
+  console.log(queryText);
+    try {
+      const query = `${queryText}`;
+      const res = await dgraphC.newTxn().query(query);
+      ppl = res.data;
+    } catch (e) {
+      if (e === dgraph.ERR_ABORTED) {
+        console.log("error:", e);
+      } else {
+        throw e;
+      }
+    } 
+    console.log("Rodou query", ppl)
+    return { data: ppl };
 }
 
+
+export async function runMutation(Nquads) {
+  let mutation= "done";
+  console.log("Running mutation")
+
+  if (process.env.NODE_ENV === "dev") {
+    console.log("Running Mutation:");
+    console.log(Nquads);
+  }
+  console.log(Nquads);
+  // const endpointBaseURL = getEndpointBaseURL();
+
+  const txn = dgraphC.newTxn();
+    try {
+      const mu = new dgraph.Mutation();
+      mu.setSetNquads(`${Nquads}`);
+      const assigned = await txn.mutate(mu);
+     // const uidMap = await assigned.getUidsMap();
+     // Commit transaction.
+      //const uid = uids.get('user');
+      await txn.commit();
+       // console.log(`*** New item uid: ${uid} ***`);
+      // return uid;
+    } catch (e) {
+      if (e === dgraph.ERR_ABORTED) {
+        // Retry or handle exception.
+      } else {
+        throw e;
+      }
+    } finally {
+      // Clean up. Calling this after txn.commit() is a no-op
+      // and hence safe.
+      await txn.discard();
+    }
+    console.log("Rodou mutation")
+    return mutation;
+}
 // parseTagString parses the string denoting a list of tags and returns an array
 // of tags. tagString is of format: `<tag1><tag2>...<tagn>`
 export function parseTagString(tagString) {

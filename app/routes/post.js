@@ -1,6 +1,6 @@
 import express from "express";
 
-import { runQuery } from "../helpers";
+import { runQuery, runMutation } from "../helpers";
 
 const router = express.Router();
 
@@ -105,7 +105,7 @@ function createPost({ title, body, postType, ownerID, parentPostID }) {
 `;
   }
 
-  const query = `
+  const Nquads = `
     <_:post> <Type> "${postType}" .
     <_:post> <ViewCount> "0" .
     <_:post> <Owner> <${ownerID}> .
@@ -125,7 +125,7 @@ function createPost({ title, body, postType, ownerID, parentPostID }) {
 `;
 
   return new Promise((resolve, reject) => {
-    runQuery(query)
+    runMutation(Nquads)
       .then(({ data }) => {
         resolve(data.uids.post);
       })
@@ -193,7 +193,7 @@ function updatePost({ post, title, body, currentUserUID }) {
       ${bodySetMutation}
 
   `;
-    runQuery(deleteMutation)
+  runMutation(deleteMutation)
       .then(() => {
         return runQuery(setMutation).then(resolve);
       })
@@ -231,7 +231,8 @@ async function handleUpdatePost(req, res, next) {
 async function handleCreateQuestion(req, res, next) {
   const { title, body, postType } = req.body;
   const currentUserUID = req.user.uid;
-
+ console.log(currentUserUID, "currentUserUID")
+ console.log(req.body, "Text")
   const postUID = await createPost({
     title,
     body,
@@ -287,7 +288,7 @@ async function handleDeletePost(req, res, next) {
     }
   }
 `;
-  runQuery(query)
+runMutation(query)
     .then(() => {
       res.end();
     })
@@ -326,7 +327,7 @@ function handleCreateComment(req, res, next) {
     <_:comment> <Type> \"Comment\" .
 `;
 
-  runQuery(query)
+runMutation(query)
     .then(({ data }) => {
       res.json({ commentUID: data.uids.comment });
     })
@@ -354,7 +355,7 @@ async function handleDeleteComment(req, res, next) {
     }
   }
 `;
-  runQuery(query)
+runMutation(query)
     .then(() => {
       res.end();
     })
@@ -388,7 +389,7 @@ async function handleCreateVote(req, res, next) {
     authorUID: currentUserUID
   });
 
-  runQuery(query)
+  runMutation(query)
     .then(() => {
       res.end();
     })
@@ -447,7 +448,7 @@ async function cancelVote({ postUID, type, authorUID }) {
   }
 `;
 
-  return runQuery(query);
+  return runMutation(query);
 }
 
 // handleCancelVote cancels the current user's vote for the post
@@ -478,7 +479,7 @@ async function handleIncrementViewCount(req, res, next) {
       <${postUID}> <ViewCount> \"${nextViewCount}\" .
 `;
 
-  runQuery(query)
+runMutation(query)
     .then(() => {
       res.end();
     })

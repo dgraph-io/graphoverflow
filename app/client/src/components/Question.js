@@ -55,8 +55,20 @@ class Question extends React.Component {
     const query = getQuestionQuery(questionUID, currentUserUID);
 
     runQuery(query).then(({ data }) => {
+      console.log(data, "relatedQuestions data")
+      const { tags } = data;
       const question = data.question[0];
-      const relatedQuestions = data.tags ? data.tags[0].relatedQuestions : [];
+      let relatedQuestions;
+      // TODO cleand logs
+      console.log(question, "question")
+      console.log(typeof(data), "data type")
+      console.log(tags.length, "data.tags.length")
+    if (tags.length > 1) {
+      relatedQuestions = tags ? tags[0].relatedQuestions : [];
+    }
+    if (tags.length < 1) {
+      relatedQuestions = [];
+    }
 
       // NOTE: `answers` is still present in `question`. Maybe we can delete it
       this.setState({

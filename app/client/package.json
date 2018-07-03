@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "dgraph-js-http": "^0.1.0",
     "lodash": "^4.17.10",
     "marked": "^0.3.6",
     "moment": "^2.18.1",
