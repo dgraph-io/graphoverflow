@@ -5,7 +5,9 @@ I'm @Micheldiz
 I'm analyzing if I revive this project for a more current version of Dgraph. xD
 But I'll do it in my spare time. If anybody could help to debug, that would be cool. 
 
-I'm thinking of changing this project to use the official 
+I'm thinking of changing this project to use the official (well Dgraph-js is a working in progress - 
+You can use it, there are only conflicts to solve.  Create a Fake user first if you do not want to 
+generate an RDF as the README tells - go to the branch "test-Dgraph-v1.0.6" to se it)
 JS client of Dgraph (DgraphJS), but as it is will work. Any help is welcome.
 
 ** This text is not just about syntax, there are other things I want to explain.

@@ -106,8 +106,6 @@ function createPost({ title, body, postType, ownerID, parentPostID }) {
   }
 
   const query = `
-mutation {
-  set {
     <_:post> <Type> "${postType}" .
     <_:post> <ViewCount> "0" .
     <_:post> <Owner> <${ownerID}> .
@@ -124,8 +122,6 @@ mutation {
     <_:post> <Body> <_:newBody> .
 
     ${hasAnswerRDF}
-  }
-}
 `;
 
   return new Promise((resolve, reject) => {
@@ -184,7 +180,7 @@ function updatePost({ post, title, body, currentUserUID }) {
     }
 
     const deleteMutation = `
-mutation {
+ {
   delete {
     ${titleDeleteMutation}
     ${bodyDeleteMutation}
@@ -192,12 +188,10 @@ mutation {
 }
 `;
     const setMutation = `
-  mutation {
-    set {
+
       ${titleSetMutation}
       ${bodySetMutation}
-    }
-  }
+
   `;
     runQuery(deleteMutation)
       .then(() => {
@@ -286,7 +280,7 @@ async function handleDeletePost(req, res, next) {
   }
 
   const query = `
-  mutation {
+   {
     delete {
       <${postUID}> * * .
       ${hasAnswerRDF}
@@ -324,16 +318,12 @@ function handleCreateComment(req, res, next) {
   const now = new Date().toISOString();
 
   const query = `
-mutation {
-  set {
     <_:comment> <Author> <${currentUserUID}> .
     <${parentPostUID}> <Comment> <_:comment> .
     <_:comment> <Score> \"0\" .
     <_:comment> <Text> \"${body}\" .
     <_:comment> <Timestamp> \"${now}\" .
     <_:comment> <Type> \"Comment\" .
-  }
-}
 `;
 
   runQuery(query)
@@ -357,7 +347,7 @@ async function handleDeleteComment(req, res, next) {
   const parentPostUID = comment["~Comment"][0].uid;
 
   const query = `
-  mutation {
+   {
     delete {
       <${commentUID}> * * .
       <${parentPostUID}> <Comment> <${commentUID}> .
@@ -380,13 +370,9 @@ async function handleCreateVote(req, res, next) {
   const now = new Date().toISOString();
 
   const query = `
-  mutation {
-    set {
       <${postUID}> <${type}> <_:v> .
       <_:v> <Author> <${currentUserUID}> .
       <_:v> <Timestamp> \"${now}\" .
-    }
-  }
 `;
 
   let oppositeVoteType;
@@ -453,7 +439,7 @@ async function cancelVote({ postUID, type, authorUID }) {
   });
 
   const query = `
-  mutation {
+   {
     delete {
       <${postUID}> <${type}> <${vote.uid}> .
       <${vote.uid}> * * .
@@ -489,11 +475,7 @@ async function handleIncrementViewCount(req, res, next) {
   const nextViewCount = viewCount + 1;
 
   const query = `
-  mutation {
-    set {
       <${postUID}> <ViewCount> \"${nextViewCount}\" .
-    }
-  }
 `;
 
   runQuery(query)

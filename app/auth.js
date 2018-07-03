@@ -1,12 +1,10 @@
 import { Strategy as GitHubStrategy } from "passport-github";
-import { runQuery, getEndpointBaseURL } from "./helpers";
+import { runQuery, runMutation } from "./helpers";
 
 // createUser persists a new user node
 function createUser(accessToken, displayName, GitHubID) {
   console.log("creating user...", accessToken);
-  const query = `
- {
-  set {
+  const Nquads = `
     <_:user> <DisplayName> "${displayName}" .
     <_:user> <GitHubAccessToken> "${accessToken}" .
     <_:user> <GitHubID> "${GitHubID}" .
@@ -15,11 +13,9 @@ function createUser(accessToken, displayName, GitHubID) {
     <_:user> <LastAccessDate> "0" .
     <_:user> <Location> "Earth" .
     <_:user> <Type> "User" .
-  }
-}
 `;
 
-  return runQuery(query)
+  return runMutation(Nquads)
     .then(({ data }) => {
       const userUID = data.uids.user;
 
@@ -116,11 +112,13 @@ export function configPassport(passport) {
     }
   }
   `;
+  console.log("query.user", query);
         runQuery(query)
           .then(({ data }) => {
             console.log("data.user", data.user);
             // FIXME
-            if (!data.user) {
+            if (!data.user.length) {
+              console.log("No user with this ID");
               createUser(
                 accessToken,
                 profile.username,
@@ -130,7 +128,7 @@ export function configPassport(passport) {
               });
               return;
             }
-
+            console.log("Passou");
             const user = data.user[0];
             cb(null, user);
           })
