@@ -48,6 +48,7 @@ export async function runQuery(queryText) {
 
 export async function runMutation(Nquads) {
   let mutation= "done";
+  let uid;
   console.log("Running mutation")
 
   if (process.env.NODE_ENV === "dev") {
@@ -62,6 +63,7 @@ export async function runMutation(Nquads) {
       const mu = new dgraph.Mutation();
       mu.setSetNquads(`${Nquads}`);
       const assigned = await txn.mutate(mu);
+      uid = assigned.getUidsMap();
      // const uidMap = await assigned.getUidsMap();
      // Commit transaction.
       //const uid = uids.get('user');
@@ -78,9 +80,43 @@ export async function runMutation(Nquads) {
       // Clean up. Calling this after txn.commit() is a no-op
       // and hence safe.
       await txn.discard();
+      clientStub.close();
     }
-    console.log("Rodou mutation")
-    return mutation;
+    console.log("Rodou mutation Client")
+    return uid;
+}
+export async function runDelation(Nquads) {
+  let mutation= "done";
+  let uid;
+  console.log("Running mutation")
+
+  if (process.env.NODE_ENV === "dev") {
+    console.log("Running Mutation:");
+    console.log(Nquads);
+  }
+  console.log(Nquads);
+  // const endpointBaseURL = getEndpointBaseURL();
+
+  const txn = dgraphC.newTxn();
+    try {
+      const mu = new dgraph.Mutation();
+      mu.setDelNquads(`${Nquads}`);
+      const assigned = await txn.mutate(mu);
+      await txn.commit();
+    } catch (e) {
+      if (e === dgraph.ERR_ABORTED) {
+        // Retry or handle exception.
+      } else {
+        throw e;
+      }
+    } finally {
+      // Clean up. Calling this after txn.commit() is a no-op
+      // and hence safe.
+      await txn.discard();
+      clientStub.close();
+    }
+    console.log("Rodou Delation Client")
+    return uid;
 }
 // parseTagString parses the string denoting a list of tags and returns an array
 // of tags. tagString is of format: `<tag1><tag2>...<tagn>`

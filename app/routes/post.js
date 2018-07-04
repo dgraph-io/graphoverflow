@@ -1,6 +1,6 @@
 import express from "express";
 
-import { runQuery, runMutation } from "../helpers";
+import { runQuery, runMutation, runDelation } from "../helpers";
 
 const router = express.Router();
 
@@ -180,12 +180,8 @@ function updatePost({ post, title, body, currentUserUID }) {
     }
 
     const deleteMutation = `
- {
-  delete {
     ${titleDeleteMutation}
     ${bodyDeleteMutation}
-  }
-}
 `;
     const setMutation = `
 
@@ -193,9 +189,9 @@ function updatePost({ post, title, body, currentUserUID }) {
       ${bodySetMutation}
 
   `;
-  runMutation(deleteMutation)
+  runDelation(deleteMutation)
       .then(() => {
-        return runQuery(setMutation).then(resolve);
+        return runMutation(setMutation).then(resolve);
       })
       .catch(reject);
   });
@@ -281,14 +277,10 @@ async function handleDeletePost(req, res, next) {
   }
 
   const query = `
-   {
-    delete {
       <${postUID}> * * .
       ${hasAnswerRDF}
-    }
-  }
 `;
-runMutation(query)
+runDelation(query)
     .then(() => {
       res.end();
     })
@@ -348,12 +340,9 @@ async function handleDeleteComment(req, res, next) {
   const parentPostUID = comment["~Comment"][0].uid;
 
   const query = `
-   {
-    delete {
       <${commentUID}> * * .
       <${parentPostUID}> <Comment> <${commentUID}> .
-    }
-  }
+
 `;
 runMutation(query)
     .then(() => {
@@ -402,6 +391,7 @@ async function handleCreateVote(req, res, next) {
 // fetchVote returns a promise that resolves with a vote
 // voteType is either `Upvote` or `Downvote`
 function fetchVote({ postUID, authorUID, voteType }) {
+  console.log(postUID, authorUID, voteType, "postUID, authorUID, voteType")
   const query = `
   {
     postId as var(func: uid(${postUID}))
@@ -418,11 +408,17 @@ function fetchVote({ postUID, authorUID, voteType }) {
   return new Promise((resolve, reject) => {
     runQuery(query)
       .then(({ data }) => {
-        if (!data || !data.currentUser || !data.currentUser[0]["~Author"]) {
+        console.log(data, "fetchVote data")
+        let newdata = { currentUser: [] }
+        if (data.length > 1) {
+          newdata = data;
+        }
+        if (!data || !data.currentUser && !data.currentUser[0]["~Author"]) {
+          console.log(data, "ENTROU AQUI")
           resolve({});
           return;
         }
-
+        console.log(data, "PASSOU DIRETO AQUI")
         const vote = data.currentUser[0]["~Author"][0];
         resolve(vote);
       })
@@ -440,15 +436,11 @@ async function cancelVote({ postUID, type, authorUID }) {
   });
 
   const query = `
-   {
-    delete {
       <${postUID}> <${type}> <${vote.uid}> .
       <${vote.uid}> * * .
-    }
-  }
 `;
 
-  return runMutation(query);
+  return runDelation(query);
 }
 
 // handleCancelVote cancels the current user's vote for the post
