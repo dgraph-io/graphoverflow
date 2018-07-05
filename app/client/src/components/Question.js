@@ -55,14 +55,10 @@ class Question extends React.Component {
     const query = getQuestionQuery(questionUID, currentUserUID);
 
     runQuery(query).then(({ data }) => {
-      console.log(data, "relatedQuestions data")
       const { tags } = data;
       const question = data.question[0];
       let relatedQuestions;
-      // TODO cleand logs
-      console.log(question, "question")
-      console.log(typeof(data), "data type")
-      console.log(tags.length, "data.tags.length")
+
     if (tags.length > 1) {
       relatedQuestions = tags ? tags[0].relatedQuestions : [];
     }
@@ -126,8 +122,6 @@ class Question extends React.Component {
       if (data && data.question) {
         const question = data.question[0];
         const answers = question["Has.Answer"];
-
-        console.log(answers);
 
         this.setState({ answers });
       }

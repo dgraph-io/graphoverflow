@@ -28,7 +28,6 @@ function createUser(accessToken, displayName, GitHubID) {
 
 // findUserByUID queries a user node with a given uid
 export function findUserByUID(uid) {
-  console.log("finding user", uid);
   const query = `
 {
   user(func: uid(${uid})) {
@@ -97,7 +96,7 @@ export function configPassport(passport) {
         callbackURL: `${callbackURL}/api/auth/github/callback`
       },
       (accessToken, refreshToken, profile, cb) => {
-        console.log(profile);
+       // console.log(profile);
         const query = `
   {
     user(func: eq(GitHubID, ${profile.id})) {
@@ -112,10 +111,8 @@ export function configPassport(passport) {
     }
   }
   `;
-  console.log("query.user", query);
         runQuery(query)
           .then(({ data }) => {
-            console.log("data.user", data.user);
             // FIXME
             if (!data.user.length) {
               console.log("No user with this ID");
@@ -128,7 +125,6 @@ export function configPassport(passport) {
               });
               return;
             }
-            console.log("Passou");
             const user = data.user[0];
             cb(null, user);
           })

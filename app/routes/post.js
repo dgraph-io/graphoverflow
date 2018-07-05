@@ -84,7 +84,7 @@ function fetchComment(uid) {
 function createPost({ title, body, postType, ownerID, parentPostID }) {
   const now = new Date().toISOString();
   const escapedBody = body.replace(/\n/g, "\\n");
-
+  const uidmap = 'post';
   // THOUGHTS: composing RDFs dynamically using string interpolation is kinda
   // painful. But this is a common scenario when making apps.
   // somewhat related: maybe upsert will ease the pain
@@ -125,9 +125,9 @@ function createPost({ title, body, postType, ownerID, parentPostID }) {
 `;
 
   return new Promise((resolve, reject) => {
-    runMutation(Nquads)
+    runMutation(Nquads, uidmap)
       .then(({ data }) => {
-        resolve(data.uids.post);
+        resolve(data);
       })
       .catch(({ errors }) => {
         console.log(errors);
@@ -198,8 +198,6 @@ function updatePost({ post, title, body, currentUserUID }) {
 }
 
 async function handleUpdatePost(req, res, next) {
-  console.log("req", req);
-  console.log("req.params", req.params);
   const { title, body } = req.body;
   const postUID = req.params.uid;
   const currentUserUID = req.user && req.user.uid;
@@ -227,15 +225,12 @@ async function handleUpdatePost(req, res, next) {
 async function handleCreateQuestion(req, res, next) {
   const { title, body, postType } = req.body;
   const currentUserUID = req.user.uid;
- console.log(currentUserUID, "currentUserUID")
- console.log(req.body, "Text")
   const postUID = await createPost({
     title,
     body,
     postType,
     ownerID: currentUserUID
   });
-
   res.json({ postUID });
 }
 
@@ -267,9 +262,12 @@ async function handleDeletePost(req, res, next) {
   }
 }
 `);
-
+      // if (data.question.length > 1) {
+      //   newdata = data;
+      // }
     let answerUIDs = [];
-    if (data.question && data.question[0]["Has.Answer"]) {
+
+    if (data.question && data.question.length > 0 && data.question[0]["Has.Answer"]) {
       answerUIDs = data.question[0]["Has.Answer"].map(ans => ans.uid);
     }
 
@@ -280,6 +278,7 @@ async function handleDeletePost(req, res, next) {
       <${postUID}> * * .
       ${hasAnswerRDF}
 `;
+
 runDelation(query)
     .then(() => {
       res.end();
@@ -308,8 +307,9 @@ function handleCreateComment(req, res, next) {
   const parentPostUID = req.params.uid;
   const currentUserUID = req.user && req.user.uid;
   const { body } = req.body;
-  const now = new Date().toISOString();
 
+  const now = new Date().toISOString();
+  const uidmap = 'comment';
   const query = `
     <_:comment> <Author> <${currentUserUID}> .
     <${parentPostUID}> <Comment> <_:comment> .
@@ -319,12 +319,12 @@ function handleCreateComment(req, res, next) {
     <_:comment> <Type> \"Comment\" .
 `;
 
-runMutation(query)
+runMutation(query, uidmap)
     .then(({ data }) => {
-      res.json({ commentUID: data.uids.comment });
+      res.json({ commentUID: data });
     })
     .catch(error => {
-      console.log(err);
+      console.log(error);
     });
 }
 
@@ -344,7 +344,7 @@ async function handleDeleteComment(req, res, next) {
       <${parentPostUID}> <Comment> <${commentUID}> .
 
 `;
-runMutation(query)
+runDelation(query)
     .then(() => {
       res.end();
     })
@@ -355,19 +355,20 @@ runMutation(query)
 
 async function handleCreateVote(req, res, next) {
   const { type } = req.body;
+  console.log(req.body, "handleCreateVote")
   const postUID = req.params.uid;
   const currentUserUID = req.user && req.user.uid;
   const now = new Date().toISOString();
-
-  const query = `
-      <${postUID}> <${type}> <_:v> .
-      <_:v> <Author> <${currentUserUID}> .
-      <_:v> <Timestamp> \"${now}\" .
+  const uidmap = 'vote';
+  const Nquads = `
+      <${postUID}> <${type}> <_:${uidmap}> .
+      <_:${uidmap}> <Author> <${currentUserUID}> .
+      <_:${uidmap}> <Timestamp> \"${now}\" .
 `;
 
   let oppositeVoteType;
   if (type === "Upvote") {
-    oppositeVoteType = "Downvote";
+    oppositeVoteType = "Upvote";
   } else if (type === "Downvote") {
     oppositeVoteType = "Upvote";
   }
@@ -378,7 +379,7 @@ async function handleCreateVote(req, res, next) {
     authorUID: currentUserUID
   });
 
-  runMutation(query)
+  runMutation(Nquads, uidmap)
     .then(() => {
       res.end();
     })
@@ -391,7 +392,6 @@ async function handleCreateVote(req, res, next) {
 // fetchVote returns a promise that resolves with a vote
 // voteType is either `Upvote` or `Downvote`
 function fetchVote({ postUID, authorUID, voteType }) {
-  console.log(postUID, authorUID, voteType, "postUID, authorUID, voteType")
   const query = `
   {
     postId as var(func: uid(${postUID}))
@@ -406,19 +406,14 @@ function fetchVote({ postUID, authorUID, voteType }) {
 `;
 
   return new Promise((resolve, reject) => {
+    console.log(query, "queryqueryqueryqueryquery")
     runQuery(query)
       .then(({ data }) => {
-        console.log(data, "fetchVote data")
-        let newdata = { currentUser: [] }
-        if (data.length > 1) {
-          newdata = data;
-        }
-        if (!data || !data.currentUser && !data.currentUser[0]["~Author"]) {
-          console.log(data, "ENTROU AQUI")
+        // if (!data || !data.currentUser || data.currentUser.length === 0 || !data.currentUser[0]["~Author"]) {
+        if (!data || !data.currentUser || !data.currentUser[0]["~Author"]) {
           resolve({});
           return;
         }
-        console.log(data, "PASSOU DIRETO AQUI")
         const vote = data.currentUser[0]["~Author"][0];
         resolve(vote);
       })
@@ -434,7 +429,7 @@ async function cancelVote({ postUID, type, authorUID }) {
     voteType: type,
     authorUID
   });
-
+ console.log("fetchVote", vote, "fetchVote")
   const query = `
       <${postUID}> <${type}> <${vote.uid}> .
       <${vote.uid}> * * .

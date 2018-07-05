@@ -1,4 +1,4 @@
-import request from "superagent";
+// import request from "superagent";
 const dgraph = require("dgraph-js");
 const grpc = require("grpc");
 
@@ -37,6 +37,7 @@ export async function runQuery(queryText) {
     console.log("Running query:");
     console.log(queryText);
   }
+
     try {
       const query = `${queryText}`;
       const res = await dgraphClient.newTxn().query(query);
@@ -52,31 +53,30 @@ export async function runQuery(queryText) {
     return { data: ppl };
 }
 
-
-export async function runMutation(Nquads) {
-  let mutation= "done";
+export async function runMutation(Nquads, uidmap) {
   let uid;
-  console.log("Running mutation")
-
   if (process.env.NODE_ENV === "dev") {
     console.log("Running Mutation:");
-    console.log(Nquads);
+    console.log("start Nquads", Nquads, "Nquads");
   }
-  console.log(Nquads);
-  // const endpointBaseURL = getEndpointBaseURL();
-
+  console.log("start Nquads", Nquads, "Nquads");
   const txn = dgraphClient.newTxn();
     try {
       const mu = new dgraph.Mutation();
       mu.setSetNquads(`${Nquads}`);
       const assigned = await txn.mutate(mu);
-      uid = assigned.getUidsMap();
-     // const uidMap = await assigned.getUidsMap();
-     // Commit transaction.
-      //const uid = uids.get('user');
+      // Commit transaction.
       await txn.commit();
-       // console.log(`*** New item uid: ${uid} ***`);
-      // return uid;
+      uid = await assigned.getUidsMap().get(`${uidmap}`);
+
+      if (process.env.NODE_ENV === "dev") {
+        console.log(`*** commit just now ***`);
+        console.log(`*** uidmap => "${uidmap}" ***`);
+        console.log("All created nodes (map from blank node names to uids):");
+        assigned.getUidsMap().forEach((uid2, key) => console.log(`${key} => ${uid2}`));
+        console.log();
+         }
+
     } catch (e) {
       if (e === dgraph.ERR_ABORTED) {
         // Retry or handle exception.
@@ -87,22 +87,18 @@ export async function runMutation(Nquads) {
       // Clean up. Calling this after txn.commit() is a no-op
       // and hence safe.
       await txn.discard();
-      // clientStub.close();
+      // dgraphClientStub.close();
     }
-    console.log("Rodou mutation Server")
-    return uid;
+    return { data: uid };
 }
 
 export async function runDelation(Nquads) {
-  let mutation= "done";
   let uid;
-  console.log("Running mutation")
 
   if (process.env.NODE_ENV === "dev") {
     console.log("Running Mutation:");
     console.log(Nquads);
   }
-  console.log(Nquads);
   // const endpointBaseURL = getEndpointBaseURL();
 
   const txn = dgraphClient.newTxn();
@@ -123,6 +119,5 @@ export async function runDelation(Nquads) {
       await txn.discard();
       // clientStub.close();
     }
-    console.log("Rodou Delation Server")
     return uid;
 }
