@@ -4,8 +4,7 @@ A blazingly fast Stack Overflow clone running the real Stack Exchange dataset.
 
 **NOTE: The repository is no longer being actively maintained by the Dgraph team. If something is broken, we'd happily accept a pull request from you, but won't fix anything ourselves.**
 
-**Update: I'll (MichelDiz) start a kind of "support" for this PJ, so right now I'm on Windows and I will create a Branch
-just for my tests. Some things may be different on other systems. I will not change anything drasticly on this branch, I will only modify some syntax changes and give some tips on how to handle this project. For this branch, read the file "syntax_changes.txt ".
+**UPDATE: This project is properly updated to work with version 1.0.6 of Dgraph. It's working as it should on MacOS and Linux. Only on the Windows platform are there problems that can be solved by starting JS Server and JS client separately. read the file "syntax_changes.md" for more details**
 
 [Live](https://graphoverflow.dgraph.io)
 
@@ -19,11 +18,13 @@ just for my tests. Some things may be different on other systems. I will not cha
 
 ### Dgraph
 
-This app is currently compatible with Dgraph v0.8.1
+This app is currently compatible with Dgraph v1.0.6
 
 1. Run Docker
 
        docker run -it -p 8080:8080 -p 9080:9080 -v ~/dgraph:/dgraph --name dgraph dgraph/dgraph:v0.8.1 dgraph --bindall=true --memory_mb 2048
+
+    PS. You can also run this project with Dgraph binaries instead of Docker.
 
 1. Choose, download and unarchive a data dump from https://archive.org/details/stackexchange, for example [lifehacks.stackexchange.com.7z](https://archive.org/download/stackexchange/lifehacks.stackexchange.com.7z)
 
