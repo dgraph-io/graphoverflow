@@ -1,15 +1,16 @@
 Hi,
 
-I'm @Micheldiz
+@Micheldiz herer,
 
-I'm analyzing if I revive this project for a more current version of Dgraph. xD
-But I'll do it in my spare time. If anybody could help to debug, that would be cool. 
+Any help is welcome.
 
-I'm thinking of changing this project to use the official JS client of Dgraph (DgraphJS), but as it is will work. Any help is welcome.
+TODO - Need to fix some bugs like "Vote".
 
-***Well Dgraph-js is a working in progress - You can use it, there are only conflicts to solve. Create a Fake user first if you do not want to  generate an RDF as the README tells - go to the branch "test-Dgraph-v1.0.6" to se it.
+Right now (4th of July, 2018) this project is working with Dgraph V1.0.6. We are using Dgraph-JS and Dgraph-JS-HTTP.
 
-** This text is not just about syntax, there are other things I want to explain.
+**Well Dgraph-js is a working in progress - You can use it, there are only conflicts to solve. Create a Fake user first if you do not want to  generate an RDF as the README tells.**
+
+**This text is not just about syntax, there are other things I want to explain.**
 
 ---------------------------------------
 

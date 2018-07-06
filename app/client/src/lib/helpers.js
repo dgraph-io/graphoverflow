@@ -1,26 +1,116 @@
-import request from "superagent";
+//import request from "superagent";
+
+const dgraph = require("dgraph-js-http");
 
 export function getEndpointBaseURL() {
   let endpointBaseURL;
   if (process.env.NODE_ENV === "production") {
     endpointBaseURL = "https://graphoverflow.dgraph.io";
   } else {
-    endpointBaseURL = "http://127.0.0.1:8080";
+    endpointBaseURL = "http://localhost:8080";
   }
 
   return endpointBaseURL;
 }
 
+const endpointBaseURL = getEndpointBaseURL();
+
+const clientStub = new dgraph.DgraphClientStub(
+  // addr: optional, default: "http://localhost:8080"
+  endpointBaseURL,
+);
+const dgraphC = new dgraph.DgraphClient(clientStub);
+
 // runQuery makes a post request to the server to run query and returns a
 // promise that resolves with a response
-export function runQuery(queryText) {
-  const endpointBaseURL = getEndpointBaseURL();
+export async function runQuery(queryText) {
+  let ppl;
 
-  return request.post(`${endpointBaseURL}/query`).send(queryText).then(res => {
-    return JSON.parse(res.text);
-  });
+  if (process.env.NODE_ENV === "dev") {
+    console.log("Running query:");
+    console.log(queryText, "queryText");
+  }
+
+    try {
+      const query = `${queryText}`;
+      const res = await dgraphC.newTxn().query(query);
+      ppl = res.data;
+    } catch (e) {
+      if (e === dgraph.ERR_ABORTED) {
+        console.log("error:", e);
+      } else {
+        throw e;
+      }
+    } 
+    return { data: ppl };
 }
 
+
+export async function runMutation(Nquads, uidmap) {
+  let uid;
+
+  if (process.env.NODE_ENV === "dev") {
+    console.log("Running Mutation:");
+    console.log(Nquads, "Nquads");
+  }
+
+  const txn = dgraphC.newTxn();
+    try {
+      const mu = new dgraph.Mutation();
+      mu.setSetNquads(`${Nquads}`);
+      const assigned = await txn.mutate(mu);
+      await txn.commit();
+      uid = await assigned.getUidsMap().get(`${uidmap}`);
+
+      if (process.env.NODE_ENV === "dev") {
+        console.log(`*** commit just now ***`);
+        console.log(`*** uidmap => "${uidmap}" ***`);
+        console.log("All created nodes (map from blank node names to uids):");
+        assigned.getUidsMap().forEach((uid2, key) => console.log(`${key} => ${uid2}`));
+        console.log();
+         }
+    } catch (e) {
+      if (e === dgraph.ERR_ABORTED) {
+        // Retry or handle exception.
+      } else {
+        throw e;
+      }
+    } finally {
+      // Clean up. Calling this after txn.commit() is a no-op
+      // and hence safe.
+      await txn.discard();
+      clientStub.close();
+    }
+    return uid;
+}
+export async function runDelation(Nquads) {
+  let uid;
+
+  if (process.env.NODE_ENV === "dev") {
+    console.log("Running Mutation:");
+    console.log(Nquads, "Nquads");
+  }
+
+  const txn = dgraphC.newTxn();
+    try {
+      const mu = new dgraph.Mutation();
+      mu.setDelNquads(`${Nquads}`);
+      const assigned = await txn.mutate(mu);
+      await txn.commit();
+    } catch (e) {
+      if (e === dgraph.ERR_ABORTED) {
+        // Retry or handle exception.
+      } else {
+        throw e;
+      }
+    } finally {
+      // Clean up. Calling this after txn.commit() is a no-op
+      // and hence safe.
+      await txn.discard();
+      clientStub.close();
+    }
+    return uid;
+}
 // parseTagString parses the string denoting a list of tags and returns an array
 // of tags. tagString is of format: `<tag1><tag2>...<tagn>`
 export function parseTagString(tagString) {

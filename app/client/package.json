@@ -9,10 +9,11 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "lodash": "^4.17.4",
+    "dgraph-js-http": "^0.1.0",
+    "lodash": "^4.17.10",
     "marked": "^0.3.6",
     "moment": "^2.18.1",
-    "node-sass": "^4.5.3",
+    "node-sass": "^4.9.0",
     "pluralize": "^5.0.0",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
@@ -21,12 +22,12 @@
     "react-router-dom": "^4.1.1",
     "redux": "^3.7.1",
     "striptags": "2.2.1",
-    "superagent": "^3.5.2"
+    "superagent": "^3.8.3"
   },
   "devDependencies": {
     "node-sass-chokidar": "0.0.1",
     "npm-run-all": "^4.0.2",
-    "react-scripts": "1.0.5"
+    "react-scripts": "^1.1.4"
   },
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/",
