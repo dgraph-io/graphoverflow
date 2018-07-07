@@ -22,7 +22,7 @@ This app is currently compatible with Dgraph v1.0.6
 
 1. Run Docker
 
-       docker run -it -p 8080:8080 -p 9080:9080 -v ~/dgraph:/dgraph --name dgraph dgraph/dgraph:v0.8.1 dgraph --bindall=true --memory_mb 2048
+       docker run -it -p 8080:8080 -p 9080:9080 -v ~/dgraph:/dgraph --name dgraph dgraph/dgraph:v1.0.6 dgraph --bindall=true --memory_mb 2048
 
     PS. You can also run this project with Dgraph binaries instead of Docker.
 
