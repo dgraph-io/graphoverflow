@@ -14,31 +14,39 @@ A blazingly fast Stack Overflow clone running the real Stack Exchange dataset.
 
 ### Dgraph
 
-This app is currently compatible with Dgraph v1.0.6
+This app is currently compatible with latest Dgraph (v1.0.11 as of this)
 
-1. Run Docker
+1. Run Docker (Recommended)
 
-   docker run -it -p 8080:8080 -p 9080:9080 -v ~/dgraph:/dgraph --name dgraph dgraph/dgraph:v1.0.6 dgraph --bindall=true --memory_mb 2048
+   `docker-compose up --force-recreate`
 
-   PS. You can also run this project with Dgraph binaries instead of Docker.
+   > PS. You can also run this project with Dgraph binaries instead of Docker.
 
-1. Choose, download and unarchive a data dump from https://archive.org/details/stackexchange, for example [lifehacks.stackexchange.com.7z](https://archive.org/download/stackexchange/lifehacks.stackexchange.com.7z)
+1. Download any number of data dumps from https://archive.org/details/stackexchange
+   and save in directory `data/`.
 
-1. Convert stackexchange data from relation to graph. From the current directory:
+   For example [lifehacks.stackexchange.com.7z](https://archive.org/download/stackexchange/lifehacks.stackexchange.com.7z):
 
-   for category in comments posts tags users votes; do go run $category/main.go -dir="/users/$USER/Downloads/lifehacks.stackexchange.com" -output="/users/\$USER/dgraph"; done
+   ```sh
+   # using wget
+   wget -P data/ https://archive.org/download/stackexchange/lifehacks.stackexchange.com.7z
 
-1. Run the [schema mutation](https://github.com/dgraph-io/graphoverflow/blob/master/schema.txt)
+   # using curl
+   (mkdir data ; cd data && curl -L -O https://archive.org/download/stackexchange/lifehacks.stackexchange.com.7z)
+   ```
 
-1. Load graph data files into Dgraph. From the current directory:
+1. Run the setup script (it expects all data in `data/` dir at base):
 
-   for category in comments posts tags users votes; do docker exec -it dgraph dgraphloader -r \$category.rdf.gz; done
+   ```sh
+   go run setup.go
+   ```
 
 ## Stack
 
+- Dgraph
+- Go
 - React
 - node.js
-- Dgraph
 
 ## Attribution
 
