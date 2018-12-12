@@ -2,10 +2,6 @@
 
 A blazingly fast Stack Overflow clone running the real Stack Exchange dataset.
 
-**NOTE: The repository is no longer being actively maintained by the Dgraph team. If something is broken, we'd happily accept a pull request from you, but won't fix anything ourselves.**
-
-**UPDATE: This project is properly updated to work with version 1.0.6 of Dgraph. It's working as it should on MacOS and Linux. Only on the Windows platform are there problems that can be solved by starting JS Server and JS client separately. read the file "syntax_changes.md" for more details**
-
 [Live](https://graphoverflow.dgraph.io)
 
 ## Running locally
@@ -22,28 +18,27 @@ This app is currently compatible with Dgraph v1.0.6
 
 1. Run Docker
 
-       docker run -it -p 8080:8080 -p 9080:9080 -v ~/dgraph:/dgraph --name dgraph dgraph/dgraph:v1.0.6 dgraph --bindall=true --memory_mb 2048
+   docker run -it -p 8080:8080 -p 9080:9080 -v ~/dgraph:/dgraph --name dgraph dgraph/dgraph:v1.0.6 dgraph --bindall=true --memory_mb 2048
 
-    PS. You can also run this project with Dgraph binaries instead of Docker.
+   PS. You can also run this project with Dgraph binaries instead of Docker.
 
 1. Choose, download and unarchive a data dump from https://archive.org/details/stackexchange, for example [lifehacks.stackexchange.com.7z](https://archive.org/download/stackexchange/lifehacks.stackexchange.com.7z)
 
 1. Convert stackexchange data from relation to graph. From the current directory:
 
-       for category in comments posts tags users votes; do go run $category/main.go -dir="/users/$USER/Downloads/lifehacks.stackexchange.com" -output="/users/$USER/dgraph"; done
+   for category in comments posts tags users votes; do go run $category/main.go -dir="/users/$USER/Downloads/lifehacks.stackexchange.com" -output="/users/\$USER/dgraph"; done
 
 1. Run the [schema mutation](https://github.com/dgraph-io/graphoverflow/blob/master/schema.txt)
 
 1. Load graph data files into Dgraph. From the current directory:
 
-       for category in comments posts tags users votes; do docker exec -it dgraph dgraphloader -r $category.rdf.gz; done
-
+   for category in comments posts tags users votes; do docker exec -it dgraph dgraphloader -r \$category.rdf.gz; done
 
 ## Stack
 
-* React
-* node.js
-* Dgraph
+- React
+- node.js
+- Dgraph
 
 ## Attribution
 
