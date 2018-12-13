@@ -1,0 +1,15 @@
+{
+  questions(func: eq(Type, "Question"), orderdesc: ViewCount, first: 1) {
+  	Title {
+      Text
+      Author { DisplayName }
+    }
+  	Score
+  	ViewCount
+    count(Comment)
+    Comment (orderdesc: Timestamp, first: 10) {
+      Text, Timestamp
+      Author {DisplayName}
+    }
+  }
+}

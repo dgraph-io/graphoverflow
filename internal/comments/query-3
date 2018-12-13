@@ -1,0 +1,6 @@
+{
+  doctor(func: eq(Type, "Comment"), orderdesc: Timestamp) @filter(allofterms(Text, "doctor")) {
+    Text, Timestamp
+    Author {DisplayName}
+  }
+}
