@@ -125,7 +125,7 @@ function createPost({ title, body, postType, ownerID, parentPostID }) {
 `;
 
   return new Promise((resolve, reject) => {
-    runMutation(Nquads, uidmap)
+    runMutation(Nquads, "blank", uidmap)
       .then(({ data }) => {
         resolve(data);
       })
@@ -319,7 +319,7 @@ function handleCreateComment(req, res, next) {
     <_:comment> <Type> \"Comment\" .
 `;
 
-runMutation(query, uidmap)
+runMutation(query,"blank", uidmap)
     .then(({ data }) => {
       res.json({ commentUID: data });
     })
@@ -355,7 +355,7 @@ runDelation(query)
 
 async function handleCreateVote(req, res, next) {
   const { type } = req.body;
-  console.log(req.body, "handleCreateVote")
+  console.log("start =>", req.body, "handleCreateVote")
   const postUID = req.params.uid;
   const currentUserUID = req.user && req.user.uid;
   const now = new Date().toISOString();
@@ -368,18 +368,29 @@ async function handleCreateVote(req, res, next) {
 
   let oppositeVoteType;
   if (type === "Upvote") {
-    oppositeVoteType = "Upvote";
+    oppositeVoteType = "Downvote";
   } else if (type === "Downvote") {
     oppositeVoteType = "Upvote";
   }
 
+ //! TODO: Need to check what is the problem here, avaliate about increasing and decreasing votes.
+
+ const checkVote = await fetchVote({
+  postUID,
+  voteType: type,
+  authorUID: currentUserUID
+});
+console.log(checkVote, "checkVote")
+ if (checkVote){
+  console.log(checkVote, "checkVote == true")
   await cancelVote({
     postUID,
     type: oppositeVoteType,
     authorUID: currentUserUID
   });
+}
 
-  runMutation(Nquads, uidmap)
+  runMutation(Nquads, "blank", uidmap)
     .then(() => {
       res.end();
     })
@@ -399,21 +410,26 @@ function fetchVote({ postUID, authorUID, voteType }) {
     currentUser(func: uid(${authorUID})) @cascade {
       ~Author {
          uid
-         ~${voteType} @filter(uid(postId))
+         ~${voteType} @filter(uid(postId)){ uid }
       }
     }
   }
 `;
 
   return new Promise((resolve, reject) => {
-    console.log(query, "queryqueryqueryqueryquery")
     runQuery(query)
       .then(({ data }) => {
-        // if (!data || !data.currentUser || data.currentUser.length === 0 || !data.currentUser[0]["~Author"]) {
-        if (!data || !data.currentUser || !data.currentUser[0]["~Author"]) {
-          resolve({});
+        console.log(query, "query in fetchVote", "data =>", data)
+        if (!data || !data.currentUser || !data.currentUser[0]) {
+          resolve(false);
           return;
         }
+        //  if (!data || !data.currentUser || !data.currentUser.length === 0 || !data.currentUser[0]["~Author"]
+        //  ) {
+        // //if (!data || !data.currentUser || !data.currentUser[0]["~Author"]) {
+        //   resolve({});
+        //   return;
+        // }
         const vote = data.currentUser[0]["~Author"][0];
         resolve(vote);
       })
@@ -429,7 +445,7 @@ async function cancelVote({ postUID, type, authorUID }) {
     voteType: type,
     authorUID
   });
- console.log("fetchVote", vote, "fetchVote")
+
   const query = `
       <${postUID}> <${type}> <${vote.uid}> .
       <${vote.uid}> * * .
@@ -466,7 +482,7 @@ async function handleIncrementViewCount(req, res, next) {
       <${postUID}> <ViewCount> \"${nextViewCount}\" .
 `;
 
-runMutation(query)
+runMutation(query, "uid", postUID)
     .then(() => {
       res.end();
     })

@@ -3,3 +3,5 @@
 /w
 npm-debug.log
 /data
+/zw
+.DS_Store
