@@ -34,6 +34,12 @@ export async function runQuery(queryText) {
     try {
       const query = `${queryText}`;
       const res = await dgraphC.newTxn().query(query);
+
+      if (process.env.NODE_ENV === "dev") {
+        console.log("Get latency:");
+        console.log("|:||", res.extensions.server_latency, "||:|");
+      }
+    
       ppl = res.data;
     } catch (e) {
       if (e === dgraph.ERR_ABORTED) {
@@ -68,6 +74,8 @@ export async function runMutation(Nquads, uidmap) {
         console.log("All created nodes (map from blank node names to uids):");
         assigned.getUidsMap().forEach((uid2, key) => console.log(`${key} => ${uid2}`));
         console.log();
+        console.log("Get latency:");
+        console.log("|:||", assigned.extensions.server_latency, "||:|");
          }
     } catch (e) {
       if (e === dgraph.ERR_ABORTED) {
@@ -87,7 +95,7 @@ export async function runDelation(Nquads) {
   let uid;
 
   if (process.env.NODE_ENV === "dev") {
-    console.log("Running Mutation:");
+    console.log("Running Delation:");
     console.log(Nquads, "Nquads");
   }
 
@@ -97,6 +105,11 @@ export async function runDelation(Nquads) {
       mu.setDelNquads(`${Nquads}`);
       const assigned = await txn.mutate(mu);
       await txn.commit();
+      if (process.env.NODE_ENV === "dev") {
+        console.log();
+        console.log("Get latency:");
+        console.log("|:||", assigned.extensions.server_latency, "||:|");
+         }
     } catch (e) {
       if (e === dgraph.ERR_ABORTED) {
         // Retry or handle exception.
