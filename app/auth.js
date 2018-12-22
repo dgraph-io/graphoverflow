@@ -15,7 +15,7 @@ function createUser(accessToken, displayName, GitHubID) {
     <_:user> <Type> "User" .
 `;
 
-  return runMutation(Nquads)
+  return runMutation(Nquads,"blank", "user")
     .then(({ data }) => {
       const userUID = data.uids.user;
 

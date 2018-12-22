@@ -54,7 +54,7 @@ export async function runQuery(queryText) {
     return { data: ppl };
 }
 
-export async function runMutation(Nquads, uidmap) {
+export async function runMutation(Nquads, type, uidmap) {
   let uid;
   if (process.env.NODE_ENV === "dev") {
     console.log("Running Mutation:");
@@ -65,10 +65,13 @@ export async function runMutation(Nquads, uidmap) {
     try {
       const mu = new dgraph.Mutation();
       mu.setSetNquads(`${Nquads}`);
+      mu.setCommitNow(true);
       const assigned = await txn.mutate(mu);
-      // Commit transaction.
-      await txn.commit();
-      uid = await assigned.getUidsMap().get(`${uidmap}`);
+      if (type !== "uid") {
+        uid = assigned.getUidsMap().get(`${uidmap}`);
+      } else {
+        uid = uidmap;
+      }
 
       if (process.env.NODE_ENV === "dev") {
         console.log(`*** commit just now ***`);
@@ -90,6 +93,7 @@ export async function runMutation(Nquads, uidmap) {
       await txn.discard();
       // dgraphClientStub.close();
     }
+    console.log({ data: uid }, "data")
     return { data: uid };
 }
 
@@ -97,7 +101,7 @@ export async function runDelation(Nquads) {
   let uid;
 
   if (process.env.NODE_ENV === "dev") {
-    console.log("Running Mutation:");
+    console.log("Running a Delation:");
     console.log(Nquads);
   }
 
@@ -119,5 +123,5 @@ export async function runDelation(Nquads) {
       await txn.discard();
       // clientStub.close();
     }
-    return uid;
+    return true;
 }

@@ -10,6 +10,12 @@ A blazingly fast Stack Overflow clone running the real Stack Exchange dataset.
 
 ## Running locally
 
+### First Thing first
+
+Before starting, make sure that Dgraph is running on default ports (8080, 9080 ...)
+Then go to Ratel UI or by cURL and set the Schema in the schema.txt file. Without this
+it won't work.
+
 ### Node
 
 1. Run `npm install` in the root directory
@@ -18,11 +24,11 @@ A blazingly fast Stack Overflow clone running the real Stack Exchange dataset.
 
 ### Dgraph
 
-This app is currently compatible with Dgraph v1.0.6
+This app is currently compatible with Dgraph v1.0.11-rc4
 
 1. Run Docker
 
-       docker run -it -p 8080:8080 -p 9080:9080 -v ~/dgraph:/dgraph --name dgraph dgraph/dgraph:v1.0.6 dgraph --bindall=true --memory_mb 2048
+       docker run -it -p 8080:8080 -p 9080:9080 -v ~/dgraph:/dgraph --name dgraph dgraph/dgraph:v1.0.11-rc4 dgraph alpha --bindall=true --memory_mb 2048
 
     PS. You can also run this project with Dgraph binaries instead of Docker.
 
