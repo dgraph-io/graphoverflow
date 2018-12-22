@@ -8,7 +8,7 @@ const grpc = require("grpc");
 //   if (process.env.NODE_ENV === "prod") {
 //     endpointBaseURL = "https://graphoverflow.dgraph.io";
 //   } else {
-//     endpointBaseURL = "http://127.0.0.1:8080";
+//     endpointBaseURL = "http://localhost:8080";
 //   }
 
 //   return endpointBaseURL;

@@ -1,0 +1,14 @@
+*.md
+/tags
+/posts
+/users
+/votes
+/queries
+/comments
+**/*.rdf.gz
+/p
+/w
+npm-debug.log
+/data
+/zw
+.DS_Store

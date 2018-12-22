@@ -3,7 +3,7 @@ const httpProxy = require("http-proxy");
 const path = require("path");
 
 var app = express();
-var apiEndpoint = "http://127.0.0.1:3001/api";
+var apiEndpoint = "http://localhost:3001/api";
 var proxy = httpProxy.createProxyServer({
   target: apiEndpoint
 });
@@ -19,5 +19,5 @@ app.get("*", (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log(`Client server running on: http://127.0.0.1:3000/`); // eslint-disable-line no-console
+  console.log(`Client server running on: http://localhost:3000/`); // eslint-disable-line no-console
 });

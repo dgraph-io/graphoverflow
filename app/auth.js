@@ -85,7 +85,7 @@ export function configPassport(passport) {
   if (process.env.NODE_ENV === "prod") {
     callbackURL = "https://graphoverflow.dgraph.io";
   } else {
-    callbackURL = "http://127.0.0.1:3000";
+    callbackURL = "http://localhost:3000";
   }
 
   passport.use(

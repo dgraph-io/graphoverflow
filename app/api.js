@@ -71,5 +71,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(app.get("port"), () => {
-  console.log(`API server running on: http://127.0.0.1:${app.get("port")}/`); // eslint-disable-line no-console
+  console.log(`API server running on: http://localhost:${app.get("port")}/`); // eslint-disable-line no-console
 });
