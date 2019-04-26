@@ -4,7 +4,7 @@ A blazingly fast Stack Overflow clone running the real Stack Exchange dataset.
 
 **NOTE: The repository is no longer being actively maintained by the Dgraph team. If something is broken, we'd happily accept a pull request from you, but won't fix anything ourselves.**
 
-**UPDATE: This project is properly updated to work with version 1.0.14 of Dgraph. It's working as it should on MacOS and Linux. Only on the Windows platform are there problems that can be solved by starting JS Server and JS client separately. read the file "syntax_changes.md" for more details**
+**UPDATE: This project is properly updated to work with version 1.0.14 of Dgraph. It's working as expected on MacOS and Linux. There are some problems running the project on Windows, that can be solved by starting JS server and JS client separately. See "syntax_changed.md" for detailed instructions**
 
 [Live](https://graphoverflow.dgraph.io)
 
