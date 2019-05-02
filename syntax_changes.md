@@ -60,7 +60,7 @@ Example:
 
 ## If you want to use this project for testing 
 
-create at least one user manually using Ratel. 
+create at least one user manually using Ratel. And also copy the schema.txt and run it against alter ou bulk edit on Ratel's schema painel.
 Or generate RDF correctly as the README indicates.
 
 Below we have a mutation template that you can use to create your user, fill in the fields if necessary.
