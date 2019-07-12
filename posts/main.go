@@ -91,7 +91,7 @@ func main() {
 	check(err)
 	w := gzip.NewWriter(o)
 
-	log.Println("1/2 Reading file")
+	log.Println("1/2 Reading posts and posthistory file")
 	pc := bufio.NewReader(pf)
 	pcd := xml.NewDecoder(pc)
 

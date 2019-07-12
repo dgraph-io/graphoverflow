@@ -47,7 +47,7 @@ func main() {
 
 	w := gzip.NewWriter(o)
 
-	log.Println("1/2 Reading votes file")
+	log.Println("1/2 Reading comments file")
 	c := bufio.NewReader(f)
 	decoder := xml.NewDecoder(c)
 
