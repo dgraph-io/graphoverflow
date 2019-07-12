@@ -38,7 +38,7 @@ This app is currently compatible with Dgraph v1.0.14
 
 3. Convert stackexchange data from relation to graph. From the current directory:
 
-       for category in comments posts tags users votes; do go run $category/main.go -dir="/users/$USER/Downloads/lifehacks.stackexchange.com" -output="/users/$USER/dgraph/$category.rdf.gz"; done
+       for category in comments posts tags users votes; do go run $category/main.go -dir="$HOME/Downloads/lifehacks.stackexchange.com" -output="/$HOME/dgraph/$category.rdf.gz"; done
 
 4. Run the [schema mutation](https://github.com/dgraph-io/graphoverflow/blob/master/schema.txt)
 
