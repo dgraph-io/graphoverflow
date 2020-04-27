@@ -6,7 +6,7 @@ Any help is welcome.
 
 TODO - Need to fix some bugs like "Vote".
 
-Right now (4th of July, 2018) this project is working with Dgraph V1.0.6. We are using Dgraph-JS and Dgraph-JS-HTTP.
+Right now (26th of April, 2020) this project is working with Dgraph v20.03.1. We are using Dgraph-JS and Dgraph-JS-HTTP.
 
 **Well Dgraph-js is a working in progress - You can use it, there are only conflicts to solve. Create a Fake user first if you do not want to  generate an RDF as the README tells.**
 

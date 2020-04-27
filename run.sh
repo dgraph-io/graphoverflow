@@ -9,6 +9,7 @@ installClient (){
         echo "install Client"
         cd ./app/client
         npm install
+        npm run build
         cd ../..
         echo "Finished"
 }
