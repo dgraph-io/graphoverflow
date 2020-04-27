@@ -5,7 +5,6 @@ import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 
 import postRoutes from "./routes/post";
-import { runQuery } from "./helpers";
 import { configPassport, findUserByUID } from "./auth";
 
 const app = express();
