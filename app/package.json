@@ -12,8 +12,8 @@
   "author": "Sung Won Cho <mikeswcho@gmail.com> (https://sungwoncho.io/)",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^4.1.0",
-    "nodemon": "^1.18.8"
+    "concurrently": "^5.2.0",
+    "nodemon": "^2.0.3"
   },
   "dependencies": {
     "babel-cli": "^6.26.0",
@@ -23,19 +23,19 @@
     "babel-preset-es2017": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.26.0",
-    "body-parser": "^1.18.3",
-    "cookie-parser": "^1.4.3",
-    "dgraph-js": "^1.2.1",
-    "dotenv": "^6.2.0",
-    "express": "^4.16.4",
-    "express-session": "^1.15.6",
-    "grpc": "^1.16.1",
-    "http-proxy": "^1.17.0",
-    "passport": "^0.4.0",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
+    "dgraph-js": "^20.3.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "grpc": "^1.24.2",
+    "http-proxy": "^1.18.0",
+    "passport": "^0.4.1",
     "passport-github": "^1.1.0",
-    "react-redux": "^6.0.0",
-    "redux": "^4.0.1",
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "superagent": "^4.0.0"
+    "superagent": "^5.2.2"
   }
 }
