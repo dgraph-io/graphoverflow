@@ -1,8 +1,6 @@
-mutation {
-  schema {
     AboutMe: string .
-    Author: uid @reverse .
-    Owner: uid @reverse .
+    Author: [uid] @reverse .
+    Owner: [uid] @reverse .
     DisplayName: string .
     Location: string .
     Reputation: int .
@@ -11,19 +9,17 @@ mutation {
     Tag.Text: string @index(hash) .
     Type: string @index(exact) .
     ViewCount: int @index(int) .
-    Vote: uid @reverse .
-    Title: uid @reverse .
-    Body: uid @reverse .
-    Post: uid @reverse .
+    Vote: [uid] @reverse .
+    Title: [uid] @reverse .
+    Body: [uid] @reverse .
+    Post: [uid] @reverse .
     PostCount: int @index(int) .
-    Tags: uid @reverse .
+    Tags: [uid] @reverse .
     Timestamp: datetime .
     GitHubID: string @index(hash) .
-    Has.Answer: uid @reverse @count .
-    Chosen.Answer: uid @count .
-    Comment: uid @reverse .
-    Upvote: uid @reverse .
-    Downvote: uid @reverse .
-    Tag: uid @reverse .
-  }
-}
+    Has.Answer: [uid] @reverse @count .
+    Chosen.Answer: [uid] @count .
+    Comment: [uid] @reverse .
+    Upvote: [uid] @reverse .
+    Downvote: [uid] @reverse .
+    Tag: [uid] @reverse .
