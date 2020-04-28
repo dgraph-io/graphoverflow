@@ -54,6 +54,26 @@ app/helpers.js
 
 >Pay attention that this docker-composer will create a volume in your docker env.
 
+>If your docker is binded to localhost. Don't change anything.
+
+### Clean up docker.
+
+```
+docker-compose down
+or
+docker-compose rm
+```
+and
+```
+docker stop $(docker ps -a -q)
+
+docker rm $(docker ps -a -q)
+
+docker volume ls
+
+docker volume rm graphoverflow_dgraph
+```
+
 ### Dgraph
 
 This app is currently compatible with Dgraph v20.xx.x
