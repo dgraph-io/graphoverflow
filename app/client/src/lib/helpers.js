@@ -4,10 +4,10 @@ const dgraph = require("dgraph-js-http");
 
 export function getEndpointBaseURL() {
   let endpointBaseURL;
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV === "prod") {
     endpointBaseURL = "https://graphoverflow.dgraph.io";
   } else {
-    endpointBaseURL = "http://localhost:8080";
+    endpointBaseURL = "http://127.0.0.1:8080"; //This must be accessible from your machine
   }
 
   return endpointBaseURL;

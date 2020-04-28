@@ -1,0 +1,36 @@
+version: "3.3"
+services:
+  webapp:
+    build: ./
+    depends_on:
+      - zero
+      - alpha
+    ports:
+        - 3000:3000
+        - 3001:3001
+    command: sh runCompose.sh
+  zero:
+    image: dgraph/dgraph:v20.03.1
+    volumes:
+      - dgraph:/dgraph
+    ports:
+      - 5080:5080
+      - 6080:6080
+    restart: on-failure
+    command: dgraph zero --my=zero:5080
+  alpha:
+    image: dgraph/dgraph:v20.03.1
+    volumes:
+      - dgraph:/dgraph
+    ports:
+      - 8080:8080
+      - 9080:9080
+    restart: on-failure
+    command: dgraph alpha --my=alpha:7080 --zero=zero:5080
+  ratel:
+    image: dgraph/dgraph:v20.03.1
+    ports:
+      - 8000:8000
+    command: dgraph-ratel
+volumes:
+  dgraph:

@@ -91,8 +91,8 @@ export function configPassport(passport) {
   passport.use(
     new GitHubStrategy(
       {
-        clientID: process.env.GitHubClientID,
-        clientSecret: process.env.GitHubClientSecret,
+        clientID: "17819057342d73375cf7", // please add this env var => // process.env.GitHubClientID,
+        clientSecret: "89617a432f8dc31bb581ec8582e928be15a9685c", // please add this env var => // process.env.GitHubClientSecret,
         callbackURL: `${callbackURL}/api/auth/github/callback`
       },
       (accessToken, refreshToken, profile, cb) => {

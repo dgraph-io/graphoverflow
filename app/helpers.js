@@ -3,22 +3,21 @@ const dgraph = require("dgraph-js");
 const grpc = require("grpc");
 
 
-// export function getEndpointBaseURL() {
-//   let endpointBaseURL;
-//   if (process.env.NODE_ENV === "prod") {
-//     endpointBaseURL = "https://graphoverflow.dgraph.io";
-//   } else {
-//     endpointBaseURL = "http://127.0.0.1:8080";
-//   }
+export function getEndpointBaseURL() {
+  let endpointBaseURL;
+  if (process.env.NODE_ENV === "prod") {
+    endpointBaseURL = "http://127.0.0.1:9080";
+  } else {
+    endpointBaseURL = "http://127.0.0.1:9080";
+  }
+  return endpointBaseURL;
+}
 
-//   return endpointBaseURL;
-// }
-
-//  const endpointBaseURL = getEndpointBaseURL();
+ const endpointBaseURL = getEndpointBaseURL();
 
 // Create a client stub.
 function newClientStub() {
-    return new dgraph.DgraphClientStub("localhost:9080", grpc.credentials.createInsecure());
+    return new dgraph.DgraphClientStub(endpointBaseURL, grpc.credentials.createInsecure());
 }
 
 // Create a client.
