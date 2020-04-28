@@ -1,15 +1,17 @@
+#!/bin/sh
+
 installServer (){
         echo "install Server"
         cd ./app
-        npm install
+        yarn
         cd ..
         echo "Finished"
 }
 installClient (){
         echo "install Client"
         cd ./app/client
-        npm install
-        npm run build
+        yarn
+        yarn build
         cd ../..
         echo "Finished"
 }
@@ -17,7 +19,7 @@ installClient (){
 RunDev (){
         echo "Running Dev"
         cd ./app
-        npm run dev
+        yarn dev
 }
 
 

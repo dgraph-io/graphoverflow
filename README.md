@@ -6,8 +6,6 @@ A blazingly fast Stack Overflow clone running the real Stack Exchange dataset.
 
 **UPDATE: This project is properly updated to work with version 20.xx.x of Dgraph. It's working as expected on macOS and Linux. There are some problems running the project on Windows, that can be solved by starting JS server and JS client separately. See "syntax_changed.md" for detailed instructions**
 
-[Live](https://graphoverflow.dgraph.io)
-
 ## Running locally
 
 ### First Thing first
@@ -27,6 +25,34 @@ it won't work.
 4. In the root directory, run `npm run dev`.
 
 > You can also instead of steps 2, 3, and 4, you can just run sh ./run.sh
+
+### Docker Compose
+
+We have a dockerized env so you can run this project.
+
+1. Run Docker-composer
+
+The first build will take time.
+```
+docker-compose up            # In the first time
+or
+docker-compose up --build    # If you wanna rebuild it
+```
+The compose has a script that will prepare everything for you. You might wait for the deployment to be done and updated the page if so.
+
+2. Now go to localhost:3000 or the IP if you are running docker in a VM.
+
+### If anything goes wrong
+
+If the page loads but keeps showing the animated loader. It means that something goes wrong. You should see a loaded site with empty questions.
+
+>You don't need to do much when running this docker-compose. In general, if you are running docker in a VM the IP is 192.168.99.100 (between 99 and 199, you can check it via docker-machine). In that case, you gonna need to change all addresses in the code from localhost or 127.0.0.1 to the VM IP.
+
+>Paths you might change: \
+app/client/src/lib/helpers.js \
+app/helpers.js
+
+>Pay attention that this docker-composer will create a volume in your docker env.
 
 ### Dgraph
 
