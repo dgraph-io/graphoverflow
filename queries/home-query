@@ -3,7 +3,7 @@
   # Get recent 100 questions
   ##########################
 
-  questions(func: eq(Type, "Question"), orderdesc: Timestamp, first: 100) {
+  questions(func: type(Question), orderdesc: Timestamp, first: 100) {
     uid
 
     Title {
@@ -41,7 +41,7 @@
   # Get top 10 popular tags
   ##########################
 
-  t as var(func: eq(Type, "Tag")) {
+  t as var(func: type(Tag)) {
     c as count(~Tag)
   }
 
@@ -55,7 +55,7 @@
   # Get popular users
   ##########################
 
-  var(func: eq(Type, "Question"), orderdesc: Timestamp, first: 100) {
+  var(func: type(Question), orderdesc: Timestamp, first: 100) {
     ca as Chosen.Answer
   }
 
