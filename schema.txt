@@ -9,17 +9,69 @@ Text: string @index(fulltext) .
 Tag.Text: string @index(hash) .
 Type: string @index(exact) .
 ViewCount: int @index(int) .
-Vote: [uid] @reverse .
 Title: [uid] @reverse .
 Body: [uid] @reverse .
 Post: [uid] @reverse .
 PostCount: int @index(int) .
-Tags: [uid] @reverse .
 Timestamp: datetime .
-GitHubID: string @index(hash) .
 Has.Answer: [uid] @reverse @count .
 Chosen.Answer: [uid] @count .
 Comment: [uid] @reverse .
 Upvote: [uid] @reverse .
 Downvote: [uid] @reverse .
 Tag: [uid] @reverse .
+type Answer {
+	Type
+	Body
+	Owner
+	Timestamp
+	Author
+	Text
+	Comment
+}
+type Author {
+	DisplayName
+}
+type Body {
+	Text
+	Type
+	Post
+	Author
+	Timestamp
+}
+type Comment {
+	Text
+	Timestamp
+}
+type Question {
+	Title
+	Body
+	Owner
+	ViewCount
+	Timestamp
+	Tag
+	Has.Answer
+}
+type Tag {
+	Tag.Text
+	Type
+}
+type Title {
+	Text
+	Author
+}
+type User {
+	Id
+	Reputation
+	CreationDate
+	DisplayName
+	Location
+	AboutMe
+	LastAccessDate
+}
+type Vote {
+	Author
+	Timestamp
+	Upvote
+	Downvote
+}

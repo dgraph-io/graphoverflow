@@ -1,0 +1,63 @@
+interface Post {
+  Timestamp: DateTime @dgraph("Timestamp")
+  Body: [Body] @dgraph("Body")
+  Owner: [User] @dgraph("Owner")
+}
+
+type Answer implements Post {
+  Type: String! @search(by: [exact]) @dgraph("Type")
+  Body: [Body!] @dgraph("Body")
+  Comment: [Comment] @dgraph("Comment")
+}
+
+type Question implements Post {
+  ViewCount: Int @search @dgraph("ViewCount")
+  Title: [Title] @dgraph("Title")
+  Tag: [Tag] @dgraph("Tag")
+  HasAnswer: [Answer] @dgraph("Has.Answer")
+}
+
+type User {
+  Id: String @dgraph("Id")
+  Type: String! @search(by: [exact]) @dgraph("Type")
+  DisplayName: String! @dgraph("DisplayName")
+  Reputation: String! @dgraph("Reputation")
+  AboutMe: String @dgraph("AboutMe")
+  Location: String @dgraph("Location")
+  CreationDate: DateTime @dgraph("CreationDate")
+  LastAccessDate: DateTime @dgraph("LastAccessDate")
+}
+
+type Vote {
+  Id: ID! @dgraph("Id")
+  Timestamp: DateTime @dgraph("Timestamp")
+  Author: [User] @dgraph("Author")
+}
+
+type Body {
+  Text: String @search(by: [fulltext]) @dgraph("Text")
+  Timestamp: DateTime @dgraph("Timestamp")
+  Type: String! @search(by: [exact]) @dgraph("Type")
+
+  Author: [User]! @dgraph("Author")
+  Post: [Post] @dgraph("Post")
+}
+
+type Comment {
+  Text: String @search(by: [fulltext]) @dgraph("Text")
+  Timestamp: String @dgraph("Timestamp")
+}
+
+type Title {
+  Text: String! @search(by: [fulltext]) @dgraph("Text")
+  Type: String! @search(by: [exact]) @dgraph("Type")
+  Timestamp: DateTime @dgraph("Timestamp")
+  Post: [Post] @dgraph("Post")
+  Author: [Author] @dgraph("Author")
+}
+
+type Tag {
+  Type: String! @search(by: [exact]) @dgraph("Type")
+  TagText: String @search(by: [hash]) @dgraph("Tag.Text")
+  PostCount: Int @search @dgraph("PostCount")}
+}
