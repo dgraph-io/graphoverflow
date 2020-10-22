@@ -45,10 +45,10 @@
     c as count(~Tag)
   }
 
-  topTags(id: var(t), orderdesc: var(c), first: 10) {
+  topTags(func: uid(t), orderdesc: val(c), first: 10) {
     uid
     TagName: Text
-    QuestionCount: var(c)
+    QuestionCount: val(c)
   }
 
   ##########################
@@ -59,15 +59,15 @@
     ca as Chosen.Answer
   }
 
-  var(id: var(ca)) @groupby(Owner) {
+  var(func: uid(ca)) @groupby(Owner) {
     a as count(uid)
   }
 
-  topUsers(id: var(a), orderdesc: var(a)) {
+  topUsers(func: uid(a), orderdesc: val(a)) {
     uid
     AboutMe
     DisplayName
     Reputation
-    NumAcceptedAnswers: var(a)
+    NumAcceptedAnswers: val(a)
   }
 }
