@@ -1,9 +1,11 @@
 {
   ##########################
-  # Get the question
+  # Get a question
   ##########################
 
-  var (id: 0xd18499a5ac49c3a6) {
+  q as var(func: type(Question), first: 1)
+
+  var (func: uid(q)) {
     Has.Answer {
       uv as count(Upvote)
       dv as count(Downvote)
@@ -11,7 +13,7 @@
     }
   }
 
-  question(id: 0xd18499a5ac49c3a6) {
+  question(func: uid(q)) {
     uid
     Title {
       Text
@@ -41,7 +43,7 @@
     # Get all answers
     ##########################
 
-    Has.Answer(orderdesc: var(answer_score)) {        
+    Has.Answer(orderdesc: val(answer_score)) {
       uid
       Body {
         Text
@@ -107,7 +109,7 @@
   # Get related questions
   ##########################
 
-  tags(id: var(questionTags)) {
+  tags(func: uid(questionTags)) {
     relatedQuestions: ~Tag(first: 10) {
       uid
       Title {
