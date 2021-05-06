@@ -6,7 +6,7 @@
     "classnames": "^2.2.6",
     "dgraph-js-http": "^20.3.0",
     "http-proxy-middleware": "^1.0.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "marked": "^1.0.0",
     "moment": "^2.24.0",
     "node-sass": "^4.14.0",
